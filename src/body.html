@@ -1,0 +1,356 @@
+<title>Kose Capital</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<!--__FONTLINK__-->
+<style>
+/*__FONTS__*/
+:root{
+  /* Yerleşim: tam genişlikte koyu sahneler. Metin solda, o ürünün hareketli görseli sağda (dar ekranda üstte).
+     Renk: koyu zemin Kose Capital yeşilinden türetildi; her ürünün tek bir vurgu rengi var. */
+  --ink:#070B09; --ink-2:#0D1411; --line:#27332C; --bone:#ECE8DC; --mute:#929D96; --hi:#FFFFFF;
+  --castle:#C99A3A; --bazaar:#35B8A6; --apex:#A9C8FF;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --gut-l:max(22px,env(safe-area-inset-left,0px)); --gut-r:max(22px,env(safe-area-inset-right,0px));
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ink);color:var(--bone);font-family:var(--f-body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ink)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--bone);outline-offset:3px}
+.wrap{max-width:1360px;margin:0 auto;padding-left:var(--gut-l);padding-right:var(--gut-r)}
+.nb{white-space:nowrap}
+.tr{display:none}
+html[data-lang="tr"] .tr{display:revert}
+html[data-lang="tr"] .en{display:none}
+[id]{scroll-margin-top:57px}
+
+/* üst şerit */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--ink) 84%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:1.6rem;height:58px}
+.brand{font-family:var(--f-display);font-stretch:118%;font-weight:640;font-size:.92rem;letter-spacing:.2em;text-decoration:none;white-space:nowrap}
+.nav{display:flex;gap:1.6rem;margin-left:auto;font-size:.95rem}
+.nav a{text-decoration:none;color:var(--mute)}
+.nav a:hover{color:var(--bone)}
+.lang{display:flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.lang button{font:500 .78rem var(--f-mono);color:var(--mute);background:none;border:0;padding:.42rem .62rem;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--bone);color:var(--ink)}
+
+/* sahneler */
+.film{display:block;position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.hero,.product{position:relative;isolation:isolate;overflow:hidden}
+.hero-in{min-height:min(calc(100svh - 58px),900px);display:flex;flex-direction:column;justify-content:flex-end;gap:1.5rem;padding-block:4.5rem 2.2rem}
+.kicker{margin:0;font-weight:400;font-size:clamp(1.05rem,1.5vw,1.3rem);line-height:1.4}
+.names{list-style:none;margin:0;padding:0;max-width:min(40rem,52%)}
+.names a{display:block;padding-block:.75rem 1.05rem;border-top:1px solid var(--line);text-decoration:none;opacity:.42;transition:opacity .35s}
+.names a.on,.names a:hover,.names a:focus-visible{opacity:1}
+.nm{display:block;font-family:var(--f-display);font-stretch:125%;font-weight:560;font-size:clamp(3.2rem,8.8vw,8.4rem);font-size:clamp(3.2rem,min(8.8vw,13.5svh),8.4rem);line-height:.9;letter-spacing:-.025em}
+.tag{display:flex;flex-wrap:wrap;align-items:baseline;gap:.1rem 1.1rem;margin-top:.6rem;font-size:1rem;line-height:1.45}
+.tag b,.st{font:500 .8rem var(--f-mono);white-space:nowrap}
+.tag b{color:var(--accent)}
+.st{display:inline-flex;align-items:center;gap:.5rem}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}
+
+.product{border-top:1px solid var(--line)}
+.product .wrap{min-height:min(92svh,860px);display:flex;flex-direction:column;justify-content:flex-end;padding-block:7rem 4.6rem}
+.col{max-width:35rem;display:flex;flex-direction:column;gap:1.3rem}
+.product h2{font-family:var(--f-display);font-stretch:125%;font-weight:560;font-size:clamp(3rem,8.4vw,7.4rem);line-height:.92;letter-spacing:-.025em;margin:0}
+.status{font:500 .8rem var(--f-mono);color:var(--accent);display:flex;gap:.6rem;align-items:center;margin:0}
+.status i{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}
+.lede{font-size:clamp(1.12rem,1.5vw,1.34rem);line-height:1.45;margin:0;text-wrap:pretty}
+.small{font-size:.88rem;color:var(--mute);margin:0}
+.nums{display:flex;flex-wrap:wrap;gap:.6rem 2.4rem;margin:0}
+.nums div{display:flex;flex-direction:column-reverse}
+.nums dt{font-size:.88rem;color:var(--mute)}
+.nums dd{margin:0;font:500 clamp(1.6rem,2.6vw,2.2rem)/1.1 var(--f-mono);font-variant-numeric:tabular-nums}
+.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:.55rem}
+.steps li{counter-increment:s;display:grid;grid-template-columns:1.6rem minmax(0,1fr);gap:.4rem}
+.steps li::before{content:counter(s);font:500 .8rem/2.1 var(--f-mono);color:var(--accent)}
+.spec{margin:0;display:flex;flex-direction:column;gap:.7rem}
+.spec dt{font:500 .8rem var(--f-mono);color:var(--accent)}
+.spec dd{margin:.1rem 0 0}
+.row{display:flex;flex-wrap:wrap;gap:.9rem 1.4rem;align-items:center}
+.btn{display:inline-flex;align-items:center;min-height:46px;padding:.2rem 1.35rem;background:var(--bone);color:var(--ink);font-weight:620;text-decoration:none;border-radius:2px}
+.btn:hover{background:var(--hi)}
+.mail{font:500 .95rem var(--f-mono);user-select:all}
+
+/* şirket ve iletişim */
+.plain{border-top:1px solid var(--line)}
+.plain .wrap{padding-block:clamp(4rem,9vw,7.5rem);display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:2rem 3rem}
+.plain .wrap.one{display:flex;flex-direction:column;align-items:flex-start;gap:1.5rem}
+.label{font:500 .8rem var(--f-mono);color:var(--mute);margin:.5rem 0 0}
+.big{font-family:var(--f-display);font-stretch:108%;font-weight:480;font-size:clamp(1.5rem,2.7vw,2.5rem);line-height:1.22;letter-spacing:-.012em;margin:0;text-wrap:pretty}
+.body{display:flex;flex-direction:column;gap:1.3rem;min-width:0}
+.body p{margin:0;max-width:60ch}
+.addr{font-family:var(--f-display);font-stretch:118%;font-weight:540;font-size:clamp(1.3rem,6vw,5.4rem);line-height:1.05;letter-spacing:-.02em;text-decoration:none;max-width:100%;overflow-wrap:anywhere}
+.copy{font:500 .8rem var(--f-mono);color:var(--bone);background:none;border:1px solid var(--line);border-radius:2px;padding:.55rem .85rem;cursor:pointer}
+.copy:hover{border-color:var(--mute)}
+.foot{border-top:1px solid var(--line)}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:.6rem 2rem;justify-content:space-between;padding-block:1.5rem 2.2rem;font-size:.85rem;color:var(--mute)}
+
+@media (max-width:900px){
+  .hero-in{min-height:min(calc(100svh - 58px),780px);padding-block:min(46vw,300px) 1.6rem}
+  .names{max-width:none}
+  .product .wrap{min-height:0;padding-block:min(72vw,420px) 3.2rem}
+  .plain .wrap{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  body{font-size:16px}
+  .nav{display:none}
+  .lang{margin-left:auto}
+}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .names a{transition:none} }
+</style>
+
+<header class="top"><div class="wrap bar">
+  <a class="brand" href="#top" aria-label="Kose Capital">KOSE CAPITAL</a>
+  <nav class="nav"><a href="#castle">Castle</a><a href="#bazaar">Bazaar</a><a href="#apex">Apex</a><a href="#company"><span class="en">Company</span><span class="tr">Şirket</span></a><a href="#contact"><span class="en">Contact</span><span class="tr">İletişim</span></a></nav>
+  <div class="lang" id="lang" role="group" aria-label="Language"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="tr" aria-pressed="false">TR</button></div>
+</div></header>
+
+<main id="top">
+<section class="hero">
+  <canvas class="film" id="reel" aria-hidden="true"></canvas>
+  <div class="wrap hero-in">
+    <h1 class="kicker"><span class="en">Kose Capital builds and runs three systems.</span><span class="tr">Kose Capital üç sistem kurar ve işletir.</span></h1>
+    <ul class="names" id="names">
+      <li><a href="#castle" class="on" data-i="0" style="--accent:var(--castle)"><span class="nm">Castle</span><span class="tag"><b><span class="en">Value investing</span><span class="tr">Değer yatırımı</span></b><span class="st"><span class="en">Live</span><span class="tr">Yayında</span></span><span><span class="en">Every listed company in a country, run through four walls.</span><span class="tr">Bir ülkedeki bütün hisseler dört surdan geçer.</span></span></span></a></li>
+      <li><a href="#bazaar" data-i="1" style="--accent:var(--bazaar)"><span class="nm">Bazaar</span><span class="tag"><b><span class="en">AI sales</span><span class="tr">Yapay zekâyla satış</span></b><span class="st">Pilot</span><span><span class="en">Finds buyers abroad for what you make and opens the conversation.</span><span class="tr">Ürettiğin ürüne yurt dışında alıcı bulur, ilk teması kurar.</span></span></span></a></li>
+      <li><a href="#apex" data-i="2" style="--accent:var(--apex)"><span class="nm">Apex</span><span class="tag"><b><span class="en">Exchange connectivity</span><span class="tr">Borsa bağlantısı</span></b><span class="st"><span class="en">In production</span><span class="tr">Canlıda</span></span><span><span class="en">At Borsa Istanbul: market data in over ITCH, orders out over OUCH.</span><span class="tr">Borsa İstanbul'da veri ITCH ile gelir, emir OUCH ile gider.</span></span></span></a></li>
+    </ul>
+  </div>
+</section>
+
+<section class="product" id="castle" style="--accent:var(--castle)">
+  <canvas class="film" data-film="0" aria-hidden="true"></canvas>
+  <div class="wrap"><div class="col">
+    <p class="status"><i></i><span class="en">Live</span><span class="tr">Yayında</span></p>
+    <h2>Castle</h2>
+    <p class="lede"><span class="en">Castle runs every listed company in a country through four walls built on the principles of Buffett and Munger. Zoom in and the review deepens. Only the castles remain.</span><span class="tr">Castle, bir ülkedeki bütün halka açık şirketleri Buffett ve Munger ilkeleriyle kurulmuş dört surdan geçirir. Yaklaştıkça inceleme derinleşir. Geriye yalnızca kaleler kalır.</span></p>
+    <dl class="nums">
+      <div><dt><span class="en">countries</span><span class="tr">ülke</span></dt><dd>4</dd></div>
+      <div><dt><span class="en">companies scanned</span><span class="tr">taranan şirket</span></dt><dd><span class="en">14,669</span><span class="tr">14.669</span></dd></div>
+      <div><dt><span class="en">castles</span><span class="tr">kale</span></dt><dd>4</dd></div>
+    </dl>
+    <p class="small"><span class="en">Data as of 10 November 2026. One or two countries are added every day. Castle is an analysis tool; it does not give investment advice.</span><span class="tr">Veri: 10 Kasım 2026. Her gün bir iki ülke eklenir. Castle bir analiz aracıdır; yatırım tavsiyesi vermez.</span></p>
+    <div class="row"><a class="btn" id="castle-link" href="https://kosecapital.github.io/castle/" target="_blank" rel="noopener"><span class="en">Open Castle</span><span class="tr">Castle'ı aç</span></a></div>
+  </div></div>
+</section>
+
+<section class="product" id="bazaar" style="--accent:var(--bazaar)">
+  <canvas class="film" data-film="1" aria-hidden="true"></canvas>
+  <div class="wrap"><div class="col">
+    <p class="status"><i></i><span class="en">Pilot</span><span class="tr">Pilot aşamasında</span></p>
+    <h2>Bazaar</h2>
+    <p class="lede"><span class="en">Bazaar is our AI sales system. It finds buyers abroad for what you make, checks each candidate, writes the first email and follows the replies.</span><span class="tr">Bazaar, yapay zekâyla çalışan satış sistemimizdir. Ürettiğin ürüne yurt dışında alıcı bulur, her adayı doğrular, ilk <span class="nb">e-postayı</span> yazar ve yanıtları izler.</span></p>
+    <ol class="steps">
+      <li><span><span class="en">You describe your product.</span><span class="tr">Ürününü anlatırsın.</span></span></li>
+      <li><span><span class="en">Bazaar finds companies that buy products like yours and checks each one.</span><span class="tr">Bazaar, senin ürününe benzer ürünler alan firmaları bulur ve tek tek doğrular.</span></span></li>
+      <li><span><span class="en">It opens the first contact by email and reports every reply.</span><span class="tr">İlk teması <span class="nb">e-postayla</span> kurar, gelen her yanıtı sana bildirir.</span></span></li>
+    </ol>
+    <p class="small"><span class="en">For exporters and manufacturers. The whole process runs over the web.</span><span class="tr">İhracatçılar ve üreticiler için. Süreç baştan sona web üzerinden yürür.</span></p>
+    <div class="row"><a class="btn" href="mailto:info@kosecapital.com?subject=Bazaar"><span class="en">Join the pilot</span><span class="tr">Pilota katıl</span></a><span class="mail">info@kosecapital.com</span></div>
+  </div></div>
+</section>
+
+<section class="product" id="apex" style="--accent:var(--apex)">
+  <canvas class="film" data-film="2" aria-hidden="true"></canvas>
+  <div class="wrap"><div class="col">
+    <p class="status"><i></i><span class="en">In production</span><span class="tr">Canlıda</span></p>
+    <h2>Apex</h2>
+    <p class="lede"><span class="en">Apex is our exchange connectivity for Borsa Istanbul. It reads the market over ITCH, sends orders over OUCH and runs in colocation. It was built and tested in our own live trading.</span><span class="tr">Apex, Borsa İstanbul için borsa bağlantı altyapımızdır. Piyasayı ITCH ile okur, emirleri OUCH ile iletir, kolokasyonda çalışır. Kendi canlı işlemlerimizde kuruldu ve sınandı.</span></p>
+    <dl class="spec">
+      <div><dt><span class="en">ITCH feed handler</span><span class="tr">ITCH veri işleyici</span></dt><dd><span class="en">Decodes the raw BIST feed and rebuilds the full order book in real time.</span><span class="tr">Ham BIST yayınını çözer, emir defterinin tamamını gerçek zamanlı yeniden kurar.</span></dd></div>
+      <div><dt><span class="en">OUCH gateway</span><span class="tr">OUCH geçidi</span></dt><dd><span class="en">Sends, modifies and cancels orders. Every order passes pre-trade risk checks before it reaches the exchange.</span><span class="tr">Emir gönderir, değiştirir, iptal eder. Her emir borsaya gitmeden önce risk denetiminden geçer.</span></dd></div>
+      <div><dt><span class="en">Colocation and upkeep</span><span class="tr">Kolokasyon ve bakım</span></dt><dd><span class="en">We set up the connection and keep it current when the exchange changes.</span><span class="tr">Bağlantıyı kurar, borsa değiştikçe altyapıyı güncel tutarız.</span></dd></div>
+      <div><dt>FPGA</dt><dd><span class="en">A hardware version of the same path is in development.</span><span class="tr">Aynı yolun donanım sürümü geliştiriliyor.</span></dd></div>
+    </dl>
+    <p class="small"><span class="en">BIST OUCH-certified. For BIST member brokers and proprietary trading firms.</span><span class="tr">BIST OUCH sertifikalı. BIST üyesi aracı kurumlar ve kendi hesabına işlem yapan firmalar için.</span></p>
+    <div class="row"><a class="btn" href="mailto:info@kosecapital.com?subject=Apex"><span class="en">Talk to us</span><span class="tr">Bize yaz</span></a><span class="mail">info@kosecapital.com</span></div>
+  </div></div>
+</section>
+
+<section class="plain" id="company"><div class="wrap">
+  <h2 class="label"><span class="en">Company</span><span class="tr">Şirket</span></h2>
+  <div class="body">
+    <p class="big"><span class="en">In emerging markets like Borsa Istanbul, prices drift from fair value more often than theory admits. We price that risk and move before the rest of the market does.</span><span class="tr">Borsa İstanbul gibi gelişen piyasalarda fiyat, adil değerden kuramın kabul ettiğinden daha sık sapar. Biz bu riski fiyatlar, piyasanın geri kalanından önce davranırız.</span></p>
+    <p><span class="en">Limited information, thin liquidity and sudden external shocks keep the gaps open. Slow approaches miss the fast moves. Speed isn't an edge here, it's the requirement.</span><span class="tr">Sınırlı bilgi, ince likidite ve ani dış şoklar bu boşlukları açık tutar. Yavaş yaklaşımlar hızlı hareketleri kaçırır. Burada hız bir üstünlük değil, şarttır.</span></p>
+    <p><span class="en">We built our own systems for the Turkish market: quoting, providing liquidity and executing in real time, with a machine-learning layer that reads market microstructure. Today we build three products: Castle, Bazaar and Apex.</span><span class="tr">Türkiye piyasası için kendi sistemlerimizi kurduk: kotasyon, likidite sağlama ve gerçek zamanlı emir iletimi; üstünde piyasa mikro yapısını okuyan bir makine öğrenmesi katmanı. Bugün üç ürün geliştiriyoruz: Castle, Bazaar ve Apex.</span></p>
+  </div>
+</div></section>
+
+<section class="plain" id="contact"><div class="wrap one">
+  <h2 class="label"><span class="en">Reach us</span><span class="tr">Bize ulaş</span></h2>
+  <a class="addr" id="addr" href="mailto:info@kosecapital.com">info@kosecapital.com</a>
+  <button class="copy" id="copy" type="button"><span class="en">Copy address</span><span class="tr">Adresi kopyala</span></button>
+</div></section>
+</main>
+
+<footer class="foot"><div class="wrap"><span>© 2024–2026 Kose Capital</span><span><span class="en">Castle is an analysis tool; it does not give investment advice.</span><span class="tr">Castle bir analiz aracıdır; yatırım tavsiyesi vermez.</span></span></div></footer>
+
+<script>
+(function () {
+"use strict";
+var $ = function (s, r) { return (r || document).querySelector(s); }, $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
+var REDUCE = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+var relayout = function () {};
+
+/* ---------- dil: ziyaretçinin seçimi, adresteki ?lang=, tarayıcının dili ---------- */
+var LANG = (function () {
+  try { var s = localStorage.getItem("kc.lang"); if (s === "tr" || s === "en") return s; } catch (e) {}
+  try { var q = new URLSearchParams(location.search).get("lang"); if (q === "tr" || q === "en") return q; } catch (e) {}
+  return String(navigator.language || "en").toLowerCase().indexOf("tr") === 0 ? "tr" : "en";
+})();
+function setLang(l) {
+  LANG = l; document.documentElement.setAttribute("data-lang", l); try { document.documentElement.lang = l; } catch (e) {}
+  $$("#lang button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lang === l)); });
+  $("#lang").setAttribute("aria-label", l === "tr" ? "Dil" : "Language");
+  $("#castle-link").href = "https://kosecapital.github.io/castle/?lang=" + l;
+  relayout();
+}
+$("#lang").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; setLang(b.dataset.lang); try { localStorage.setItem("kc.lang", b.dataset.lang); } catch (e) {} });
+setLang(LANG);
+
+/* ---------- adresi kopyala ---------- */
+$("#copy").addEventListener("click", function () {
+  var btn = this, done = function () { var old = btn.innerHTML; btn.textContent = LANG === "tr" ? "Kopyalandı" : "Copied"; setTimeout(function () { btn.innerHTML = old; }, 1800); };
+  var pick = function () { var r = document.createRange(); r.selectNodeContents($("#addr")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+  try { navigator.clipboard.writeText("info@kosecapital.com").then(done, pick); } catch (e) { pick(); }
+});
+
+/* ---------- hareketli görseller: üç ürün için üç döngü ---------- */
+var css = getComputedStyle(document.documentElement);
+var rgb = function (n) { var v = parseInt(css.getPropertyValue(n).trim().slice(1), 16); return [(v >> 16) & 255, (v >> 8) & 255, v & 255].join(","); };
+var C = { ink: rgb("--ink"), bone: rgb("--bone"), castle: rgb("--castle"), bazaar: rgb("--bazaar"), apex: rgb("--apex") };
+var col = function (c, a) { return "rgba(" + C[c] + "," + a + ")"; };
+var MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace', TAU = Math.PI * 2, NARROW = 900;
+var clamp = function (x, a, b) { return Math.max(a, Math.min(b, x)); }, ease = function (x) { return 1 - Math.pow(1 - x, 3); };
+var hash = function (x) { var s = Math.sin(x * 127.1) * 43758.5453; return s - Math.floor(s); };
+function rng(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+/* Her görsel bir "sahne"ye çizilir (S): geniş ekranda metnin sağındaki alan, dar ekranda metnin üstündeki bant. */
+
+/* Castle: şirketler dışarıdan gelir, her surda bir bölümü kalır; merkeze ulaşanlar kaledir */
+var cDots = (function () { var r = rng(11), P = [0.56, 0.82, 0.94, 0.985, 1], a = []; for (var i = 0; i < 900; i++) { var u = r(), k = 0; while (u > P[k]) k++; a.push({ a: r() * TAU, k: k, s: 0.7 + Math.pow(r(), 3) * 2.2, p: r(), sp: 0.04 + r() * 0.045, j: r() - 0.5, b: r() }); } return a; })();
+function filmCastle(g, w, h, t, S) {
+  var cx = S.cx, cy = S.cy, R = S.nar ? Math.min(S.w * 0.4, S.h * 0.44) : Math.min(S.w * 0.45, S.h * 0.41), rr = [R, R * 0.74, R * 0.5, R * 0.27], i;
+  var gl = g.createRadialGradient(cx, cy, 0, cx, cy, rr[3] * 1.7); gl.addColorStop(0, col("castle", 0.26)); gl.addColorStop(1, col("castle", 0)); g.fillStyle = gl; g.beginPath(); g.arc(cx, cy, rr[3] * 1.7, 0, TAU); g.fill();
+  g.lineWidth = 1;
+  for (i = 0; i < 4; i++) { g.beginPath(); g.setLineDash(i === 3 ? [] : [2, 7]); g.lineDashOffset = t * 5 * (i % 2 ? 1 : -1); g.strokeStyle = i === 3 ? col("castle", 0.95) : col("bone", 0.26 + i * 0.09); g.arc(cx, cy, rr[i], 0, TAU); g.stroke(); }
+  g.setLineDash([]);
+  var out = R * 1.42, band = [[rr[0] + 5, R * 1.24], [rr[1] + 5, rr[0] - 5], [rr[2] + 5, rr[1] - 5], [rr[3] + 5, rr[2] - 5], [2, rr[3] - 6]];
+  for (i = 0; i < cDots.length; i++) {
+    var d = cDots[i], u = (t * d.sp + d.p) % 1, b = band[d.k], stop = b[0] + (b[1] - b[0]) * d.b, m = ease(clamp(u / 0.6, 0, 1)), r = out + (stop - out) * m, ang = d.a + t * 0.02 + (1 - m) * d.j * 0.9;
+    var al = clamp(u / 0.07, 0, 1) * (d.k === 4 ? (u > 0.94 ? (1 - u) / 0.06 : 1) : (u > 0.66 ? clamp(1 - (u - 0.66) / 0.22, 0, 1) : 1));
+    if (al < 0.02) continue;
+    g.fillStyle = d.k === 4 ? col("castle", al) : col("bone", al * (0.34 + 0.15 * d.k)); g.beginPath(); g.arc(cx + Math.cos(ang) * r, cy + Math.sin(ang) * r, d.s * (d.k === 4 ? 1.35 : 1), 0, TAU); g.fill();
+  }
+  g.font = "500 11px " + MONO; g.textAlign = "center"; g.textBaseline = "alphabetic"; g.fillStyle = col("bone", 0.6); for (i = 0; i < 4; i++) g.fillText(String(i + 1), cx, cy - rr[i] - 7);
+}
+
+/* Bazaar: tek bir noktadan dünyaya giden ilk e-postalar; bazılarından yanıt döner */
+var LAND = (function () { var hex = "__LAND__", pts = [], r, c; for (r = 0; r < 45; r++) for (c = 0; c < 120; c++) if (parseInt(hex.charAt(r * 30 + (c >> 2)), 16) & (8 >> (c & 3))) pts.push([-178.5 + c * 3, 75 - r * 3]); return pts; })();
+var HOME = [27.1, 38.4];
+/* varış noktaları: büyük ticaret kentlerinin yaklaşık yerleri; görselde ad ya da rakam yazmaz */
+var ROUTES = (function () {
+  var P = [[-0.1, 51.5], [10, 53.6], [2.3, 48.9], [-3.7, 40.4], [9.2, 45.5], [21, 52.2], [18.1, 59.3], [-7.6, 33.6], [31.2, 30], [3.4, 6.5], [36.8, -1.3], [28, -26.2], [55.3, 25.2], [46.7, 24.7], [76.9, 43.2], [72.9, 19.1], [103.8, 1.4], [121.5, 31.2], [127, 37.6], [139.7, 35.7], [151.2, -33.9], [-74, 40.7], [-87.6, 41.9], [-99.1, 19.4], [-46.6, -23.5], [-79.4, 43.7]];
+  var r = rng(5); return P.map(function (p) { return { p: p, ph: r() * 2, sp: 0.15 + r() * 0.12, reply: r() < 0.45 }; });
+})();
+function seg(g, B, a, b, style) { a = clamp(a, 0, 1); b = clamp(b, 0, 1); if (b <= a) return; g.strokeStyle = style; g.lineWidth = 1.7; g.beginPath(); for (var j = 0; j <= 10; j++) { var p = B(a + (b - a) * j / 10); if (j) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); } g.stroke(); }
+function filmBazaar(g, w, h, t, S) {
+  var k = S.nar ? S.w / 150 : Math.min(S.w * 0.66 / 100, S.h / 118), fx = S.x + S.w * (S.nar ? 0.42 : 0.36), fy = S.cy - 22 * 1.14 * k * (S.nar ? 0.2 : 1), i, s = Math.max(1.4, k * 0.4);
+  var P = function (lon, lat) { return [fx + (lon - HOME[0]) * k, fy - (lat - HOME[1]) * k * 1.14]; };
+  g.fillStyle = col("bone", 0.34);
+  for (i = 0; i < LAND.length; i++) { var q = P(LAND[i][0], LAND[i][1]); if (q[0] < -4 || q[0] > w + 4 || q[1] < -4 || q[1] > h + 4) continue; g.fillRect(q[0] - s / 2, q[1] - s / 2, s, s); }
+  var o = P(HOME[0], HOME[1]);
+  ROUTES.forEach(function (R) {
+    var d = P(R.p[0], R.p[1]), mx = (o[0] + d[0]) / 2, my = (o[1] + d[1]) / 2 - Math.hypot(d[0] - o[0], d[1] - o[1]) * 0.24;
+    var B = function (u) { var v = 1 - u; return [v * v * o[0] + 2 * v * u * mx + u * u * d[0], v * v * o[1] + 2 * v * u * my + u * u * d[1]]; };
+    g.lineWidth = 1; g.strokeStyle = col("bone", 0.13); g.beginPath(); g.moveTo(o[0], o[1]); g.quadraticCurveTo(mx, my, d[0], d[1]); g.stroke();
+    var c = (t * R.sp + R.ph) % 2;
+    if (c < 1) seg(g, B, c - 0.13, c, col("bone", 0.95));
+    else if (c < 1.24) { var e = (c - 1) / 0.24; g.lineWidth = 1; g.strokeStyle = col(R.reply ? "bazaar" : "bone", (1 - e) * 0.85); g.beginPath(); g.arc(d[0], d[1], 2 + e * 12, 0, TAU); g.stroke(); }
+    else if (R.reply) { var b2 = 1 - (c - 1.24) / 0.76; seg(g, B, b2, b2 + 0.13, col("bazaar", 0.95)); }
+    g.fillStyle = col(R.reply ? "bazaar" : "bone", R.reply ? 0.95 : 0.6); g.beginPath(); g.arc(d[0], d[1], 2.2, 0, TAU); g.fill();
+  });
+  g.fillStyle = col("bone", 1); g.beginPath(); g.arc(o[0], o[1], 3.2, 0, TAU); g.fill();
+  g.lineWidth = 1; g.strokeStyle = col("bone", 0.45 + 0.25 * Math.sin(t * 2)); g.beginPath(); g.arc(o[0], o[1], 9 + 2 * Math.sin(t * 2), 0, TAU); g.stroke();
+}
+
+/* Apex: üstte borsadan gelen ITCH iletileri, altta borsaya giden OUCH emirleri, ortada yeniden kurulan emir defteri */
+var LANES = (function () { var r = rng(23), a = []; for (var i = 0; i < 16; i++) { var n = 4 + Math.floor(r() * 5), pk = []; for (var j = 0; j < n; j++) pk.push({ x: r(), l: r() < 0.4 ? (i < 8 ? "AEDX" : "OUXC").charAt(Math.floor(r() * 4)) : "", w: 0.5 + r() }); a.push({ sp: 0.2 + r() * 0.55, pk: pk }); } return a; })();
+function filmApex(g, w, h, t, S) {
+  var top = S.y + S.h * (S.nar ? 0.17 : 0.16), bot = S.y + S.h * (S.nar ? 0.85 : 0.84), n = LANES.length, gap = (bot - top) / (n - 1), i, j;
+  g.font = "500 10px " + MONO; g.textBaseline = "middle";
+  for (i = 0; i < n; i++) {
+    var L = LANES[i], y = top + i * gap, inb = i < n / 2, c = inb ? "bone" : "apex", dir = inb ? -1 : 1, v = L.sp * Math.max(w, 700) * 1.5;
+    g.strokeStyle = col("bone", 0.08); g.lineWidth = 1; g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke();
+    for (j = 0; j < L.pk.length; j++) {
+      var p = L.pk[j], span = w + 320, x = (((p.x * span + dir * v * t) % span) + span) % span - 160, len = (24 + v * 0.05) * p.w;
+      var gr = g.createLinearGradient(x, 0, x - dir * len, 0); gr.addColorStop(0, col(c, 0.95)); gr.addColorStop(1, col(c, 0));
+      g.strokeStyle = gr; g.lineWidth = 1.5; g.beginPath(); g.moveTo(x, y); g.lineTo(x - dir * len, y); g.stroke();
+      if (p.l) { g.fillStyle = col(c, 0.85); g.textAlign = dir < 0 ? "right" : "left"; g.fillText(p.l, x + dir * 7, y); }
+    }
+  }
+  var rows = 14, rh = Math.min(13, (bot - top) / (rows + 5)), cy = (top + bot) / 2, bx = S.cx, bw = Math.min(S.w * (S.nar ? 0.34 : 0.27), 210), tick = Math.floor(t * 12);
+  g.fillStyle = col("ink", 0.95); g.fillRect(bx - bw - 16, cy - rows / 2 * rh - 18, bw * 2 + 32, rows * rh + 36);
+  g.strokeStyle = col("bone", 0.18); g.lineWidth = 1; g.strokeRect(Math.round(bx - bw - 16) + 0.5, Math.round(cy - rows / 2 * rh - 18) + 0.5, Math.round(bw * 2 + 31), Math.round(rows * rh + 35));
+  for (i = 0; i < rows; i++) {
+    var up = i < rows / 2, dd = up ? rows / 2 - i : i - rows / 2 + 1, len2 = bw * (0.22 + 0.78 * Math.pow(dd / (rows / 2), 0.8)) * (0.6 + 0.4 * hash(i * 7.13 + tick * 1.37)), yy = cy + (i - rows / 2) * rh + (up ? -2 : 3);
+    g.fillStyle = col(up ? "bone" : "apex", up ? 0.5 : 0.62); if (up) g.fillRect(bx, yy, len2, rh - 3); else g.fillRect(bx - len2, yy, len2, rh - 3);
+  }
+  g.strokeStyle = col("bone", 0.55); g.beginPath(); g.moveTo(bx - bw, Math.round(cy) + 0.5); g.lineTo(bx + bw, Math.round(cy) + 0.5); g.stroke();
+  g.textAlign = "left"; g.font = "500 11px " + MONO; var lx = S.nar ? 14 : bx - bw - 15;
+  g.fillStyle = col("bone", 0.62); g.fillText("ITCH", lx, top - 14); g.fillStyle = col("apex", 0.82); g.fillText("OUCH", lx, bot + 14);
+}
+var FILMS = [filmCastle, filmBazaar, filmApex];
+
+/* görsel metnin altına girmesin: geniş ekranda sola, dar ekranda aşağı doğru silinir; alt kenarda sonraki bölüme karışır */
+function veil(g, w, h, S) {
+  var m; g.globalAlpha = 1; g.globalCompositeOperation = "destination-out";
+  if (S.nar) { var y0 = S.h * 0.82, y1 = Math.max(y0 + 1, Math.min(h, S.h * 1.3)); m = g.createLinearGradient(0, y0, 0, y1); m.addColorStop(0, "rgba(0,0,0,0)"); m.addColorStop(1, "rgba(0,0,0,.96)"); g.fillStyle = m; g.fillRect(0, y0, w, h - y0); }
+  else { var x1 = S.x + w * 0.1, x0 = S.x - w * 0.03; m = g.createLinearGradient(x0, 0, x1, 0); m.addColorStop(0, "rgba(0,0,0,1)"); m.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = m; g.fillRect(0, 0, x1, h); }
+  m = g.createLinearGradient(0, h - 80, 0, h); m.addColorStop(0, "rgba(0,0,0,0)"); m.addColorStop(1, "rgba(0,0,0,1)"); g.fillStyle = m; g.fillRect(0, h - 80, w, 80);
+  g.globalCompositeOperation = "source-over";
+}
+
+/* her tuval yalnız görünürken çizer; hareket azaltma açıksa tek kare gösterir */
+var sizers = [];
+function mount(cv, draw) {
+  var g = cv.getContext("2d"), w = 0, h = 0, dpr = 1, raf = 0, vis = false, S = null;
+  var above = $(".kicker, .col", cv.parentNode), beside = $(".names, .col", cv.parentNode);
+  function frame() {
+    raf = 0; if (!w) return;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.globalCompositeOperation = "source-over"; g.globalAlpha = 1; g.clearRect(0, 0, w, h);
+    draw(g, w, h, REDUCE ? 31.4 : performance.now() / 1000, S); veil(g, w, h, S);
+    if (vis && !REDUCE) raf = requestAnimationFrame(frame);
+  }
+  function size() {
+    var r = cv.getBoundingClientRect(); if (!r.width || !r.height) return;
+    dpr = Math.min(window.devicePixelRatio || 1, 1.75); w = r.width; h = r.height;
+    var W = Math.round(w * dpr), H = Math.round(h * dpr); if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+    if (w < NARROW) { var b = clamp(above.getBoundingClientRect().top - r.top, 140, h); S = { nar: true, x: 0, y: 0, w: w, h: b, cx: w * 0.5, cy: b * 0.5 }; }
+    else { var x = clamp(beside.getBoundingClientRect().right - r.left + 28, w * 0.36, w * 0.62); S = { nar: false, x: x, y: 0, w: w - x, h: h, cx: x + (w - x) / 2, cy: h * 0.5 }; }
+    if (raf) { cancelAnimationFrame(raf); raf = 0; } frame();
+  }
+  if (window.ResizeObserver) new ResizeObserver(size).observe(cv); else window.addEventListener("resize", size);
+  if (window.IntersectionObserver) new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis && !raf) raf = requestAnimationFrame(frame); }, { rootMargin: "120px" }).observe(cv); else vis = true;
+  sizers.push(size); size(); return function () { if (!raf) frame(); };
+}
+$$("canvas[data-film]").forEach(function (cv) { mount(cv, FILMS[+cv.dataset.film]); });
+
+/* açılış: üç ürünün görseli sırayla döner; adın üstüne gelince o ürün seçilir */
+var active = 0, prev = 0, mixAt = -9, links = $$("#names a"), hold = false;
+var redraw = mount($("#reel"), function (g, w, h, t, S) { var m = clamp((t - mixAt) / 0.7, 0, 1); if (m < 1 && !REDUCE) { g.globalAlpha = 1 - m; FILMS[prev](g, w, h, t, S); } g.globalAlpha = REDUCE ? 1 : m; FILMS[active](g, w, h, t, S); g.globalAlpha = 1; });
+function show(i) { if (i === active) return; prev = active; active = i; mixAt = performance.now() / 1000; links.forEach(function (a, k) { a.classList.toggle("on", k === i); }); redraw(); }
+links.forEach(function (a, i) {
+  a.addEventListener("pointerenter", function (ev) { if (ev.pointerType === "mouse") { hold = true; show(i); } });
+  a.addEventListener("pointerleave", function () { hold = false; });
+  a.addEventListener("focus", function () { hold = true; show(i); }); a.addEventListener("blur", function () { hold = false; });
+});
+if (!REDUCE) setInterval(function () { if (!hold && !document.hidden) show((active + 1) % 3); }, 5600);
+relayout = function () { sizers.forEach(function (f) { f(); }); };
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
+})();
+</script>
