@@ -30,7 +30,8 @@ html[data-lang="tr"] .en{display:none}
 /* üst şerit */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--ink) 84%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;gap:1.6rem;height:58px}
-.brand{font-family:var(--f-display);font-stretch:118%;font-weight:640;font-size:.92rem;letter-spacing:.2em;text-decoration:none;white-space:nowrap}
+.brand{display:flex;align-items:center;color:var(--bone);text-decoration:none}
+.brand svg{display:block;height:26px;width:auto;fill:currentColor}
 .nav{display:flex;gap:1.6rem;margin-left:auto;font-size:.95rem}
 .nav a{text-decoration:none;color:var(--mute)}
 .nav a:hover{color:var(--bone)}
@@ -110,7 +111,7 @@ html[data-lang="tr"] .en{display:none}
 </style>
 
 <header class="top"><div class="wrap bar">
-  <a class="brand" href="#top" aria-label="Kose Capital">KOSE CAPITAL</a>
+  <a class="brand" href="#top" aria-label="Kose Capital"><!--__LOGO__--></a>
   <nav class="nav"><a href="#castle">Castle</a><a href="#bazaar">Bazaar</a><a href="#apex">Apex</a><a href="#company"><span class="en">Company</span><span class="tr">Şirket</span></a><a href="#contact"><span class="en">Contact</span><span class="tr">İletişim</span></a></nav>
   <div class="lang" id="lang" role="group" aria-label="Language"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="tr" aria-pressed="false">TR</button></div>
 </div></header>
@@ -122,7 +123,7 @@ html[data-lang="tr"] .en{display:none}
     <h1 class="kicker"><span class="en">Kose Capital builds and runs three systems.</span><span class="tr">Kose Capital üç sistem kurar ve işletir.</span></h1>
     <ul class="names" id="names">
       <li><a href="#castle" class="on" data-i="0" style="--accent:var(--castle)"><span class="nm">Castle</span><span class="tag"><b><span class="en">Value investing</span><span class="tr">Değer yatırımı</span></b><span class="st"><span class="en">Live</span><span class="tr">Yayında</span></span><span><span class="en">Every listed company in a country, run through four walls.</span><span class="tr">Bir ülkedeki bütün hisseler dört surdan geçer.</span></span></span></a></li>
-      <li><a href="#bazaar" data-i="1" style="--accent:var(--bazaar)"><span class="nm">Bazaar</span><span class="tag"><b><span class="en">AI sales</span><span class="tr">Yapay zekâyla satış</span></b><span class="st">Pilot</span><span><span class="en">Finds buyers abroad for what you make and opens the conversation.</span><span class="tr">Ürettiğin ürüne yurt dışında alıcı bulur, ilk teması kurar.</span></span></span></a></li>
+      <li><a href="#bazaar" data-i="1" style="--accent:var(--bazaar)"><span class="nm">Bazaar</span><span class="tag"><b><span class="en">AI sales</span><span class="tr">Yapay zekâyla satış</span></b><span class="st"><span class="en">Pilot</span><span class="tr">Pilot aşamasında</span></span><span><span class="en">Finds buyers abroad for what you make and opens the conversation.</span><span class="tr">Ürettiğin ürüne yurt dışında alıcı bulur, ilk teması kurar.</span></span></span></a></li>
       <li><a href="#apex" data-i="2" style="--accent:var(--apex)"><span class="nm">Apex</span><span class="tag"><b><span class="en">Exchange connectivity</span><span class="tr">Borsa bağlantısı</span></b><span class="st"><span class="en">In production</span><span class="tr">Canlıda</span></span><span><span class="en">At Borsa Istanbul: market data in over ITCH, orders out over OUCH.</span><span class="tr">Borsa İstanbul'da veri ITCH ile gelir, emir OUCH ile gider.</span></span></span></a></li>
     </ul>
   </div>
@@ -135,11 +136,11 @@ html[data-lang="tr"] .en{display:none}
     <h2>Castle</h2>
     <p class="lede"><span class="en">Castle runs every listed company in a country through four walls built on the principles of Buffett and Munger. Zoom in and the review deepens. Only the castles remain.</span><span class="tr">Castle, bir ülkedeki bütün halka açık şirketleri Buffett ve Munger ilkeleriyle kurulmuş dört surdan geçirir. Yaklaştıkça inceleme derinleşir. Geriye yalnızca kaleler kalır.</span></p>
     <dl class="nums">
-      <div><dt><span class="en">countries</span><span class="tr">ülke</span></dt><dd>4</dd></div>
-      <div><dt><span class="en">companies scanned</span><span class="tr">taranan şirket</span></dt><dd><span class="en">14,669</span><span class="tr">14.669</span></dd></div>
-      <div><dt><span class="en">castles</span><span class="tr">kale</span></dt><dd>4</dd></div>
+      <div><dt><span class="en">countries</span><span class="tr">ülke</span></dt><dd id="k-countries">__K_COUNTRIES__</dd></div>
+      <div><dt><span class="en">companies scanned</span><span class="tr">taranan şirket</span></dt><dd><span class="en" id="k-co-en">__K_COMPANIES_EN__</span><span class="tr" id="k-co-tr">__K_COMPANIES_TR__</span></dd></div>
+      <div><dt><span class="en">castles</span><span class="tr">kale</span></dt><dd id="k-castles">__K_CASTLES__</dd></div>
     </dl>
-    <p class="small"><span class="en">Data as of 10 November 2026. One or two countries are added every day. Castle is an analysis tool; it does not give investment advice.</span><span class="tr">Veri: 10 Kasım 2026. Her gün bir iki ülke eklenir. Castle bir analiz aracıdır; yatırım tavsiyesi vermez.</span></p>
+    <p class="small"><span class="en">Data as of <span id="k-asof-en">__K_ASOF_EN__</span>. One or two countries are added every day. Castle is an analysis tool; it does not give investment advice.</span><span class="tr">Veri: <span id="k-asof-tr">__K_ASOF_TR__</span>. Her gün bir iki ülke eklenir. Castle bir analiz aracıdır; yatırım tavsiyesi vermez.</span></p>
     <div class="row"><a class="btn" id="castle-link" href="https://kosecapital.github.io/castle/" target="_blank" rel="noopener"><span class="en">Open Castle</span><span class="tr">Castle'ı aç</span></a></div>
   </div></div>
 </section>
@@ -202,6 +203,12 @@ var $ = function (s, r) { return (r || document).querySelector(s); }, $$ = funct
 var REDUCE = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 var relayout = function () {};
 
+/* Yayındaki sitede Castle aynı alan adının /castle/ yolundadır; önizlemede tam adres kullanılır. */
+var LIVE = /^(www\.)?kosecapital\.com$|^kosecapital\.github\.io$|^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+var CASTLE = LIVE ? "/castle/" : "https://kosecapital.github.io/castle/";
+var DESC = { en: "Kose Capital builds and runs three systems: Castle (value investing), Bazaar (AI sales) and Apex (exchange connectivity for Borsa Istanbul).",
+             tr: "Kose Capital üç sistem kurar ve işletir: Castle (değer yatırımı), Bazaar (yapay zekâyla satış) ve Apex (Borsa İstanbul için borsa bağlantısı)." };
+
 /* ---------- dil: ziyaretçinin seçimi, adresteki ?lang=, tarayıcının dili ---------- */
 var LANG = (function () {
   try { var s = localStorage.getItem("kc.lang"); if (s === "tr" || s === "en") return s; } catch (e) {}
@@ -212,11 +219,24 @@ function setLang(l) {
   LANG = l; document.documentElement.setAttribute("data-lang", l); try { document.documentElement.lang = l; } catch (e) {}
   $$("#lang button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lang === l)); });
   $("#lang").setAttribute("aria-label", l === "tr" ? "Dil" : "Language");
-  $("#castle-link").href = "https://kosecapital.github.io/castle/?lang=" + l;
+  $("#castle-link").href = CASTLE + "?lang=" + l;
+  var md = $('meta[name="description"]'); if (md) md.content = DESC[l];
   relayout();
 }
 $("#lang").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; setLang(b.dataset.lang); try { localStorage.setItem("kc.lang", b.dataset.lang); } catch (e) {} });
 setLang(LANG);
+
+/* ---------- Castle rakamları: Castle'ın özet dosyasından; okunamazsa sayfadaki son rakamlar kalır ---------- */
+var MONTHS = { en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+               tr: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"] };
+var group = function (n, sep) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, sep); };
+var day = function (iso, l) { var p = String(iso).split("-"); return +p[2] + " " + MONTHS[l][+p[1] - 1] + " " + p[0]; };
+if (LIVE && window.fetch) fetch(CASTLE + "data/summary.json", { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (k) {
+  if (!k || !(k.countries > 0) || !(k.companies > 0) || !/^\d{4}-\d{2}-\d{2}$/.test(k.asof || "")) return;
+  $("#k-countries").textContent = k.countries; $("#k-castles").textContent = k.castles;
+  $("#k-co-en").textContent = group(k.companies, ","); $("#k-co-tr").textContent = group(k.companies, ".");
+  $("#k-asof-en").textContent = day(k.asof, "en"); $("#k-asof-tr").textContent = day(k.asof, "tr");
+}).catch(function () {});
 
 /* ---------- adresi kopyala ---------- */
 $("#copy").addEventListener("click", function () {
