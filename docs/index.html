@@ -407,5 +407,17 @@ relayout = function () { sizers.forEach(function (f) { f(); }); };
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
 })();
 </script>
-</body>
+<script>
+(function () {
+  try {
+    var u = "https://kose-sayac.falling-flower-8099.workers.dev";
+    if (navigator.webdriver || !/(^|\.)kosecapital\.(com|github\.io)$/.test(location.hostname)) return;
+    var r = "";
+    try { r = document.referrer ? new URL(document.referrer).hostname : ""; } catch (e) {}
+    if (r === location.hostname) r = "";
+    var q = u + "/hit?t=v&s=home&p=&r=" + encodeURIComponent(r) + "&l=" + (document.documentElement.getAttribute("data-lang") || "");
+    if (!(navigator.sendBeacon && navigator.sendBeacon(q))) fetch(q, { method: "POST", mode: "no-cors", keepalive: true }).catch(function () {});
+  } catch (e) {}
+})();
+</script></body>
 </html>
