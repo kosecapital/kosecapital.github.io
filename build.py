@@ -30,8 +30,8 @@ FONT_CSS = [
 KEEP = ("latin", "latin-ext")           # Türkçe harfler latin-ext içinde
 MONTHS = {"en": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
           "tr": ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]}
-DESC = ("Kose Capital builds and runs three systems: Castle (value investing), Bazaar (AI sales) "
-        "and Apex (exchange connectivity for Borsa Istanbul).")
+DESC = ("Kose Capital builds and runs four systems: Castle (value investing), Bazaar (AI sales), "
+        "Apex (exchange connectivity for Borsa Istanbul) and Orbit (satellite imagery of land parcels in Türkiye).")
 ORBIT_DESC = ("Orbit shows the latest cloud-free Sentinel-2 satellite image of a land parcel in Türkiye "
               "and compares it with an earlier date.")
 
@@ -140,7 +140,7 @@ def main():
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")
     domain = site.get("domain")
     if domain:
-        (DOCS / "CNAME").write_text(domain + "\n", encoding="utf-8")
+        (DOCS / "CNAME").write_text(domain, encoding="utf-8")      # GitHub'ın yazdığı dosyayla bayt bayt aynı: sonda satır sonu yok
     base = "https://%s/" % domain if domain else None
 
     cut = body.index('<header class="top">')

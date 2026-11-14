@@ -12,6 +12,8 @@ const PARCEL = JSON.parse(fs.readFileSync(path.join(__dirname, "parcel.json"), "
 const S3 = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/";
 const TYPES = { ".html": "text/html; charset=utf-8", ".woff2": "font/woff2", ".png": "image/png", ".svg": "image/svg+xml", ".json": "application/json" };
 // Sayfanın dışarıda konuşabileceği yerler; başka bir adrese istek giderse deneme tutmaz.
+// Ziyaret sayacı bu listede yoktur: yalnız yayındaki alan adında çağrılır, o da ayrı bir senaryoda (5) denenir.
+const LIVE = "https://www.kosecapital.com/", COUNTER = "https://kose-sayac.falling-flower-8099.workers.dev/";
 const ALLOWED = /^https:\/\/(cbsapi\.tkgm\.gov\.tr|parselsorgu\.tkgm\.gov\.tr|earth-search\.aws\.element84\.com|sentinel-cogs\.s3\.us-west-2\.amazonaws\.com)\//;
 
 // [kayıt adı, zaman, sahnedeki bulut, kare, veri yok %, dosya takımı]: 14 Kasım 2026'da gerçek katalogdan alınan geçişler
@@ -77,12 +79,20 @@ function serve() {
 
   async function open(opt) {
     const ctx = await browser.newContext({ viewport: opt.viewport || { width: 1280, height: 900 }, deviceScaleFactor: opt.dsf || 1, isMobile: !!opt.mobile, hasTouch: !!opt.mobile, locale: opt.locale || "tr-TR" });
-    const page = await ctx.newPage(), log = { errors: [], urls: [], bytes: 0, ranges: 0, tkgm: 0, stray: [] };
+    if (opt.live) await ctx.addInitScript(() => Object.defineProperty(Navigator.prototype, "webdriver", { get: () => false }));   // sayaç otomasyon tarayıcısında susar; gerçek ziyaretçi gibi görün
+    const page = await ctx.newPage(), log = { errors: [], urls: [], bytes: 0, ranges: 0, tkgm: 0, stray: [], hits: [] };
     page.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource|net::ERR/.test(m.text())) log.errors.push("konsol: " + m.text()); });
     page.on("pageerror", (e) => log.errors.push("betik: " + e.message));
     await ctx.route("**/*", (route) => {
       const req = route.request(), u = req.url();
       if (u.startsWith(base) || u.startsWith("data:") || u.startsWith("blob:")) return route.continue();
+      if (opt.live && u.startsWith(LIVE)) {                                         // yayındaki adres: dosyalar docs/ klasöründen
+        let p = decodeURIComponent(u.slice(LIVE.length - 1).split(/[?#]/)[0]); if (p.endsWith("/")) p += "index.html";
+        const f = path.join(DOCS, p);
+        if (!f.startsWith(DOCS) || !fs.existsSync(f)) return route.fulfill({ status: 404, body: "yok" });
+        return route.fulfill({ status: 200, contentType: TYPES[path.extname(f)] || "application/octet-stream", body: fs.readFileSync(f) });
+      }
+      if (opt.live && u.startsWith(COUNTER)) { log.hits.push(req.method() + " " + u.slice(COUNTER.length)); return route.fulfill({ status: 204, body: "" }); }
       log.urls.push(u);
       if (!ALLOWED.test(u)) { log.stray.push(u); return route.abort("failed"); }
       const json = (status, body) => route.fulfill({ status, headers: Object.assign({ "content-type": "application/json; charset=utf-8" }, CORS), body: JSON.stringify(body) });
@@ -125,7 +135,7 @@ function serve() {
       }
       return route.abort("failed");
     });
-    await page.goto(base + "orbit/" + (opt.lang ? "?lang=" + opt.lang : ""), { waitUntil: "load" });
+    await page.goto((opt.live ? LIVE : base) + "orbit/" + (opt.lang ? "?lang=" + opt.lang : ""), { waitUntil: "load" });
     return { ctx, page, log };
   }
   const state = (page) => page.evaluate(() => {
@@ -277,7 +287,15 @@ function serve() {
     ok(fit.lang <= fit.w && fit.gap >= 0 && fit.app !== "none", name + " ekranında üst şerit ya da tarih etiketleri sığmıyor (" + lang + "): " + JSON.stringify(fit));
     await shot(page, "4-" + name + "-" + lang); await page.evaluate(() => document.querySelector("#passes").scrollIntoView()); await shot(page, "4-" + name + "-" + lang + "-gecisler"); await ctx.close(); }
 
+  // 5) ziyaret sayacı: yayındaki adreste sayfa açılınca tek kayıt (s=orbit). Parsel açmak ya da dil değiştirmek yeni kayıt üretmez;
+  //    hangi parsele bakıldığı gönderilmez. Yerel adreste hiç çağrılmaz (çağrılsaydı 1. senaryo "izin verilmeyen adres" diye tutmazdı).
+  { const { ctx, page, log } = await open({ lang: "tr", tkgm: "down", live: true });
+    await page.click("#sample"); await settled(page, true); await page.click('#lang button[data-lang="en"]'); await wait(300);
+    console.log("sayaç " + JSON.stringify(log.hits));
+    ok(log.hits.length === 1 && log.hits[0] === "POST hit?t=v&s=orbit&p=&r=&l=tr", "ziyaret sayacı: tek kayıt bekleniyordu (s=orbit, l=tr): " + JSON.stringify(log.hits));
+    ok(!log.stray.length, "yayındaki adreste izin verilmeyen adrese istek: " + log.stray.join(", ")); ok(!log.errors.length, "konsol: " + log.errors.join(";")); await ctx.close(); }
+
   await browser.close(); srv.close();
-  console.log(bad.length ? "\nOrbit denemesi TUTMADI: " + bad.length + " sorun\n- " + bad.join("\n- ") : "\nOrbit denemesi tamam (koordinat, akış, hizalama, iki dil, servis kapalıyken, yedek yollar, masaüstü, telefon)");
+  console.log(bad.length ? "\nOrbit denemesi TUTMADI: " + bad.length + " sorun\n- " + bad.join("\n- ") : "\nOrbit denemesi tamam (koordinat, akış, hizalama, iki dil, servis kapalıyken, yedek yollar, masaüstü, telefon, sayaç)");
   process.exit(bad.length ? 1 : 0);
 })().catch((e) => { console.error(e); process.exit(2); });

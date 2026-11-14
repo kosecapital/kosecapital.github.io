@@ -1014,5 +1014,20 @@ try { var last = JSON.parse(localStorage.getItem("kc.orbit.last") || "null"); if
 window.__orbit = { utm: utm, st: st, normParcel: normParcel, useParcel: useParcel, polyArea: polyArea, CFG: CFG };
 })();
 </script>
+<script>
+/* Ziyaret sayacı: Kose Capital'in kendi sayacı, ana sayfadakiyle aynı. Yalnız yayındaki alan adında, sayfa açılınca bir kez çağrılır.
+   Çerez yoktur; hangi parsele bakıldığı gönderilmez. */
+(function () {
+  try {
+    var u = "https://kose-sayac.falling-flower-8099.workers.dev";
+    if (navigator.webdriver || !/(^|\.)kosecapital\.(com|github\.io)$/.test(location.hostname)) return;
+    var r = "";
+    try { r = document.referrer ? new URL(document.referrer).hostname : ""; } catch (e) {}
+    if (r === location.hostname) r = "";
+    var q = u + "/hit?t=v&s=orbit&p=&r=" + encodeURIComponent(r) + "&l=" + (document.documentElement.getAttribute("data-lang") || "");
+    if (!(navigator.sendBeacon && navigator.sendBeacon(q))) fetch(q, { method: "POST", mode: "no-cors", keepalive: true }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>

@@ -2,9 +2,9 @@
 
 Bu depo Kose Capital'in ana sayfasıdır. Sahibi Alper Köse.
 Site bu depodaki `docs/` klasöründen GitHub Pages ile yayımlanır: `https://www.kosecapital.com/` (alan adı bağlanana kadar `https://kosecapital.github.io/`).
-Sayfa üç ürünü tanıtır: **Castle** (değer yatırımı uygulaması), **Bazaar** (yapay zekâyla satış), **Apex** (Borsa İstanbul için borsa bağlantısı; FPGA sürümü geliştiriliyor).
+Sayfa dört ürünü tanıtır: **Castle** (değer yatırımı uygulaması), **Bazaar** (yapay zekâyla satış), **Apex** (Borsa İstanbul için borsa bağlantısı; FPGA sürümü geliştiriliyor), **Orbit** (Türkiye'deki bir parselin en yeni bulutsuz uydu görüntüsü).
 Castle uygulaması ayrı depodadır (`kosecapital/castle`) ve aynı alan adının `/castle/` yolunda yayımlanır.
-**Orbit** uygulaması bu depodadır (`src/orbit.html`) ve `/orbit/` yolunda yayımlanır: Türkiye'deki bir parselin en yeni bulutsuz uydu görüntüsünü gösterir. Ana sayfada henüz tanıtılmıyor (bkz. "Orbit").
+**Orbit** uygulaması bu depodadır (`src/orbit.html`) ve `/orbit/` yolunda yayımlanır: Türkiye'deki bir parselin en yeni bulutsuz uydu görüntüsünü gösterir. Ana sayfada dördüncü ürün olarak tanıtılır (bkz. "Orbit").
 Sayfa Türkçe ve İngilizcedir.
 
 ## Değişmez kurallar
@@ -65,17 +65,19 @@ Yayımlamak: `python3 build.py && node tools/check.cjs && git add -A && git comm
 
 - **Tek dosya.** Stil ve betik `src/body.html` içindedir; dış kitaplık yoktur. Yazı tipleri (Archivo, IBM Plex Mono) siteyle birlikte sunulur; Claude önizlemesinde Google Fonts'tan gelir.
 - **Dil.** Her metin `.en` ve `.tr` olarak yan yana durur; `html[data-lang]` hangisinin görüneceğini belirler. Açılış dili: ziyaretçinin kendi seçimi, yoksa adresteki `?lang=en` ya da `?lang=tr`, o da yoksa tarayıcının dili.
-- **Hareketli görseller.** Üç ürünün her biri için bir tuval döngüsü vardır: `filmCastle` (dört sur ve içeri akan şirketler), `filmBazaar` (tek noktadan dünyaya giden ilk e-postalar ve dönen yanıtlar), `filmApex` (ITCH ve OUCH iletileri, ortada emir defteri). Görseller veri göstermez; içlerinde ad, rakam ya da iddia yoktur. Geniş ekranda metnin sağında, dar ekranda (900 pikselin altı) metnin üstünde durur. Yalnız görünürken çizilir; "hareketi azalt" ayarı açıksa tek kare gösterilir.
-- **Açılış.** Üç ürün adı aynı zamanda bağlantıdır; üstüne gelince arkadaki görsel o ürüne geçer, dokunulmazsa sırayla döner.
+- **Hareketli görseller.** Dört ürünün her biri için bir tuval döngüsü vardır: `filmCastle` (dört sur ve içeri akan şirketler), `filmBazaar` (tek noktadan dünyaya giden ilk e-postalar ve dönen yanıtlar), `filmApex` (ITCH ve OUCH iletileri, ortada emir defteri), `filmOrbit` (uydunun izi ve tarama çizgisi; ikinci geçiş bulutludur, açık geçişlerde parselin içinde değişen kareler belirir). Görseller veri göstermez; içlerinde ad, rakam ya da iddia yoktur. Geniş ekranda metnin sağında, dar ekranda (900 pikselin altı) metnin üstünde durur. Yalnız görünürken çizilir; "hareketi azalt" ayarı açıksa tek kare gösterilir.
+- **Açılış.** Dört ürün adı aynı zamanda bağlantıdır; üstüne gelince arkadaki görsel o ürüne geçer, dokunulmazsa sırayla döner. Adların boyu ve aralıkları ekran yüksekliğine bağlıdır; geniş ekranda dört ad ilk ekrana sığar (deneme bunu ölçer).
+- **Üst şerit.** Menü 720 pikselin altında gizlenir; dil düğmesi hiçbir genişlikte sıkışmaz.
 - **Castle rakamları.** Yayındaki sayfa ülke, şirket ve kale sayısını `/castle/data/summary.json` dosyasından okur (Castle deposu her derlemede yeniler). Okuyamazsa `src/castle.json`'dan yazılmış son rakamlar kalır.
-- **Castle bağlantısı.** Yayında `/castle/?lang=…`, önizlemede tam adres.
+- **Castle ve Orbit bağlantıları.** Yayında `/castle/?lang=…` ve `/orbit/?lang=…`, önizlemede tam adres.
 - **İletişim.** Tek adres: info@kosecapital.com. Form yoktur.
+- **Ziyaret sayacı.** Ana sayfanın ve Orbit'in sonunda şirketin kendi sayacı çağrılır (Cloudflare Worker; kodu Castle deposunda `counter/`). Ana sayfaya Alper kendisi ekledi (13 Kasım 2026), Orbit'e onun isteğiyle eklendi (14 Kasım 2026); 5. kuraldaki "dışarıdan izleme kodu" değildir, başka izleme kodu eklenmez. Yalnız yayındaki alan adında, sayfa açılınca bir kez çalışır: ana sayfa `s=home`, Orbit `s=orbit` ile. Çerez yoktur; Orbit'te hangi parsele bakıldığı gönderilmez. İki sayfa denemesi de yayındaki adresi taklit edip tek kayıt gittiğini sayar.
 
 ## Orbit
 
 Orbit, il, ilçe, mahalle, ada ve parselden bir parselin sınırını bulur; üstüne en yeni bulutsuz Sentinel-2 görüntüsünü koyar ve eski bir tarihle kaydırmalı karşılaştırır. Ad Alper'in seçimidir (14 Kasım 2026).
 
-- **Sunucu yok.** Her şey ziyaretçinin tarayıcısında olur. Sayfa yalnız şu üç yere istek yapar; `tools/orbit/check.cjs` başka adrese istek giderse tutmaz:
+- **Sunucu yok.** Her şey ziyaretçinin tarayıcısında olur. Sayfa parsel ve görüntü için yalnız şu üç yere istek yapar; `tools/orbit/check.cjs` başka adrese istek giderse tutmaz (bunların dışında yalnız ziyaret sayacı vardır, o da yalnız yayındaki alan adında çağrılır):
   - Parsel sınırı ve il/ilçe/mahalle listeleri: TKGM Parsel Sorgu servisi (`cbsapi.tkgm.gov.tr/megsiswebapi.v3`, olmazsa `v3.1`; il listesi önce `parselsorgu.tkgm.gov.tr` üstündeki dosyadan). Listeler tarayıcıda saklanır, aynı liste ikinci kez istenmez.
   - Geçiş listesi: Earth Search kataloğu (`earth-search.aws.element84.com/v1`, `sentinel-2-l2a`).
   - Görüntü: AWS açık verisindeki dosyalar (`sentinel-cogs`); sayfa dosyanın yalnız parselin çevresine düşen parçasını okur. Okuyucu `geotiff` paketidir (sürümü `package.json` içinde sabit), `build.py` onu sayfaya gömer.
@@ -83,7 +85,7 @@ Orbit, il, ilçe, mahalle, ada ve parselden bir parselin sınırını bulur; üs
 - **Yeşillik puanı.** Parselin içindeki ortalama NDVI (kırmızı ve yakın kızılötesi bant). Sayfa yalnız değişimi söyler; "inşaat başladı" gibi bir hüküm vermez.
 - **Parsel servisine ulaşılamazsa** sayfa uyarır; ziyaretçi örnek parseli açabilir ya da TKGM kaydını yapıştırabilir. "Tanı bilgisi" kutusu neyin çalışıp neyin çalışmadığını iki dilde yazar.
 - **Henüz yok:** parseli takibe alma ve değişince haber verme; 10 metreden net (ücretli) görüntü. Bunlar yokken sayfada sözü edilmez.
-- **Ana sayfa.** Orbit ana sayfada dördüncü ürün olarak tanıtılmıyor. Durumu, rengi ve ana sayfadaki bölümü Alper söyleyince eklenir. Uygulama sayfasındaki vurgu rengi `#FF78BE` geçicidir.
+- **Ana sayfa.** Orbit ana sayfada dördüncü üründür (14 Kasım 2026, Alper'in isteğiyle). Durumu "Yayında", vurgu rengi `#FF78BE`; ikisi de Alper başka bir şey söyleyene kadar böyle kalır. Ana sayfadaki bölüm yalnız uygulamanın bugün yaptığını anlatır.
 - **Deneme.** Örnek görüntüler gerçek karelerin koordinat düzeninde üretilir (35SQB ve 36STG); deneme, sınır çizgisinin görüntüye piksel piksel oturduğunu iki UTM diliminde de sayar. Gerçek servisler denemede çağrılmaz.
 
 ## Logo
@@ -94,7 +96,7 @@ Logo `tools/logo.py` ile çizilir; elle düzenlenmez. Simge eski logodaki fikri 
 ## Renk ve yazı
 
 - Zemin `#070B09`, metin `#ECE8DC`, ikincil metin `#929D96`, çizgi `#27332C`.
-- Ürün vurguları: Castle `#C99A3A`, Bazaar `#35B8A6`, Apex `#A9C8FF`. Her bölümde yalnız o ürünün rengi kullanılır.
+- Ürün vurguları: Castle `#C99A3A`, Bazaar `#35B8A6`, Apex `#A9C8FF`, Orbit `#FF78BE`. Her bölümde yalnız o ürünün rengi kullanılır.
 - Başlıklar Archivo (geniş kesim), etiket ve rakamlar IBM Plex Mono.
 
 ## Neye dokunulur, neye dokunulmaz
