@@ -31,8 +31,8 @@ KEEP = ("latin", "latin-ext")           # Türkçe harfler latin-ext içinde
 MONTHS = {"en": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
           "tr": ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]}
 DESC = ("Kose Capital builds and runs four systems: Castle (value investing), Bazaar (AI sales), "
-        "Apex (exchange connectivity for Borsa Istanbul) and Orbit (satellite imagery of land parcels in Türkiye).")
-ORBIT_DESC = ("Orbit shows the latest cloud-free Sentinel-2 satellite image of a land parcel in Türkiye "
+        "Apex (exchange connectivity for Borsa Istanbul) and Orbit (satellite imagery of land in Türkiye).")
+ORBIT_DESC = ("Orbit shows the latest cloud-free Sentinel-2 satellite image of a piece of land in Türkiye "
               "and compares it with an earlier date.")
 
 

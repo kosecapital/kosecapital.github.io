@@ -2,7 +2,7 @@
 Kullanım: python3 tools/orbit/fixtures.py   (pip: rasterio numpy pyproj)
  Koordinat düzeni gerçek karelerle aynıdır
 (35SQB: EPSG:32635, köşe 699960/4200000; 36STG: EPSG:32636, köşe 199980/4200000; 10980x10980, 10 m).
-Parselin içine düşen pikseller ayrı renkte boyanır; böylece sayfadaki sınır çizgisinin doğru yere
+Örnek alanın (tools/orbit/sample.json) içine düşen pikseller ayrı renkte boyanır; böylece sayfadaki sınır çizgisinin doğru yere
 oturup oturmadığı ekran görüntüsünden ve piksel sayımından denetlenir."""
 import json, os, sys, numpy as np, rasterio
 from rasterio.transform import Affine
@@ -13,7 +13,7 @@ from pyproj import Transformer
 
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = os.path.join(HERE, "fx")
 TILES = {"35SQB": (32635, 699960.0, 4200000.0), "36STG": (32636, 199980.0, 4200000.0)}
-parcel = json.load(open(os.path.join(HERE, "parcel.json"), encoding="utf-8"))
+parcel = json.load(open(os.path.join(HERE, "sample.json"), encoding="utf-8"))      # örnek alan: kendi çizdiğimiz çokgen
 ring = parcel["geometry"]["coordinates"][0]
 lon0 = (min(c[0] for c in ring) + max(c[0] for c in ring)) / 2
 lat0 = (min(c[1] for c in ring) + max(c[1] for c in ring)) / 2
@@ -27,7 +27,7 @@ def region(tile, res, half_m=1500):
     T = Affine(res, 0, ox + col0 * res, 0, -res, oy - row0 * res)       # pencerenin kendi dönüşümü
     poly = {"type": "Polygon", "coordinates": [[tr.transform(x, y) for x, y in ring]]}
     inside = rasterize([(poly, 1)], out_shape=(n, n), transform=T, fill=0, dtype="uint8").astype(bool)   # piksel merkezi kuralı
-    # yön işareti: parsel merkezinin 150 m kuzeyi ve 150 m doğusunda 40x40 m beyaz kare
+    # yön işareti: alanın merkezinin 150 m kuzeyi ve 150 m doğusunda 40x40 m beyaz kare
     yy, xx = np.mgrid[0:n, 0:n]
     px = T.c + (xx + 0.5) * res; py = T.f - (yy + 0.5) * res
     # kareyi gerçek kuzey/doğuya göre yerleştir (UTM ızgarası birkaç derece döner): işaretin merkezi enlem-boylamdan hesaplanır
@@ -84,7 +84,7 @@ for tile, kind, seed in [("36STG", "after", 1), ("35SQB", "after", 2), ("35SQB",
 for tile in ("35SQB", "36STG"):
     write(tile, f"{tile}_cloud_SCL.tif", 20, "uint8", 1, scl(9))
 write("35SQB", "35SQB_nodata_SCL.tif", 20, "uint8", 1, scl(0))
-# kısmen bulutlu: parselin çevresinin yaklaşık üçte biri bulut
+# kısmen bulutlu: alanın çevresinin yaklaşık üçte biri bulut
 def part(n, inside, marker, xx, yy):
     a = np.full((1, n, n), 4); a[0][:, : n // 2 - 1] = 8; return a
 write("36STG", "36STG_partly_SCL.tif", 20, "uint8", 1, part)

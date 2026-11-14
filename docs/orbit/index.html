@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Orbit · Kose Capital</title>
-<meta name="description" content="Orbit shows the latest cloud-free Sentinel-2 satellite image of a land parcel in Türkiye and compares it with an earlier date.">
+<meta name="description" content="Orbit shows the latest cloud-free Sentinel-2 satellite image of a piece of land in Türkiye and compares it with an earlier date.">
 <meta name="theme-color" content="#070B09">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Kose Capital">
 <meta property="og:title" content="Orbit · Kose Capital">
-<meta property="og:description" content="Orbit shows the latest cloud-free Sentinel-2 satellite image of a land parcel in Türkiye and compares it with an earlier date.">
+<meta property="og:description" content="Orbit shows the latest cloud-free Sentinel-2 satellite image of a piece of land in Türkiye and compares it with an earlier date.">
 <link rel="canonical" href="https://www.kosecapital.com/orbit/">
 <link rel="alternate" hreflang="en" href="https://www.kosecapital.com/orbit/?lang=en">
 <link rel="alternate" hreflang="tr" href="https://www.kosecapital.com/orbit/?lang=tr">
@@ -73,6 +73,15 @@ select,input[type="text"],input[type="date"],textarea{width:100%;font:400 1rem v
 select:disabled,input:disabled{opacity:.45}
 textarea{min-height:110px;font:400 .78rem/1.4 var(--f-mono);resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.two{margin-top:.75rem}
+.two .end{display:flex;align-items:flex-end}
+.two .end .btn{width:100%}
+.drop{display:flex;align-items:center;justify-content:center;width:100%;min-height:76px;padding:.6rem .8rem;text-align:center;font:500 .95rem var(--f-body);color:var(--bone);background:var(--ink);border:1px dashed var(--mute);border-radius:3px;cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--bone);background:var(--ink-3)}
+.or{display:flex;align-items:center;gap:.7rem;margin:1.1rem 0 0;font:500 .72rem var(--f-mono);color:var(--mute);text-transform:uppercase}
+.or::before,.or::after{content:"";flex:1;border-top:1px solid var(--line)}
+.or + label,details label{margin-top:.9rem}
+details a{color:var(--bone)}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.2rem 1.1rem;background:var(--bone);color:var(--ink);font:620 1rem var(--f-body);border:0;border-radius:2px;cursor:pointer;text-decoration:none}
 .btn:hover{background:var(--hi)}
 .btn:disabled{opacity:.45;cursor:default}
@@ -84,6 +93,7 @@ textarea{min-height:110px;font:400 .78rem/1.4 var(--f-mono);resize:vertical}
 .row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
 .note{font-size:.84rem;color:var(--mute);margin:.7rem 0 0}
 .msg{font-size:.86rem;margin:.7rem 0 0;padding:.55rem .65rem;border:1px solid var(--line);border-left:3px solid var(--warn);background:var(--ink)}
+.msg{scroll-margin:70px 0 12px}       /* uyarı ekrana getirilirken üst şeridin altında kalmasın */
 .msg.bad{border-left-color:var(--bad)}
 .msg.ok{border-left-color:var(--ok)}
 details{margin-top:.9rem;border-top:1px solid var(--line);padding-top:.8rem}
@@ -190,49 +200,44 @@ td small{display:none;font:400 .72rem var(--f-mono);color:var(--mute);white-spac
 
 <main>
 <div class="wrap intro">
-  <h1><span class="tr">Bir parselin en yeni uydu görüntüsü</span><span class="en">The latest satellite image of a parcel</span></h1>
-  <p class="lede"><span class="tr">İl, ilçe, mahalle, ada ve parseli gir. Sayfa parselin sınırını bulur, üstüne en yeni bulutsuz Sentinel-2 görüntüsünü koyar ve eski bir tarihle karşılaştırır. Görüntü 10 metre netliktedir: ayrıntıyı değil, değişimi gösterir.</span><span class="en">Enter province, district, neighbourhood, block and parcel. The page finds the parcel boundary, lays the latest cloud-free Sentinel-2 image over it and compares it with an older date. The image is 10 m per pixel: it shows change, not detail.</span></p>
+  <h1><span class="tr">Bir arazinin en yeni uydu görüntüsü</span><span class="en">The latest satellite image of a piece of land</span></h1>
+  <p class="lede"><span class="tr">Arazinin sınır dosyasını yükle ya da bir konum yapıştır. Sayfa üstüne en yeni bulutsuz Sentinel-2 görüntüsünü koyar ve eski bir tarihle karşılaştırır. Görüntü 10 metre netliktedir: ayrıntıyı değil, değişimi gösterir.</span><span class="en">Load the boundary file of the land or paste a location. The page lays the latest cloud-free Sentinel-2 image over it and compares it with an older date. The image is 10 m per pixel: it shows change, not detail.</span></p>
 </div>
 
 <div class="wrap grid">
   <aside>
-    <form class="panel" id="form" novalidate>
-      <h2><span class="tr">Parsel seç</span><span class="en">Choose a parcel</span></h2>
-      <label for="il"><span class="tr">İl</span><span class="en">Province</span></label>
-      <select id="il" disabled><option value="">…</option></select>
-      <label for="ilce"><span class="tr">İlçe</span><span class="en">District</span></label>
-      <select id="ilce" disabled><option value="">…</option></select>
-      <label for="mah"><span class="tr">Mahalle / köy</span><span class="en">Neighbourhood / village</span></label>
-      <select id="mah" disabled><option value="">…</option></select>
-      <div class="two">
-        <div><label for="ada"><span class="tr">Ada (yoksa 0)</span><span class="en">Block (0 if none)</span></label><input type="text" id="ada" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="0"></div>
-        <div><label for="parsel"><span class="tr">Parsel</span><span class="en">Parcel</span></label><input type="text" id="parsel" inputmode="numeric" autocomplete="off" maxlength="6"></div>
-      </div>
-      <button class="btn wide" id="go" type="submit" disabled><span class="tr">Göster</span><span class="en">Show</span></button>
-      <p class="msg" id="tkgm-msg" hidden></p>
-      <p class="note" style="margin-top:.5rem"><button class="ghost" type="button" id="retry" hidden><span class="tr">Yeniden dene</span><span class="en">Try again</span></button></p>
-      <p class="note"><button class="ghost" type="button" id="sample"><span class="tr">Örnek parsel: Burdur · İlyas 389/26</span><span class="en">Sample parcel: Burdur · İlyas 389/26</span></button></p>
-      <details id="alt">
-        <summary><span class="tr">Parsel servisine ulaşılamıyorsa</span><span class="en">If the parcel service cannot be reached</span></summary>
+    <div class="panel" id="form">
+      <h2><span class="tr">Alanı seç</span><span class="en">Choose the area</span></h2>
+      <label for="drop"><span class="tr">Sınır dosyası (KML, KMZ ya da GeoJSON)</span><span class="en">Boundary file (KML, KMZ or GeoJSON)</span></label>
+      <button class="drop" type="button" id="drop"><span class="tr">Dosya seç ya da buraya bırak</span><span class="en">Choose a file or drop it here</span></button>
+      <input type="file" id="file" hidden>
+      <p class="msg bad" id="in-msg" role="alert" hidden></p>
+      <details id="how">
+        <summary><span class="tr">Parselin dosyası nereden alınır?</span><span class="en">Where do I get the parcel's file?</span></summary>
         <ol>
-          <li><span class="tr">Parselin içinden bir noktanın koordinatını yaz (enlem, boylam):</span><span class="en">Type the coordinates of a point inside the parcel (latitude, longitude):</span></li>
+          <li><span class="tr"><a href="https://parselsorgu.tkgm.gov.tr/" target="_blank" rel="noopener">TKGM Parsel Sorgu</a> uygulamasını aç; il, ilçe, mahalle, ada ve parsel numarasıyla parseli bul.</span><span class="en">Open <a href="https://parselsorgu.tkgm.gov.tr/" target="_blank" rel="noopener">TKGM Parsel Sorgu</a>, the official parcel application, and find the parcel by province, district, neighbourhood, block and parcel number.</span></li>
+          <li><span class="tr">Parselin bilgi kutusundaki üç nokta menüsünden "İndir"i seç; KML ya da GeoJSON olarak indir.</span><span class="en">In the parcel's info box, open the three-dot menu, choose "İndir" (download) and download it as KML or GeoJSON.</span></li>
+          <li><span class="tr">İnen dosyayı yukarıdaki kutuya bırak.</span><span class="en">Drop the downloaded file into the box above.</span></li>
         </ol>
-        <div class="two">
-          <div><label for="lat"><span class="tr">Enlem</span><span class="en">Latitude</span></label><input type="text" id="lat" inputmode="decimal" placeholder="37.7573"></div>
-          <div><label for="lon"><span class="tr">Boylam</span><span class="en">Longitude</span></label><input type="text" id="lon" inputmode="decimal" placeholder="30.1294"></div>
-        </div>
-        <ol start="2">
-          <li><a id="tkgm-link" href="https://parselsorgu.tkgm.gov.tr/" target="_blank" rel="noopener"><span class="tr">TKGM kaydını yeni sekmede aç</span><span class="en">Open the TKGM record in a new tab</span></a><span class="tr">, ekrandaki metnin tamamını kopyala.</span><span class="en">, then copy all of the text on the screen.</span></li>
-          <li><span class="tr">Buraya yapıştır:</span><span class="en">Paste it here:</span></li>
-        </ol>
-        <textarea id="paste" spellcheck="false" aria-label="GeoJSON"></textarea>
-        <p class="row" style="margin:.6rem 0 0"><button class="ghost" type="button" id="use-paste"><span class="tr">Yapıştırılan parseli kullan</span><span class="en">Use the pasted parcel</span></button></p>
-        <p class="msg bad" id="paste-msg" hidden></p>
+        <p class="note"><span class="tr">TKGM'den indirilen bilgi bilgilendirme amaçlıdır; TKGM'nin kullanım koşullarına göre resmî işlemde ve ticari amaçla kullanılamaz.</span><span class="en">Information downloaded from TKGM is for information only; under TKGM's terms of use it may not be used in official transactions or for commercial purposes.</span></p>
+        <p class="note"><span class="tr">Google Earth'te çizdiğin bir alanı da KML ya da KMZ olarak kaydedip yükleyebilirsin. Dosya tarayıcında okunur, bir yere gönderilmez.</span><span class="en">You can also save an area you drew in Google Earth as KML or KMZ and load it. The file is read in your browser; it is not sent anywhere.</span></p>
+        <label for="paste"><span class="tr">Dosya yerine içindeki metni yapıştır</span><span class="en">Or paste the text of the file</span></label>
+        <textarea id="paste" spellcheck="false"></textarea>
+        <p class="row" style="margin:.6rem 0 0"><button class="ghost" type="button" id="use-paste"><span class="tr">Yapıştırılan sınırı kullan</span><span class="en">Use the pasted boundary</span></button></p>
       </details>
-    </form>
+      <div class="or"><span class="tr">ya da</span><span class="en">or</span></div>
+      <label for="loc"><span class="tr">Konum (koordinat ya da Google Haritalar bağlantısı)</span><span class="en">Location (coordinates or a Google Maps link)</span></label>
+      <input type="text" id="loc" autocomplete="off" spellcheck="false" placeholder="37.7575, 30.1296">
+      <div class="two">
+        <div><label for="size"><span class="tr">Karenin kenarı</span><span class="en">Side of the square</span></label><select id="size"><option value="100">100 m</option><option value="200" selected>200 m</option><option value="500">500 m</option><option value="1000">1 km</option></select></div>
+        <div class="end"><button class="btn" id="go" type="button"><span class="tr">Göster</span><span class="en">Show</span></button></div>
+      </div>
+      <p class="msg bad" id="loc-msg" role="alert" hidden></p>
+      <p class="note"><button class="ghost" type="button" id="sample"><span class="tr">Örnek alanı aç: Burdur</span><span class="en">Open the sample area: Burdur</span></button></p>
+    </div>
 
     <div class="panel" id="info-panel" hidden>
-      <h2><span class="tr">Parsel</span><span class="en">Parcel</span></h2>
+      <h2><span class="tr">Alan</span><span class="en">Area</span></h2>
       <dl class="info" id="info"></dl>
     </div>
   </aside>
@@ -248,7 +253,7 @@ td small{display:none;font:400 .72rem var(--f-mono);color:var(--mute);white-spac
       <canvas id="cv-over" width="720" height="720" aria-hidden="true"></canvas>
       <div class="split" id="split" aria-hidden="true"></div>
       <span class="tag tagb" id="tag-b" hidden></span><span class="tag taga" id="tag-a" hidden></span>
-      <div class="empty" id="empty"><span><span class="tr">Soldan bir parsel seç ya da örnek parseli aç.</span><span class="en">Choose a parcel on the left or open the sample parcel.</span></span></div>
+      <div class="empty" id="empty"><span><span class="tr">Bir sınır dosyası yükle, bir konum yapıştır ya da örnek alanı aç.</span><span class="en">Load a boundary file, paste a location, or open the sample area.</span></span></div>
       <div class="busy" id="busy" hidden></div>
     </div>
 
@@ -314,20 +319,20 @@ td small{display:none;font:400 .72rem var(--f-mono);color:var(--mute);white-spac
         <th><span class="tr">Tarih</span><span class="en">Date</span></th>
         <th><span class="tr">Uydu</span><span class="en">Satellite</span></th>
         <th><span class="tr">Sahnede bulut</span><span class="en">Scene cloud</span></th>
-        <th><span class="tr">Parselin üstü</span><span class="en">Over the parcel</span></th>
+        <th><span class="tr">Alanın üstü</span><span class="en">Over the area</span></th>
         <th><span class="tr">Göster</span><span class="en">Show</span></th>
       </tr></thead>
       <tbody id="rows"></tbody>
     </table></div>
     <div class="more"><button class="ghost" type="button" id="older"><span class="tr">Daha eski geçişleri getir</span><span class="en">Load older passes</span></button></div>
-    <p class="note"><span class="tr">"Sahnede bulut" yaklaşık 110 km'lik karenin tamamı içindir. "Parselin üstü" yalnız parselin çevresine bakar; satırdaki düğmeye basınca kontrol edilir.</span><span class="en">"Scene cloud" is for the whole tile of about 110 km. "Over the parcel" looks only around the parcel; it is checked when you press a button in the row.</span></p>
+    <p class="note"><span class="tr">"Sahnede bulut" yaklaşık 110 km'lik karenin tamamı içindir. "Alanın üstü" yalnız alanın çevresine bakar; satırdaki düğmeye basınca kontrol edilir.</span><span class="en">"Scene cloud" is for the whole tile of about 110 km. "Over the area" looks only around the area; it is checked when you press a button in the row.</span></p>
   </div>
 </div>
 </main>
 
 <footer class="foot"><div class="wrap">
   <span><span class="tr">Uydu görüntüsü: değiştirilmiş Copernicus Sentinel verisi içerir (ESA). Katalog ve dosyalar: Earth Search (Element 84), AWS açık veri.</span><span class="en">Satellite imagery: contains modified Copernicus Sentinel data (ESA). Catalogue and files: Earth Search (Element 84), AWS Open Data.</span></span>
-  <span><span class="tr">Parsel sınırı: Tapu ve Kadastro Genel Müdürlüğü, Parsel Sorgu. Bilgilendirme amaçlıdır; resmî işlemde tapu kaydı esas alınır.</span><span class="en">Parcel boundary: General Directorate of Land Registry and Cadastre (TKGM), Parsel Sorgu. For information only; the land registry is authoritative.</span></span>
+  <span><span class="tr">Sınır, yüklediğin dosyadan ya da yazdığın konumdan gelir; sayfa onu doğrulamaz. Bilgilendirme amaçlıdır; resmî işlemde tapu kaydı esas alınır.</span><span class="en">The boundary comes from the file you load or the location you type; the page does not verify it. For information only; the land registry is authoritative.</span></span>
   <span>© 2024–2026 Kose Capital</span>
 </div></footer>
 
@@ -371,41 +376,44 @@ var $$ = function (s, r) { return Array.prototype.slice.call((r || document).que
 
 /* ---------- ayarlar ---------- */
 var CFG = {
-  tkgm: ["https://cbsapi.tkgm.gov.tr/megsiswebapi.v3/api/", "https://cbsapi.tkgm.gov.tr/megsiswebapi.v3.1/api/"],
   stac: "https://earth-search.aws.element84.com/v1",
-  ilFile: "https://parselsorgu.tkgm.gov.tr/app/modules/administrativeQuery/data/ilListe.json",
   collection: "sentinel-2-l2a",
   N: 720,            // tuvalin iç boyutu (piksel)
-  cloudMax: 0.10,    // parselin çevresinde en çok bu kadar bulut "açık" sayılır
+  cloudMax: 0.10,    // alanın çevresinde en çok bu kadar bulut "açık" sayılır
   nodataMax: 0.02,
   pageSize: 60
 };
 if (window.ORBIT_CFG) for (var k0 in window.ORBIT_CFG) CFG[k0] = window.ORBIT_CFG[k0];
 
-var SAMPLE = {"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[30.12993,37.75737],[30.13,37.75765],[30.12968,37.7578],[30.12966,37.75792],[30.12952,37.75803],[30.12931,37.75778],[30.12905,37.75753],[30.12893,37.75744],[30.12909,37.75732],[30.12923,37.75721],[30.12912,37.75709],[30.12891,37.75685],[30.12907,37.75678],[30.12919,37.75676],[30.12941,37.75665],[30.12955,37.75689],[30.12974,37.75712],[30.12993,37.75737]]]},"properties":{"ilceAd":"Merkez","mevkii":"Koryakası","ilId":37,"durum":"1","ilceId":277,"zeminKmdurum":"Ana Taşınmaz","parselNo":"26","mahalleAd":"İlyas","ozet":"İlyas-389/26","gittigiParselListe":"","gittigiParselSebep":"","alan":"7.722,87","adaNo":"389","nitelik":"Tarla","ilAd":"Burdur","mahalleId":139070,"pafta":"M24a23c4a"}};
+// Örnek alan: Burdur yakınında, kendi çizdiğimiz bir çokgen (bir parsel kaydı değildir). tools/orbit/sample.json ile aynıdır.
+var SAMPLE = [[[[30.1288, 37.757], [30.1299, 37.7569], [30.1304, 37.7576], [30.1296, 37.7581], [30.1287, 37.7577], [30.1288, 37.757]]]];
 
 /* ---------- dil ---------- */
 var LANG = "tr";
 var S = {
-  desc: ["Orbit, Türkiye'deki bir parselin en yeni bulutsuz Sentinel-2 uydu görüntüsünü gösterir ve eski bir tarihle karşılaştırır.", "Orbit shows the latest cloud-free Sentinel-2 satellite image of a land parcel in Türkiye and compares it with an earlier date."],
-  choose: ["Seçiniz", "Choose"],
-  loading: ["Yükleniyor…", "Loading…"],
-  tkgmDown: ["Parsel servisine (TKGM) bu sayfadan ulaşılamadı. Örnek parseli açabilir ya da aşağıdaki \"Parsel servisine ulaşılamıyorsa\" adımlarını izleyebilirsin.", "The parcel service (TKGM) could not be reached from this page. You can open the sample parcel or follow the steps under \"If the parcel service cannot be reached\" below."],
-  tkgmHttp: ["Parsel servisi yanıt vermedi (HTTP {0}). {1}", "The parcel service did not answer (HTTP {0}). {1}"],
-  notFound: ["Bu ada ve parsel bu mahallede bulunamadı. Ada yoksa 0 yaz. {0}", "This block and parcel were not found in this neighbourhood. Type 0 if there is no block. {0}"],
-  needFields: ["Mahalleyi seç, parsel numarasını yaz.", "Choose the neighbourhood and type the parcel number."],
-  badPaste: ["Yapıştırılan metin bir parsel kaydı değil. TKGM sayfasındaki metnin tamamını kopyaladığından emin ol.", "The pasted text is not a parcel record. Make sure you copied all of the text on the TKGM page."],
-  asking: ["Parsel sınırı soruluyor…", "Asking for the parcel boundary…"],
+  desc: ["Orbit, Türkiye'deki bir arazinin en yeni bulutsuz Sentinel-2 uydu görüntüsünü gösterir ve eski bir tarihle karşılaştırır.", "Orbit shows the latest cloud-free Sentinel-2 satellite image of a piece of land in Türkiye and compares it with an earlier date."],
+  eFile: ["Bu dosya okunamadı. KML, KMZ ya da GeoJSON biçiminde bir sınır dosyası yükle.", "This file could not be read. Load a boundary file in KML, KMZ or GeoJSON format."],
+  eNoPoly: ["Dosyada kapalı bir alan yok. Nokta ya da açık bir çizgi değil, araziyi çevreleyen bir sınır gerekir.", "There is no closed area in the file. A boundary that encloses the land is needed, not a point or an open line."],
+  eCoords: ["Dosyadaki koordinatlar enlem ve boylam değil. Dosyayı KML ya da GeoJSON olarak indirip yeniden dene.", "The coordinates in the file are not latitude and longitude. Download the file as KML or GeoJSON and try again."],
+  eLarge: ["Alan çok büyük. En çok 10 km genişliğinde bir alan yükle.", "The area is too large. Load an area at most 10 km wide."],
+  eTiny: ["Alan çok küçük: görüntüde bir pikselden (100 m²) az yer tutuyor.", "The area is too small: it covers less than one pixel (100 m²) of the image."],
+  eMany: ["Sınır çok ayrıntılı (20.000'den fazla köşe). Daha sade bir dosya yükle.", "The boundary is too detailed (more than 20,000 points). Load a simpler file."],
+  eKmz: ["Bu KMZ dosyası açılamadı. Dosyayı KML olarak kaydedip yeniden dene.", "This KMZ file could not be opened. Save it as KML and try again."],
+  eBig: ["Dosya çok büyük (5 MB'tan fazla).", "The file is too large (more than 5 MB)."],
+  eLoc: ["Konum anlaşılamadı. Enlem ve boylamı şöyle yaz: 37.7575, 30.1296. Google Haritalar'da bir noktaya sağ tıklayınca çıkan koordinatı da yapıştırabilirsin.", "The location was not understood. Type latitude and longitude like this: 37.7575, 30.1296. You can also paste the coordinates shown when you right-click a point in Google Maps."],
+  eShort: ["Kısa bağlantı buradan açılamıyor. Haritada noktaya sağ tıklayıp koordinatı kopyala ve onu yapıştır.", "A short link cannot be opened from here. Right-click the point on the map, copy the coordinates and paste them."],
+  sampleName: ["Örnek alan (Burdur)", "Sample area (Burdur)"],
+  srcFile: ["dosya: {0}", "file: {0}"], srcLoc: ["konum; kenarı {0} olan kare", "location; a square {0} on a side"], srcSample: ["örnek", "sample"], srcPaste: ["yapıştırılan metin", "pasted text"],
   searching: ["Uydu kataloğunda son geçişler aranıyor…", "Searching the satellite catalogue for recent passes…"],
   stacDown: ["Uydu kataloğuna ulaşılamadı. İnternet bağlantını kontrol edip yeniden dene.", "The satellite catalogue could not be reached. Check your connection and try again."],
   noPass: ["Bu konum için geçiş bulunamadı.", "No pass was found for this location."],
-  checking: ["{0}: parselin üstü kontrol ediliyor…", "{0}: checking over the parcel…"],
-  skipCloud: ["{0}: parselin üstü bulutlu (%{1}), atlandı.", "{0}: cloudy over the parcel ({1}%), skipped."],
-  skipNo: ["{0}: parsel bu geçişin dışında kaldı, atlandı.", "{0}: the parcel is outside this pass, skipped."],
+  checking: ["{0}: alanın üstü kontrol ediliyor…", "{0}: checking over the area…"],
+  skipCloud: ["{0}: alanın üstü bulutlu (%{1}), atlandı.", "{0}: cloudy over the area ({1}%), skipped."],
+  skipNo: ["{0}: alan bu geçişin dışında kaldı, atlandı.", "{0}: the area is outside this pass, skipped."],
   skipErr: ["{0}: dosya okunamadı, atlandı.", "{0}: the file could not be read, skipped."],
   loadingImg: ["{0}: görüntü indiriliyor…", "{0}: downloading the image…"],
   shown: ["En yeni açık görüntü: {0}.", "Latest clear image: {0}."],
-  noClear: ["Son {0} geçişin hiçbiri parselin üstünde açık değil. Aşağıdan daha eski geçişleri getirebilirsin.", "None of the last {0} passes is clear over the parcel. You can load older passes below."],
+  noClear: ["Son {0} geçişin hiçbiri alanın üstünde açık değil. Aşağıdan daha eski geçişleri getirebilirsin.", "None of the last {0} passes is clear over the area. You can load older passes below."],
   beforeSearch: ["Karşılaştırma için {0} civarı aranıyor…", "Looking around {0} for the comparison…"],
   beforeNone: ["{0} civarında açık bir görüntü bulunamadı.", "No clear image was found around {0}."],
   beforeShown: ["Karşılaştırma görüntüsü: {0}.", "Comparison image: {0}."],
@@ -416,20 +424,22 @@ var S = {
   stOk: ["açık", "clear"], stCloud: ["bulutlu %{0}", "cloudy {0}%"], stNo: ["kapsam dışı", "outside"], stErr: ["okunamadı", "unreadable"], stQ: ["—", "—"],
   bBefore: ["Önce", "Before"], bAfter: ["Sonra", "After"],
   north: ["K", "N"],
-  iWhere: ["Yer", "Place"], iAda: ["Ada / parsel", "Block / parcel"], iArea: ["Yüzölçümü", "Area"], iKind: ["Nitelik", "Type"], iSite: ["Mevkii", "Locality"], iSheet: ["Pafta", "Sheet"], iCalc: ["Sınırdan hesap", "From the boundary"], iMap: ["Karşılaştır", "Compare"], iMapOpen: ["Google Haritalar'da aç", "Open in Google Maps"],
+  iWhere: ["Yer", "Place"], iName: ["Ad", "Name"], iAda: ["Ada / parsel", "Block / parcel"], iArea: ["Yüzölçümü", "Area"], iKind: ["Nitelik", "Type"], iSite: ["Mevkii", "Locality"], iSheet: ["Pafta", "Sheet"], iCalc: ["Sınırdan hesap", "From the boundary"],
+  iSrc: ["Kaynak", "Source"], iCentre: ["Merkez", "Centre"], iMap: ["Karşılaştır", "Compare"], iMapOpen: ["Google Haritalar'da aç", "Open in Google Maps"],
   donum: ["{0} m² ({1} dönüm)", "{0} m² ({1} dönüm)"],
   ndWait: ["hesaplanıyor…", "computing…"],
-  ndDown: ["Parselin içindeki bitki örtüsü belirgin azalmış. Bu, zeminin açıldığına işaret edebilir; hasat, sürüm ya da kuraklık da aynı düşüşü yapar. Görüntüye bakarak karar ver.", "Vegetation inside the parcel has dropped clearly. This can mean the ground was cleared; harvest, ploughing or drought cause the same drop. Decide by looking at the image."],
-  ndUp: ["Parselin içindeki bitki örtüsü belirgin artmış.", "Vegetation inside the parcel has clearly increased."],
-  ndSame: ["Parselin içindeki bitki örtüsünde belirgin bir değişim yok.", "No clear change in vegetation inside the parcel."],
+  ndDown: ["Alanın içindeki bitki örtüsü belirgin azalmış. Bu, zeminin açıldığına işaret edebilir; hasat, sürüm ya da kuraklık da aynı düşüşü yapar. Görüntüye bakarak karar ver.", "Vegetation inside the area has dropped clearly. This can mean the ground was cleared; harvest, ploughing or drought cause the same drop. Decide by looking at the image."],
+  ndUp: ["Alanın içindeki bitki örtüsü belirgin artmış.", "Vegetation inside the area has clearly increased."],
+  ndSame: ["Alanın içindeki bitki örtüsünde belirgin bir değişim yok.", "No clear change in vegetation inside the area."],
   ndHelp: ["Puan −1 ile 1 arasındadır; kabaca, sık bitki 0,6 ve üstünde, çıplak toprak ve beton 0,2 ve altındadır.", "The score runs from −1 to 1; roughly, dense vegetation is 0.6 and above, bare soil and concrete 0.2 and below."],
   older: ["Daha eski geçişler aranıyor…", "Looking for older passes…"], olderDone: ["{0} eski geçiş eklendi.", "{0} older passes added."],
   sat: ["Sentinel-2{0}", "Sentinel-2{0}"]
 };
-function T(key) {
-  var a = S[key], s = a ? a[LANG === "tr" ? 0 : 1] : key, args = arguments;
-  return s.replace(/\{(\d)\}/g, function (m, i) { var v = args[+i + 1]; return v == null ? "" : v; });
+function Tin(lang, key) {          // belirli bir dilde metin (tanı satırları iki dilde birden yazılır)
+  var a = S[key], s = a ? a[lang === "tr" ? 0 : 1] : key, args = arguments;
+  return s.replace(/\{(\d)\}/g, function (m, i) { var v = args[+i + 2]; return v == null ? "" : v; });
 }
+function T() { return Tin.apply(null, [LANG].concat(Array.prototype.slice.call(arguments))); }
 var MONTHS = { tr: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"], en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] };
 function trDay(d) { return new Date(d.getTime() + 3 * 3600 * 1000); }                  // Türkiye saatiyle gün
 function fmtDate(d) { var x = trDay(d); return x.getUTCDate() + " " + MONTHS[LANG][x.getUTCMonth()] + " " + x.getUTCFullYear(); }
@@ -448,10 +458,9 @@ function setLang(l) {
   LANG = l; document.documentElement.setAttribute("data-lang", l); document.documentElement.lang = l;
   $$("#lang button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lang === l)); });
   $$("option[data-tr]").forEach(function (o) { o.textContent = o.getAttribute("data-" + l); });
-  $$("select").forEach(function (s) { var o = s.options[0]; if (o && o.value === "" && !s.disabled) o.textContent = T("choose"); });
   $("#home").href = "../?lang=" + l;
   var md = document.querySelector('meta[name="description"]'); if (md) md.content = T("desc");
-  logLines = []; say(""); showDiag();
+  logLines = []; say(""); showDiag(); inMsg("");
   refreshTexts();
 }
 $("#lang").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; setLang(b.dataset.lang); try { localStorage.setItem("kc.lang", b.dataset.lang); } catch (e) {} });
@@ -490,120 +499,216 @@ function withTimeout(p, ms, what) {
   return new Promise(function (res, rej) { var t = setTimeout(function () { rej(new Error("timeout " + (what || ""))); }, ms); p.then(function (v) { clearTimeout(t); res(v); }, function (e) { clearTimeout(t); rej(e); }); });
 }
 
-/* ---------- TKGM: il, ilçe, mahalle listeleri ve parsel ---------- */
-var tkgmBase = null;
-function tkgm(path) {
-  var bases = tkgmBase ? [tkgmBase] : CFG.tkgm.slice(), i = 0;
-  function next(last) {
-    if (i >= bases.length) return Promise.reject(last || new Error("tkgm"));
-    var b = bases[i++];
-    return fetchJSON(b + path, 30000).then(function (j) { tkgmBase = b; return j; }, function (e) { return next(e); });
+/* ---------- alan: sınır dosyası (KML, KMZ, GeoJSON), yapıştırılan metin ya da konum ----------
+   Sayfa parsel servisine (TKGM) istek yapmaz; sınırı ziyaretçi getirir. Dosya tarayıcıda okunur, bir yere gönderilmez. */
+var KEYS = {      // dosyadaki öznitelik adları (küçük harfe ve düz Latin harfine çevrilmiş) -> bizim adlarımız
+  ilAd: ["ilad", "il", "iladi", "province"], ilceAd: ["ilcead", "ilce", "ilceadi", "district"],
+  mahalleAd: ["mahallead", "mahalle", "mahalleadi", "mahallekoy", "koy", "neighbourhood", "neighborhood"],
+  adaNo: ["adano", "ada", "block"], parselNo: ["parselno", "parsel", "parcel"], alan: ["alan", "yuzolcum", "yuzolcumu", "area"],
+  nitelik: ["nitelik", "cins", "cinsi"], mevkii: ["mevkii", "mevki"], pafta: ["pafta"], ad: ["name", "ad", "adi", "ozet", "title", "baslik"]
+};
+function fold(s) { return String(s).toLowerCase().replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c").replace(/[^a-z0-9]/g, ""); }
+function mapProps(raw) {
+  var out = {}, k, name;
+  for (k in (raw || {})) {
+    var v = raw[k]; if (v == null || typeof v === "object") continue;
+    v = String(v).replace(/\s+/g, " ").trim(); if (!v || v.length > 120) continue;
+    var f = fold(k); for (name in KEYS) if (out[name] == null && KEYS[name].indexOf(f) >= 0) out[name] = v;
   }
-  return next(null);
+  return out;
 }
-function listOf(j) {
-  var f = j && j.features ? j.features : [];
-  return f.map(function (x) { var p = x.properties || {}; return { id: p.id, text: String(p.text == null ? "" : p.text) }; })
-    .filter(function (x) { return x.id != null && x.text; })
-    .sort(function (a, b) { return a.text.localeCompare(b.text, "tr"); });
+function closedLine(r) {            // başladığı yerde biten çizgi de bir alanı çevirir
+  if (!r || r.length < 4) return false;
+  var a = r[0], z = r[r.length - 1]; return Math.abs(a[0] - z[0]) < 1e-9 && Math.abs(a[1] - z[1]) < 1e-9;
 }
-function fill(sel, items) {
-  sel.innerHTML = "";
-  var o = document.createElement("option"); o.value = ""; o.textContent = T("choose"); sel.appendChild(o);
-  items.forEach(function (it) { var e = document.createElement("option"); e.value = it.id; e.textContent = it.text; sel.appendChild(e); });
-  sel.disabled = false;
+function geomPolys(g, out) {
+  if (!g) return;
+  if (g.type === "Polygon") out.push(g.coordinates);
+  else if (g.type === "MultiPolygon") (g.coordinates || []).forEach(function (p) { out.push(p); });
+  else if (g.type === "LineString") { if (closedLine(g.coordinates)) out.push([g.coordinates]); }
+  else if (g.type === "MultiLineString") (g.coordinates || []).forEach(function (l) { if (closedLine(l)) out.push([l]); });
+  else if (g.type === "GeometryCollection") (g.geometries || []).forEach(function (x) { geomPolys(x, out); });
 }
-function reset(sel) { sel.innerHTML = '<option value="">…</option>'; sel.disabled = true; }
-function tkgmMsg(text, cls) { var m = $("#tkgm-msg"); if (!text) { m.hidden = true; return; } m.textContent = text; m.className = "msg" + (cls ? " " + cls : ""); m.hidden = false; }
-function serverSays(e) { var b = e && e.body; var s = b && (b.Message || b.message || b.error); return s ? String(s).slice(0, 200) : ""; }
-function tkgmFail(e) {
-  if (e && e.http) tkgmMsg(T("tkgmHttp", e.http, serverSays(e)), "bad");
-  else { tkgmMsg(T("tkgmDown"), "bad"); $("#alt").open = true; }
+function fromGeoJSON(j) {
+  var polys = [], props = null, n = 0;
+  function feat(f) { var k = polys.length; if (f) geomPolys(f.geometry, polys); if (polys.length > k) { n++; if (!props) props = f.properties || {}; } }
+  if (j && j.type === "FeatureCollection") (j.features || []).forEach(feat);
+  else if (j && j.type === "Feature") feat(j);
+  else geomPolys(j, polys);
+  if (!polys.length) throw new Error("nopoly");
+  return { polys: polys, props: n === 1 ? props : {}, format: "GeoJSON" };      // birden çok kayıt varsa adı dosya adından gelir
 }
-function loadIl() {
-  var cached = null;
-  try { cached = JSON.parse(localStorage.getItem("kc.orbit.il") || "null"); } catch (e) {}
-  if (cached && cached.length > 50) { fill($("#il"), cached); return Promise.resolve(); }
-  $("#il").options[0].textContent = T("loading");
-  return fetchJSON(CFG.ilFile, 30000).then(function (j) { if (!listOf(j).length) throw new Error("empty"); return j; }).catch(function () { return tkgm("idariYapi/ilListe"); }).then(function (j) {
-    var items = listOf(j);
-    if (!items.length) throw new Error("empty");
-    fill($("#il"), items); tkgmMsg(""); $("#retry").hidden = true; note("il listesi: " + items.length + " il", "province list: " + items.length);
-    try { localStorage.setItem("kc.orbit.il", JSON.stringify(items)); } catch (e) {}
-  }).catch(function (e) { $("#il").options[0].textContent = "…"; tkgmFail(e); $("#retry").hidden = false; });
-}
-function cachedList(key, path) {
-  try { var c = JSON.parse(localStorage.getItem(key) || "null"); if (c && c.length) return Promise.resolve(c); } catch (e) {}
-  return tkgm(path).then(function (j) { var items = listOf(j); note(path + ": " + items.length + " kayıt", path + ": " + items.length + " records"); try { if (items.length) localStorage.setItem(key, JSON.stringify(items)); } catch (e) {} return items; });
-}
-$("#il").addEventListener("change", function () {
-  reset($("#ilce")); reset($("#mah")); checkGo(); tkgmMsg("");
-  var id = this.value; if (!id) return;
-  $("#ilce").options[0].textContent = T("loading");
-  cachedList("kc.orbit.ilce." + id, "idariYapi/ilceListe/" + encodeURIComponent(id)).then(function (items) { if ($("#il").value === id) fill($("#ilce"), items); }).catch(function (e) { $("#ilce").options[0].textContent = "…"; tkgmFail(e); });
-});
-$("#ilce").addEventListener("change", function () {
-  reset($("#mah")); checkGo(); tkgmMsg("");
-  var id = this.value; if (!id) return;
-  $("#mah").options[0].textContent = T("loading");
-  cachedList("kc.orbit.mah." + id, "idariYapi/mahalleListe/" + encodeURIComponent(id)).then(function (items) { if ($("#ilce").value === id) fill($("#mah"), items); }).catch(function (e) { $("#mah").options[0].textContent = "…"; tkgmFail(e); });
-});
-function checkGo() { $("#go").disabled = !($("#mah").value && $("#parsel").value.trim()); }
-["change", "input"].forEach(function (ev) { $("#form").addEventListener(ev, checkGo); });
-$("#form").addEventListener("submit", function (ev) {
-  ev.preventDefault();
-  var mah = $("#mah").value, ada = ($("#ada").value.trim() || "0"), par = $("#parsel").value.trim();
-  if (!mah || !par) { tkgmMsg(T("needFields")); return; }
-  tkgmMsg(""); say(T("asking")); $("#go").disabled = true;
-  tkgm("parsel/" + encodeURIComponent(mah) + "/" + encodeURIComponent(ada) + "/" + encodeURIComponent(par)).then(function (j) {
-    $("#go").disabled = false;
-    var p; try { p = normParcel(j); } catch (e) { note("parsel yanıtında sınır yok: " + JSON.stringify(j).slice(0, 160), "no boundary in the parcel response: " + JSON.stringify(j).slice(0, 160)); tkgmMsg(T("notFound", serverSays({ body: j })), "bad"); say(""); return; }
-    var via = (tkgmBase || "").replace(/^https:\/\/[^/]+\//, ""); note("parsel alındı (" + via + ")", "parcel received (" + via + ")"); useParcel(p);
-  }).catch(function (e) {
-    $("#go").disabled = false; say("");
-    if (e && e.http && e.http >= 400 && e.http < 500 && e.http !== 429) tkgmMsg(T("notFound", serverSays(e)), "bad"); else tkgmFail(e);
+function fromKML(text) {
+  var doc = new DOMParser().parseFromString(text, "application/xml");
+  if (doc.getElementsByTagName("parsererror").length) throw new Error("format");
+  function all(el, name) { return Array.prototype.slice.call(el.getElementsByTagNameNS("*", name)); }
+  function ring(el) {
+    var c = el && all(el, "coordinates")[0]; if (!c) return null;
+    return c.textContent.replace(/\s*,\s*/g, ",").trim().split(/\s+/).map(function (t) { var p = t.split(","); return [parseFloat(p[0]), parseFloat(p[1])]; });
+  }
+  var polys = [], marks = [];
+  function mark(el) { var pm = el.parentNode; while (pm && pm.localName !== "Placemark") pm = pm.parentNode; if (pm && marks.indexOf(pm) < 0) marks.push(pm); }
+  function inside(el, name) { for (var x = el.parentNode; x; x = x.parentNode) if (x.localName === name) return true; return false; }
+  all(doc, "Polygon").forEach(function (pg) {
+    var r = ring(all(pg, "outerBoundaryIs")[0]); if (!r) return;
+    var rings = [r]; all(pg, "innerBoundaryIs").forEach(function (ib) { var h = ring(ib); if (h) rings.push(h); });
+    polys.push(rings); mark(pg);
   });
-});
-$("#sample").addEventListener("click", function () { useParcel(normParcel(SAMPLE)); });
-$("#retry").addEventListener("click", function () { tkgmMsg(""); this.hidden = true; loadIl(); });
-function coordLink() {
-  var la = parseFloat($("#lat").value.replace(",", ".")), lo = parseFloat($("#lon").value.replace(",", "."));
-  $("#tkgm-link").href = (isFinite(la) && isFinite(lo) && la > 35 && la < 43 && lo > 25 && lo < 45) ? CFG.tkgm[0] + "parsel/" + la + "/" + lo + "/" : "https://parselsorgu.tkgm.gov.tr/";
+  all(doc, "LineString").concat(all(doc, "LinearRing").filter(function (lr) { return !inside(lr, "Polygon"); })).forEach(function (ln) {   // kapalı çizgi de alan sayılır
+    var r = ring(ln); if (closedLine(r)) { polys.push([r]); mark(ln); }
+  });
+  if (!polys.length) throw new Error("nopoly");
+  var raw = {};
+  if (marks.length === 1) {
+    var kids = Array.prototype.slice.call(marks[0].children);
+    kids.forEach(function (k) { if (k.localName === "name") raw.name = k.textContent; });
+    all(marks[0], "Data").forEach(function (d) { var v = all(d, "value")[0]; if (d.getAttribute("name") && v) raw[d.getAttribute("name")] = v.textContent; });
+    all(marks[0], "SimpleData").forEach(function (d) { if (d.getAttribute("name")) raw[d.getAttribute("name")] = d.textContent; });
+    kids.forEach(function (k) { if (k.localName === "description") descProps(k.textContent, raw); });
+  }
+  return { polys: polys, props: raw, format: "KML" };
 }
-$("#lat").addEventListener("input", coordLink); $("#lon").addEventListener("input", coordLink);
-$("#use-paste").addEventListener("click", function () {
-  var m = $("#paste-msg"); m.hidden = true;
-  try { useParcel(normParcel(JSON.parse($("#paste").value))); } catch (e) { m.textContent = T("badPaste"); m.hidden = false; }
-});
-
-/* ---------- parsel ---------- */
-function normParcel(feat) {
-  if (feat && feat.type === "FeatureCollection" && feat.features && feat.features.length) feat = feat.features[0];
-  if (!feat || !feat.geometry || !feat.geometry.coordinates) throw new Error("nogeom");
-  var g = feat.geometry, polys;
-  if (g.type === "Polygon") polys = [g.coordinates]; else if (g.type === "MultiPolygon") polys = g.coordinates; else throw new Error("geomtype");
+function descProps(html, raw) {      // açıklamadaki iki hücreli tablo satırları ya da "Ad: değer" satırları
+  var d = new DOMParser().parseFromString("<body>" + html + "</body>", "text/html");
+  function put(k, v) { k = String(k).replace(/:\s*$/, "").trim(); if (k && k.length <= 40 && raw[k] == null) raw[k] = v; }
+  Array.prototype.slice.call(d.querySelectorAll("tr")).forEach(function (tr) { var c = tr.querySelectorAll("td,th"); if (c.length === 2) put(c[0].textContent, c[1].textContent); });
+  Array.prototype.slice.call(d.querySelectorAll("table")).forEach(function (t) { t.parentNode.replaceChild(d.createTextNode("\n"), t); });
+  Array.prototype.slice.call(d.querySelectorAll("br,p,div,li")).forEach(function (b) { b.insertAdjacentText("afterend", "\n"); });
+  d.body.textContent.split(/\n/).forEach(function (line) { var m = /^\s*([^:]{1,40}):\s*(.+?)\s*$/.exec(line); if (m) put(m[1], m[2]); });
+}
+function unzipFirst(buf, want) {     // ZIP içindeki ilk uygun dosyayı çıkarır (KMZ, sıkıştırılmış KML'dir)
+  var dv = new DataView(buf), i = buf.byteLength - 22;
+  while (i >= 0 && dv.getUint32(i, true) !== 0x06054b50) i--;
+  if (i < 0) throw new Error("zip");
+  var count = dv.getUint16(i + 10, true), off = dv.getUint32(i + 16, true), dec = new TextDecoder();
+  for (var k = 0; k < count && dv.getUint32(off, true) === 0x02014b50; k++) {
+    var method = dv.getUint16(off + 10, true), csize = dv.getUint32(off + 20, true), nlen = dv.getUint16(off + 28, true), xlen = dv.getUint16(off + 30, true), clen = dv.getUint16(off + 32, true), lho = dv.getUint32(off + 42, true);
+    if (want.test(dec.decode(new Uint8Array(buf, off + 46, nlen)))) {
+      var data = new Uint8Array(buf, lho + 30 + dv.getUint16(lho + 26, true) + dv.getUint16(lho + 28, true), csize);
+      if (method === 0) return Promise.resolve(data);
+      if (method !== 8 || typeof DecompressionStream !== "function") throw new Error("zipmethod");
+      return new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer().then(function (b) { return new Uint8Array(b); });
+    }
+    off += 46 + nlen + xlen + clen;
+  }
+  throw new Error("zipnokml");
+}
+function decode(u8) {                // UTF-8; dosya başka bir kodlama bildiriyorsa onunla
+  var t = new TextDecoder().decode(u8), m = /^﻿?<\?xml[^>]*encoding=["']([\w-]+)["']/i.exec(t.slice(0, 200));
+  if (m && !/^utf-?8$/i.test(m[1])) { try { t = new TextDecoder(m[1]).decode(u8); } catch (e) {} }
+  return t;
+}
+function parseBoundary(text, src) {
+  var t = String(text == null ? "" : text).replace(/^﻿/, "").trim(), got;
+  if (!t) throw new Error("format");
+  if (t.charAt(0) === "<") got = fromKML(t);
+  else { var j; try { j = JSON.parse(t); } catch (e) { throw new Error("format"); } got = fromGeoJSON(j); }
+  src = src || { kind: "paste" }; src.format = got.format;
+  return normArea(got.polys, mapProps(got.props), src);
+}
+function normArea(polys, props, src) {
   var w = 180, s = 90, e = -180, n = -90, count = 0, clean = [];
-  polys.forEach(function (poly) {
+  (polys || []).forEach(function (poly) {
     var rings = [];
-    poly.forEach(function (ring) {
+    (poly || []).forEach(function (ring) {
       var r = [];
-      ring.forEach(function (c) {
+      (ring || []).forEach(function (c) {
         var lon = +c[0], lat = +c[1];
-        if (!isFinite(lon) || !isFinite(lat) || Math.abs(lon) > 180 || Math.abs(lat) > 90) throw new Error("coord");
+        if (!isFinite(lon) || !isFinite(lat)) throw new Error("format");
+        if (Math.abs(lon) > 180 || Math.abs(lat) > 90) throw new Error("coords");
         r.push([lon, lat]); count++;
         if (lon < w) w = lon; if (lon > e) e = lon; if (lat < s) s = lat; if (lat > n) n = lat;
       });
+      if (r.length >= 3 && (r[0][0] !== r[r.length - 1][0] || r[0][1] !== r[r.length - 1][1])) r.push([r[0][0], r[0][1]]);   // halka kapalı olmalı
       if (r.length >= 4) rings.push(r);
     });
     if (rings.length) clean.push(rings);
   });
-  if (!clean.length || count > 20000) throw new Error("rings");
-  if (e - w > 0.5 || n - s > 0.5) throw new Error("toolarge");
-  var p = feat.properties || {}, props = {};
-  ["ilAd", "ilceAd", "mahalleAd", "adaNo", "parselNo", "alan", "nitelik", "mevkii", "pafta", "ozet", "mahalleId"].forEach(function (k) { if (p[k] != null && String(p[k]).length < 120) props[k] = p[k]; });
-  return { polys: clean, bbox: [w, s, e, n], lon0: (w + e) / 2, lat0: (s + n) / 2, props: props };
+  if (!clean.length) throw new Error("nopoly");
+  if (count > 20000) throw new Error("toomany");
+  var out = { polys: clean, bbox: [w, s, e, n], lon0: (w + e) / 2, lat0: (s + n) / 2, props: props || {}, src: src || { kind: "paste" } };
+  if (makeFrame(out, "mid").half > 5001) throw new Error("toolarge");      // en çok 10 km genişlik
+  if (!(polyArea(out) >= 100)) throw new Error("tiny");
+  return out;
 }
 function parseArea(a) { if (a == null) return null; if (typeof a === "number") return a; var x = parseFloat(String(a).replace(/\./g, "").replace(",", ".")); return isFinite(x) ? x : null; }
+
+// Konum: "37.7575, 30.1296", "37,7575 30,1296", 37°45'27"K 30°07'47"D ya da bir Google Haritalar bağlantısı
+function dms(t) {
+  var re = /(\d+(?:[.,]\d+)?)\s*°?\s*(?:(\d+(?:[.,]\d+)?)\s*['′’]\s*)?(?:(\d+(?:[.,]\d+)?)\s*(?:"|″|”|'')\s*)?([NSEWKGDB])(?![a-zçğıöşü])/gi, m, la = null, lo = null;
+  function num(x) { return x ? parseFloat(x.replace(",", ".")) : 0; }
+  while ((m = re.exec(t))) {
+    var v = num(m[1]) + num(m[2]) / 60 + num(m[3]) / 3600, h = m[4].toUpperCase();
+    if (h === "N" || h === "K") la = v; else if (h === "S" || h === "G") la = -v; else if (h === "E" || h === "D") lo = v; else lo = -v;
+  }
+  return la != null && lo != null ? [la, lo] : null;
+}
+function parseLoc(text) {
+  var t = String(text == null ? "" : text).trim(), m, ll = null, N = "(-?\\d+(?:\\.\\d+)?)";
+  if (!t) throw new Error("loc");
+  if (/^https?:\/\//i.test(t)) {
+    try { t = decodeURIComponent(t); } catch (e) {}
+    if (/^https?:\/\/(maps\.app\.goo\.gl|goo\.gl|g\.co)\//i.test(t)) throw new Error("shortlink");
+    m = new RegExp("!3d" + N + "!4d" + N).exec(t) || new RegExp("[?&](?:q|ll|query|center|destination|daddr)=(?:loc:)?" + N + ",\\s*" + N).exec(t) || new RegExp("@" + N + "," + N).exec(t);
+    if (m) ll = [+m[1], +m[2]];
+  } else if (!(ll = dms(t))) {
+    var s = t.replace(/[()\[\]°]/g, " ").trim();
+    if ((m = new RegExp("^" + N + "\\s*[,;\\s]\\s*" + N + "$").exec(s))) ll = [+m[1], +m[2]];
+    else if ((m = /^(-?\d+,\d+)\s*[;,\s]\s*(-?\d+,\d+)$/.exec(s))) ll = [+m[1].replace(",", "."), +m[2].replace(",", ".")];
+  }
+  if (!ll || !isFinite(ll[0]) || !isFinite(ll[1]) || Math.abs(ll[0]) > 85 || Math.abs(ll[1]) > 180) throw new Error("loc");
+  return ll;
+}
+function squareArea(la, lo, side) {  // noktanın çevresinde, kenarı "side" metre olan kare
+  var e2 = WF * (2 - WF), phi = la * Math.PI / 180, W = Math.sqrt(1 - e2 * Math.sin(phi) * Math.sin(phi));
+  var dx = side / 2 / (Math.PI / 180 * (WA / W) * Math.cos(phi)), dy = side / 2 / (Math.PI / 180 * (WA * (1 - e2) / (W * W * W)));
+  return normArea([[[[lo - dx, la - dy], [lo + dx, la - dy], [lo + dx, la + dy], [lo - dx, la + dy], [lo - dx, la - dy]]]], {}, { kind: "loc", side: side, lat: la, lon: lo });
+}
+function fmtSide(m) { return m >= 1000 ? (m / 1000) + " km" : m + " m"; }
+function areaName(p, lang) {
+  var pr = p.props, s = p.src || {}, a = [pr.ilAd, pr.ilceAd, pr.mahalleAd].filter(Boolean);
+  if (pr.parselNo != null) a.push((pr.adaNo != null ? pr.adaNo : "0") + "/" + pr.parselNo);
+  if (a.length) return a.join(" · ");
+  if (pr.ad) return pr.ad;
+  if (s.kind === "loc") return s.lat.toFixed(5) + ", " + s.lon.toFixed(5);
+  if (s.kind === "sample") return Tin(lang || LANG, "sampleName");
+  return s.name ? String(s.name).replace(/\.[a-z0-9]+$/i, "") : "";
+}
+function srcText(p, lang) { var s = p.src || {}, l = lang || LANG; return s.kind === "file" ? Tin(l, "srcFile", s.name) : s.kind === "loc" ? Tin(l, "srcLoc", fmtSide(s.side)) : s.kind === "sample" ? Tin(l, "srcSample") : Tin(l, "srcPaste"); }
+
+function inMsg(text, loc) {          // uyarı: dosya için dosya kutusunun, konum için konum kutusunun altında
+  $$("#in-msg, #loc-msg").forEach(function (m) { m.hidden = true; m.textContent = ""; });
+  if (!text) return;
+  var m = $(loc ? "#loc-msg" : "#in-msg"); m.textContent = text; m.hidden = false;
+  try { m.scrollIntoView({ block: "nearest" }); } catch (e) {}
+}
+function inFail(e, what) {
+  var key = { nopoly: "eNoPoly", coords: "eCoords", toolarge: "eLarge", tiny: "eTiny", toomany: "eMany", zipnokml: "eKmz", zipmethod: "eKmz", toobig: "eBig", loc: "eLoc", shortlink: "eShort" }[e && e.message] || "eFile";
+  inMsg(T(key), key === "eLoc" || key === "eShort"); note("alan alınamadı (" + what + "): " + errText(e), "the area could not be taken (" + what + "): " + errText(e));
+}
+function readFile(file) {
+  if (!file) return;
+  inMsg("");
+  Promise.resolve().then(function () {
+    if (file.size > 5 * 1024 * 1024) throw new Error("toobig");
+    return file.arrayBuffer();
+  }).then(function (buf) {
+    var u8 = new Uint8Array(buf);
+    return u8[0] === 0x50 && u8[1] === 0x4B ? unzipFirst(buf, /\.kml$/i).then(decode) : decode(u8);
+  }).then(function (text) { useArea(parseBoundary(text, { kind: "file", name: String(file.name || "").slice(0, 80) })); }).catch(function (e) { inFail(e, file.name || "dosya"); });
+}
+$("#drop").addEventListener("click", function () { $("#file").click(); });
+$("#file").addEventListener("change", function () { var f = this.files && this.files[0]; this.value = ""; readFile(f); });
+function hasFiles(ev) { return !!(ev.dataTransfer && Array.prototype.indexOf.call(ev.dataTransfer.types || [], "Files") >= 0); }
+["dragenter", "dragover"].forEach(function (n) { window.addEventListener(n, function (ev) { if (hasFiles(ev)) { ev.preventDefault(); $("#drop").classList.add("over"); } }); });
+window.addEventListener("dragleave", function (ev) { if (!ev.relatedTarget) $("#drop").classList.remove("over"); });
+window.addEventListener("drop", function (ev) { $("#drop").classList.remove("over"); if (hasFiles(ev)) { ev.preventDefault(); readFile(ev.dataTransfer.files[0]); } });
+$("#use-paste").addEventListener("click", function () { inMsg(""); try { useArea(parseBoundary($("#paste").value, { kind: "paste" })); } catch (e) { inFail(e, "yapıştırılan metin"); } });
+function goLoc() { inMsg(""); try { var ll = parseLoc($("#loc").value); useArea(squareArea(ll[0], ll[1], +$("#size").value || 200)); } catch (e) { inFail(e, "konum"); } }
+$("#go").addEventListener("click", goLoc);
+$("#loc").addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); goLoc(); } });
+$("#size").addEventListener("change", function () { var s = st.parcel && st.parcel.src; if (s && s.kind === "loc") { try { useArea(squareArea(s.lat, s.lon, +this.value || 200)); } catch (e) { inFail(e, "konum"); } } });
+$("#sample").addEventListener("click", function () { inMsg(""); useArea(normArea(SAMPLE, {}, { kind: "sample" })); });
 
 /* ---------- koordinat hesabı ---------- */
 var WA = 6378137, WF = 1 / 298.257223563;
@@ -628,12 +733,13 @@ function utm(lon, lat, zone, south) {
   for (var j = 1; j <= 6; j++) { x += al[j] * Math.cos(2 * j * xi) * Math.sinh(2 * j * eta); y += al[j] * Math.sin(2 * j * xi) * Math.cosh(2 * j * eta); }
   return [500000 + 0.9996 * A * x, (south ? 10000000 : 0) + 0.9996 * A * y];
 }
-// Parselin çevresinde düz bir çerçeve: metre cinsinden doğu ve kuzey
+// Alanın çevresinde düz bir çerçeve: metre cinsinden doğu ve kuzey
 function makeFrame(parcel, zoom) {
   var e2 = WF * (2 - WF), phi = parcel.lat0 * Math.PI / 180, W = Math.sqrt(1 - e2 * Math.sin(phi) * Math.sin(phi));
   var kx = Math.PI / 180 * (WA / W) * Math.cos(phi), ky = Math.PI / 180 * (WA * (1 - e2) / (W * W * W));
   var b = parcel.bbox, half = Math.max((b[2] - b[0]) * kx, (b[3] - b[1]) * ky) / 2;
   var H = zoom === "near" ? Math.max(half * 1.5, 120) : zoom === "wide" ? Math.max(half * 8, 1200) : Math.max(half * 3, 300);
+  H = Math.min(H, Math.max(half * 1.15, 3000));        // büyük alanlarda pencere en çok alanın kendisi kadar (okunan parça sınırlı kalsın)
   var N = CFG.N;
   return {
     H: H, half: half,
@@ -740,7 +846,7 @@ function bboxWindow(cog, toPx, parcel, pad) {
   x0 = Math.max(0, x0); y0 = Math.max(0, y0); x1 = Math.min(cog.w, x1); y1 = Math.min(cog.h, y1);
   return (x1 - x0 < 1 || y1 - y0 < 1) ? null : [x0, y0, x1, y1];
 }
-// Parselin çevresinde bulut var mı? Sınıf haritasından (SCL, 20 m) sayar.
+// Alanın çevresinde bulut var mı? Sınıf haritasından (SCL, 20 m) sayar.
 function sclStats(it, parcel) {
   return ensureAssets(it).then(function () { if (!it.scl) throw new Error("no scl"); return openCog(it.scl.href); }).then(function (cog) {
     var win = bboxWindow(cog, mapper(cog, it), parcel, 2);
@@ -750,11 +856,11 @@ function sclStats(it, parcel) {
       for (var i = 0; i < n; i++) { var v = d[i]; if (v === 0 || v === 1) nod++; else if (v === 3 || v === 8 || v === 9 || v === 10) cl++; }
       var res = { nodata: n ? nod / n : 1, cloud: n - nod > 0 ? cl / (n - nod) : 0 };
       var cp = Math.round(res.cloud * 100), np = Math.round(res.nodata * 100);
-      note(it.id + " parsel çevresi: " + n + " piksel, bulut %" + cp + ", veri yok %" + np, it.id + " around the parcel: " + n + " pixels, cloud " + cp + "%, no data " + np + "%"); return res;
+      note(it.id + " alanın çevresi: " + n + " piksel, bulut %" + cp + ", veri yok %" + np, it.id + " around the area: " + n + " pixels, cloud " + cp + "%, no data " + np + "%"); return res;
     });
   });
 }
-function evalPass(g, parcel) {       // geçişin karelerini sırayla dener; parseli içeren ilk kare karar verir (bulut iki karede de aynıdır)
+function evalPass(g, parcel) {       // geçişin karelerini sırayla dener; alanı içeren ilk kare karar verir (bulut iki karede de aynıdır)
   if (g.status) return Promise.resolve(g);
   var i = 0;
   function next() {
@@ -810,7 +916,7 @@ function paint(cv, sc, opt) {
   }
   ctx.putImageData(im, 0, 0);
 }
-// Parselin içindeki ortalama yeşillik (NDVI): kırmızı ve yakın kızılötesi bantlardan
+// Alanın içindeki ortalama yeşillik (NDVI): kırmızı ve yakın kızılötesi bantlardan
 function ndvi(it, parcel) {
   if (!it.red || !it.nir) return Promise.resolve(null);
   return Promise.all([openCog(it.red.href), openCog(it.nir.href)]).then(function (cs) {
@@ -884,12 +990,13 @@ function showInfo() {
   var p = st.parcel, d = $("#info"); d.innerHTML = "";
   if (!p) { $("#info-panel").hidden = true; return; }
   function row(k, v) { if (!v) return; var dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = k; dd.textContent = v; d.appendChild(dt); d.appendChild(dd); }
-  var pr = p.props, area = parseArea(pr.alan), calc = polyArea(p);
-  row(T("iWhere"), [pr.ilAd, pr.ilceAd, pr.mahalleAd].filter(Boolean).join(" · "));
+  var pr = p.props, area = parseArea(pr.alan), calc = polyArea(p), where = [pr.ilAd, pr.ilceAd, pr.mahalleAd].filter(Boolean).join(" · ");
+  row(T("iWhere"), where); if (!where && !(p.src && p.src.kind === "loc")) row(T("iName"), areaName(p));      // konumda ad, merkezle aynıdır
   row(T("iAda"), pr.parselNo != null ? (pr.adaNo != null ? pr.adaNo : "0") + " / " + pr.parselNo : "");
   if (area) row(T("iArea"), T("donum", fmtNum(area, 2), fmtNum(area / 1000, 1)));
   row(T("iKind"), pr.nitelik); row(T("iSite"), pr.mevkii); row(T("iSheet"), pr.pafta);
-  row(T("iCalc"), T("donum", fmtNum(calc, 0), fmtNum(calc / 1000, 1)));
+  row(T(area ? "iCalc" : "iArea"), T("donum", fmtNum(calc, 0), fmtNum(calc / 1000, 1)));      // dosyada yüzölçümü yoksa tek satır: sınırdan hesaplanan
+  row(T("iSrc"), srcText(p)); row(T("iCentre"), p.lat0.toFixed(5) + ", " + p.lon0.toFixed(5));
   var dt = document.createElement("dt"), dd = document.createElement("dd"), a = document.createElement("a");
   dt.textContent = T("iMap"); a.textContent = T("iMapOpen"); a.target = "_blank"; a.rel = "noopener";
   a.href = "https://www.google.com/maps/@?api=1&map_action=map&center=" + p.lat0.toFixed(6) + "%2C" + p.lon0.toFixed(6) + "&zoom=17&basemap=satellite";
@@ -933,12 +1040,13 @@ function refreshTexts() {
 }
 
 /* ---------- akış ---------- */
-function useParcel(p) {
-  var who = [p.props.ilAd, p.props.ilceAd, p.props.mahalleAd, (p.props.adaNo != null ? p.props.adaNo : "?") + "/" + (p.props.parselNo != null ? p.props.parselNo : "?")].filter(Boolean).join(" · "), at = p.lat0.toFixed(5) + "," + p.lon0.toFixed(5);
-  note("parsel: " + who + " · merkez " + at, "parcel: " + who + " · centre " + at);
+function useArea(p) {
+  var pts = 0; p.polys.forEach(function (poly) { poly.forEach(function (r) { pts += r.length - 1; }); });
+  var at = p.lat0.toFixed(5) + "," + p.lon0.toFixed(5), fmt = p.src && p.src.format ? " (" + p.src.format + ")" : "";
+  note("alan: " + areaName(p, "tr") + " · " + srcText(p, "tr") + fmt + " · " + p.polys.length + " çokgen, " + pts + " köşe · merkez " + at, "area: " + areaName(p, "en") + " · " + srcText(p, "en") + fmt + " · " + p.polys.length + " polygons, " + pts + " points · centre " + at);
   st.parcel = p; st.frame = makeFrame(p, st.zoom); st.passes = []; st.after = null; st.before = null; st.nd = { a: undefined, b: undefined };
   var run = ++st.run; logLines = [];
-  try { localStorage.setItem("kc.orbit.last", JSON.stringify({ type: "Feature", geometry: { type: "MultiPolygon", coordinates: p.polys }, properties: p.props })); } catch (e) {}
+  try { localStorage.setItem("kc.orbit.last", JSON.stringify({ v: 2, polys: p.polys, props: p.props, src: p.src })); } catch (e) {}
   $("#ctrl").hidden = true; $("#score").hidden = true;
   ["#cv-after", "#cv-before"].forEach(function (id) { var c = $(id); c.getContext("2d").clearRect(0, 0, c.width, c.height); });
   refreshTexts(); repaint();
@@ -1062,14 +1170,23 @@ window.addEventListener("resize", drawOverlay);
 /* ---------- başla ---------- */
 note("sayfa: " + location.host + location.pathname + " · " + navigator.userAgent, "page: " + location.host + location.pathname + " · " + navigator.userAgent);
 setLang(pickLang());
-loadIl();
-try { var last = JSON.parse(localStorage.getItem("kc.orbit.last") || "null"); if (last) useParcel(normParcel(last)); } catch (e) {}
-window.__orbit = { utm: utm, st: st, normParcel: normParcel, useParcel: useParcel, polyArea: polyArea, CFG: CFG };
+(function () {
+  try {
+    var last = JSON.parse(localStorage.getItem("kc.orbit.last") || "null");
+    if (last && last.v === 2) {
+      var p = normArea(last.polys, last.props, last.src);
+      if (p.src.kind === "loc") { $("#loc").value = p.src.lat.toFixed(5) + ", " + p.src.lon.toFixed(5); if ($('#size option[value="' + p.src.side + '"]')) $("#size").value = String(p.src.side); }
+      useArea(p);
+    } else if (last) localStorage.removeItem("kc.orbit.last");             // eski sürümün kaydı
+    for (var i = localStorage.length - 1; i >= 0; i--) { var k = localStorage.key(i); if (/^kc\.orbit\.(il$|ilce\.|mah\.)/.test(k)) localStorage.removeItem(k); }   // eski sürümün sakladığı listeler
+  } catch (e) {}
+})();
+window.__orbit = { utm: utm, st: st, makeFrame: makeFrame, parseBoundary: parseBoundary, parseLoc: parseLoc, squareArea: squareArea, normArea: normArea, useArea: useArea, polyArea: polyArea, mapProps: mapProps, SAMPLE: SAMPLE, CFG: CFG };
 })();
 </script>
 <script>
 /* Ziyaret sayacı: Kose Capital'in kendi sayacı, ana sayfadakiyle aynı. Yalnız yayındaki alan adında, sayfa açılınca bir kez çağrılır.
-   Çerez yoktur; hangi parsele bakıldığı gönderilmez. */
+   Çerez yoktur; hangi alana bakıldığı gönderilmez. */
 (function () {
   try {
     var u = "https://kose-sayac.falling-flower-8099.workers.dev";

@@ -127,7 +127,7 @@ html[data-lang="tr"] .en{display:none}
       <li><a href="#castle" class="on" data-i="0" style="--accent:var(--castle)"><span class="nm">Castle</span><span class="tag"><b><span class="en">Value investing</span><span class="tr">Değer yatırımı</span></b><span class="st"><span class="en">Live</span><span class="tr">Yayında</span></span><span><span class="en">Every listed company in a country, run through four walls.</span><span class="tr">Bir ülkedeki bütün hisseler dört surdan geçer.</span></span></span></a></li>
       <li><a href="#bazaar" data-i="1" style="--accent:var(--bazaar)"><span class="nm">Bazaar</span><span class="tag"><b><span class="en">AI sales</span><span class="tr">Yapay zekâyla satış</span></b><span class="st"><span class="en">Pilot</span><span class="tr">Pilot aşamasında</span></span><span><span class="en">Finds buyers abroad for what you make and opens the conversation.</span><span class="tr">Ürettiğin ürüne yurt dışında alıcı bulur, ilk teması kurar.</span></span></span></a></li>
       <li><a href="#apex" data-i="2" style="--accent:var(--apex)"><span class="nm">Apex</span><span class="tag"><b><span class="en">Exchange connectivity</span><span class="tr">Borsa bağlantısı</span></b><span class="st"><span class="en">In production</span><span class="tr">Canlıda</span></span><span><span class="en">At Borsa Istanbul: market data in over ITCH, orders out over OUCH.</span><span class="tr">Borsa İstanbul'da veri ITCH ile gelir, emir OUCH ile gider.</span></span></span></a></li>
-      <li><a href="#orbit" data-i="3" style="--accent:var(--orbit)"><span class="nm">Orbit</span><span class="tag"><b><span class="en">Satellite imagery</span><span class="tr">Uydu görüntüsü</span></b><span class="st"><span class="en">Live</span><span class="tr">Yayında</span></span><span><span class="en">The latest cloud-free image of a land parcel in Türkiye.</span><span class="tr">Türkiye'deki bir parselin en yeni bulutsuz görüntüsü.</span></span></span></a></li>
+      <li><a href="#orbit" data-i="3" style="--accent:var(--orbit)"><span class="nm">Orbit</span><span class="tag"><b><span class="en">Satellite imagery</span><span class="tr">Uydu görüntüsü</span></b><span class="st"><span class="en">Live</span><span class="tr">Yayında</span></span><span><span class="en">The latest cloud-free image of a piece of land in Türkiye.</span><span class="tr">Türkiye'deki bir arazinin en yeni bulutsuz görüntüsü.</span></span></span></a></li>
     </ul>
   </div>
 </section>
@@ -186,10 +186,10 @@ html[data-lang="tr"] .en{display:none}
   <div class="wrap"><div class="col">
     <p class="status"><i></i><span class="en">Live</span><span class="tr">Yayında</span></p>
     <h2>Orbit</h2>
-    <p class="lede"><span class="en">Orbit shows the latest cloud-free satellite image of a land parcel in Türkiye and compares it with an earlier date. You check for change on the land without going there.</span><span class="tr">Orbit, Türkiye'deki bir parselin en yeni bulutsuz uydu görüntüsünü gösterir ve eski bir tarihle karşılaştırır. Arazide değişiklik var mı, yerine gitmeden bakarsın.</span></p>
+    <p class="lede"><span class="en">Orbit shows the latest cloud-free satellite image of a piece of land in Türkiye and compares it with an earlier date. You check for change on the land without going there.</span><span class="tr">Orbit, Türkiye'deki bir arazinin en yeni bulutsuz uydu görüntüsünü gösterir ve eski bir tarihle karşılaştırır. Arazide değişiklik var mı, yerine gitmeden bakarsın.</span></p>
     <ol class="steps">
-      <li><span><span class="en">You pick the province, district and neighbourhood, then enter the block and parcel numbers.</span><span class="tr">İl, ilçe ve mahalleyi seçer, ada ve parsel numarasını yazarsın.</span></span></li>
-      <li><span><span class="en">Orbit draws the parcel boundary and finds the latest image with no cloud over the parcel.</span><span class="tr">Orbit parselin sınırını çizer, parselin üstünde bulut olmayan en yeni görüntüyü bulur.</span></span></li>
+      <li><span><span class="en">You load the boundary file of the land (KML or GeoJSON) or paste a location.</span><span class="tr">Arazinin sınır dosyasını (KML ya da GeoJSON) yüklersin ya da bir konum yapıştırırsın.</span></span></li>
+      <li><span><span class="en">Orbit draws the boundary and finds the latest image with no cloud over the area.</span><span class="tr">Orbit sınırı çizer, alanın üstünde bulut olmayan en yeni görüntüyü bulur.</span></span></li>
       <li><span><span class="en">You slide between that image and an earlier one to compare them.</span><span class="tr">Bu görüntüyle eski bir görüntü arasında kaydırarak ikisini karşılaştırırsın.</span></span></li>
     </ol>
     <p class="small"><span class="en">Sentinel-2 imagery at 10 m per pixel: it shows change on large plots, not fine detail.</span><span class="tr">Sentinel-2 görüntüsü, piksel başına 10 metre: büyük arazilerde değişimi gösterir, ince ayrıntıyı göstermez.</span></p>
@@ -225,8 +225,8 @@ var relayout = function () {};
 /* Yayındaki sitede Castle ve Orbit aynı alan adının /castle/ ve /orbit/ yollarındadır; önizlemede tam adres kullanılır. */
 var LIVE = /^(www\.)?kosecapital\.com$|^kosecapital\.github\.io$|^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 var CASTLE = LIVE ? "/castle/" : "https://kosecapital.github.io/castle/", ORBIT = LIVE ? "/orbit/" : "https://kosecapital.github.io/orbit/";
-var DESC = { en: "Kose Capital builds and runs four systems: Castle (value investing), Bazaar (AI sales), Apex (exchange connectivity for Borsa Istanbul) and Orbit (satellite imagery of land parcels in Türkiye).",
-             tr: "Kose Capital dört sistem kurar ve işletir: Castle (değer yatırımı), Bazaar (yapay zekâyla satış), Apex (Borsa İstanbul için borsa bağlantısı) ve Orbit (Türkiye'deki parsellerin uydu görüntüsü)." };
+var DESC = { en: "Kose Capital builds and runs four systems: Castle (value investing), Bazaar (AI sales), Apex (exchange connectivity for Borsa Istanbul) and Orbit (satellite imagery of land in Türkiye).",
+             tr: "Kose Capital dört sistem kurar ve işletir: Castle (değer yatırımı), Bazaar (yapay zekâyla satış), Apex (Borsa İstanbul için borsa bağlantısı) ve Orbit (Türkiye'deki arazilerin uydu görüntüsü)." };
 
 /* ---------- dil: ziyaretçinin seçimi, adresteki ?lang=, tarayıcının dili ---------- */
 var LANG = (function () {
