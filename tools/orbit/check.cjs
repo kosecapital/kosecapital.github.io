@@ -36,6 +36,24 @@ const ITEMS = [
   // daha eski sayfa
   ["S2B_35SQB_20261025_1_L2A", "2026-10-25T08:59:49.477000Z", 0.3, "35SQB", 0, { SCL: "35SQB_after_SCL", TCI: "35SQB_after_TCI" }],
   ["S2C_35SQB_20261020_0_L2A", "2026-10-20T08:59:54.531000Z", 0.2, "35SQB", 0, { SCL: "35SQB_after_SCL", TCI: "35SQB_after_TCI" }],
+  // "Ne zaman değişti?" çizelgesi için (uydurma kayıtlar): alanın içi 9 Haziran'a kadar yeşil, 24 Haziran'dan sonra toprak.
+  // 7 Şubat'ta her yer daha parlak (mevsim farkı gibi); 8 Ocak ve 19 Haziran bulutlu; 10 Nisan'ın dosyaları yok (okunamaz).
+  ["S2C_36STG_20261010_0_L2A", "2026-10-10T08:59:49.000000Z", 2.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_after_TCI" }],
+  ["S2B_36STG_20260910_0_L2A", "2026-09-10T08:59:49.000000Z", 1.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_after_TCI" }],
+  ["S2C_36STG_20260809_0_L2A", "2026-08-09T08:59:49.000000Z", 3.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_after_TCI", B04: "36STG_after_B04", B08: "36STG_after_B08" }],
+  ["S2B_36STG_20260710_0_L2A", "2026-07-10T08:59:49.000000Z", 2.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_after_TCI" }],
+  ["S2C_36STG_20260629_0_L2A", "2026-06-29T08:59:49.000000Z", 4.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_after_TCI" }],
+  ["S2B_36STG_20260624_0_L2A", "2026-06-24T08:59:49.000000Z", 5.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_after_TCI" }],
+  ["S2C_36STG_20260619_0_L2A", "2026-06-19T08:59:49.000000Z", 20.0, "36STG", 0, { SCL: "36STG_cloud_SCL" }],
+  ["S2B_36STG_20260614_0_L2A", "2026-06-14T08:59:49.000000Z", 3.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_green_TCI" }],
+  ["S2C_36STG_20260609_0_L2A", "2026-06-09T08:59:49.000000Z", 2.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_green_TCI" }],
+  ["S2B_36STG_20260511_0_L2A", "2026-05-11T08:59:49.000000Z", 6.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_green_TCI" }],
+  ["S2B_36STG_20260410_0_L2A", "2026-04-10T08:59:49.000000Z", 5.0, "36STG", 0, {}],
+  ["S2C_36STG_20260312_0_L2A", "2026-03-12T08:59:49.000000Z", 8.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_green_TCI" }],
+  ["S2B_36STG_20260207_0_L2A", "2026-02-07T08:59:49.000000Z", 6.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_season_TCI" }],
+  ["S2C_36STG_20260113_0_L2A", "2026-01-13T08:59:49.000000Z", 5.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_green_TCI" }],
+  ["S2B_36STG_20260108_0_L2A", "2026-01-08T08:59:49.000000Z", 30.0, "36STG", 0, { SCL: "36STG_cloud_SCL" }],
+  ["S2C_36STG_20251210_0_L2A", "2025-12-10T08:59:49.000000Z", 4.0, "36STG", 0, { SCL: "36STG_after_SCL", TCI: "36STG_green_TCI" }],
   // bir yıl önce (uydurma kayıtlar)
   ["S2C_35SQB_20251113_0_L2A", "2025-11-13T08:49:58.000000Z", 35.0, "35SQB", 0, { SCL: "35SQB_cloud_SCL" }],
   ["S2B_35SQB_20251110_0_L2A", "2025-11-10T08:59:52.000000Z", 2.5, "35SQB", 0, { SCL: "35SQB_before_SCL", TCI: "35SQB_before_TCI", B04: "35SQB_before_B04", B08: "35SQB_before_B08" }],
@@ -94,10 +112,12 @@ function serve() {
   async function open(opt) {
     const ctx = await browser.newContext({ viewport: opt.viewport || { width: 1280, height: 900 }, deviceScaleFactor: opt.dsf || 1, isMobile: !!opt.mobile, hasTouch: !!opt.mobile, locale: opt.locale || "tr-TR" });
     if (opt.live) await ctx.addInitScript(() => Object.defineProperty(Navigator.prototype, "webdriver", { get: () => false }));   // sayaç otomasyon tarayıcısında susar; gerçek ziyaretçi gibi görün
+    if (opt.clip) await ctx.grantPermissions(["clipboard-read", "clipboard-write"]);
+    if (opt.share) await ctx.addInitScript(() => { window.__shared = []; navigator.share = (d) => { window.__shared.push(d); return Promise.resolve(); }; });   // telefonun paylaşım menüsü yerine
     const page = await ctx.newPage(), log = { errors: [], urls: [], bytes: 0, ranges: 0, stray: [], hits: [] };
     page.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource|net::ERR/.test(m.text())) log.errors.push("konsol: " + m.text()); });
     page.on("pageerror", (e) => log.errors.push("betik: " + e.message));
-    await ctx.route("**/*", (route) => {
+    await ctx.route("**/*", async (route) => {
       const req = route.request(), u = req.url();
       if (u.startsWith(base) || u.startsWith("data:") || u.startsWith("blob:")) return route.continue();
       if (opt.live && u.startsWith(LIVE)) {                                         // yayındaki adres: dosyalar docs/ klasöründen
@@ -109,6 +129,7 @@ function serve() {
       if (opt.live && u.startsWith(COUNTER)) { log.hits.push(req.method() + " " + u.slice(COUNTER.length)); return route.fulfill({ status: 204, body: "" }); }
       log.urls.push(u);
       if (!ALLOWED.test(u)) { log.stray.push(u); return route.abort("failed"); }
+      if (opt.slow) await new Promise((r) => setTimeout(r, opt.slow));
       const json = (status, body) => route.fulfill({ status, headers: Object.assign({ "content-type": "application/json; charset=utf-8" }, CORS), body: JSON.stringify(body) });
       if (u.startsWith("https://earth-search.aws.element84.com/v1/search")) {
         if (opt.stac === "down") return route.abort("failed");
@@ -137,7 +158,7 @@ function serve() {
       }
       return route.abort("failed");
     });
-    await page.goto((opt.live ? LIVE : base) + "orbit/" + (opt.lang ? "?lang=" + opt.lang : ""), { waitUntil: "load" });
+    await page.goto((opt.live ? LIVE : base) + "orbit/" + (opt.lang ? "?lang=" + opt.lang : "") + (opt.hash || ""), { waitUntil: "load" });
     return { ctx, page, log };
   }
   const state = (page) => page.evaluate(() => {
@@ -147,7 +168,8 @@ function serve() {
       rows: [...document.querySelectorAll("#rows tr")].map((r) => [...r.children].slice(0, 4).map((c) => c.textContent.trim()).join(" | ")),
       msg: [...document.querySelectorAll("#in-msg, #loc-msg")].filter((m) => !m.hidden).map((m) => m.textContent).join(" "), single: document.querySelector("#stage").classList.contains("single"), polys: s.parcel ? s.parcel.polys.length : 0, area: s.parcel ? Math.round(window.__orbit.polyArea(s.parcel)) : 0, src: s.parcel ? s.parcel.src.kind : "",
       info: [...document.querySelectorAll("#info dt")].map((d) => d.textContent + ": " + d.nextSibling.textContent), score: [t("#nd-b"), t("#nd-a"), t("#nd-d"), t("#nd-t")],
-      overflow: document.documentElement.scrollWidth - innerWidth, diag: t("#diag") };
+      overflow: document.documentElement.scrollWidth - innerWidth, diag: t("#diag"), hash: decodeURIComponent(location.hash), chosen: !document.querySelector("#pinned").hidden,
+      newest: [...document.querySelectorAll(".head.after .new")].some((e) => e.getClientRects().length > 0), share: !document.querySelector("#share").hidden, shMsg: t("#sh-msg") };
   });
   const settled = (page, need) => page.waitForFunction((need) => { const s = window.__orbit.st; return s.after && s.after.scene && (!need || (s.before && s.before.scene && s.nd.a !== undefined && s.nd.b !== undefined)) && document.querySelector("#busy").hidden; }, need, { timeout: 30000 });
   const loadFile = (page, name, data) => page.setInputFiles("#file", { name, mimeType: "application/octet-stream", buffer: Buffer.isBuffer(data) ? data : Buffer.from(data) });
@@ -234,8 +256,11 @@ function serve() {
     const s3 = await state(page); ok(s3.hAfter === "14 Kasım 2026" && /bulutlu %100/.test(s3.sAfter) && /"Sonra" görüntüsü/.test(s3.log.slice(-1)[0]), "bulutlu geçiş elle seçilince gösterilmedi: " + s3.sAfter);
     await rowButton(page, "8 Kasım", 1); await page.waitForFunction(() => window.__orbit.st.after.item.id === "S2A_35SQB_20261108_0_L2A" && document.querySelector("#busy").hidden);
     // önceki tarih seçimi: 3 ay önce (örnek veride yok) ve daha eski geçişler
-    await page.selectOption("#pre", "91"); await page.waitForFunction(() => /bulunamadı/.test(document.querySelector("#log").textContent));
+    await page.selectOption("#pre", "91"); await page.waitForFunction(() => { const b = window.__orbit.st.before; return b && b.scene && b.item.id === "S2C_36STG_20260809_0_L2A" && window.__orbit.st.nd.b !== undefined; }).catch(() => fail("3 ay önce: 9 Ağustos 2026 görüntüsü gelmedi"));
+    await page.selectOption("#pre", "730"); await page.waitForFunction(() => /bulunamadı/.test(document.querySelector("#log").textContent));
     ok((await state(page)).single, "önceki görüntü yokken tek görüntü görünümüne dönmedi");
+    const one = await page.evaluate(() => { const c = window.__orbit.exportCanvas(); return [c.width, c.height, window.__orbit.exportName()].join("|"); });
+    ok(one === "776|1044|orbit-burdur-bucak-deneme-101-7-20261108.png", "tek görüntülü indirilen görsel: " + one);
     const n0 = (await state(page)).rows.length; await page.click("#older"); await page.waitForFunction((n) => document.querySelectorAll("#rows tr").length > n, n0);
     // dil: İngilizce. Görünen her şey İngilizce olmalı (dosyadan gelen yer adları ve nitelikler veri olduğu için olduğu gibi kalır).
     await page.click('#lang button[data-lang="en"]'); const en = await state(page);
@@ -365,7 +390,191 @@ function serve() {
     ok(log.hits.length === 1 && log.hits[0] === "POST hit?t=v&s=orbit&p=&r=&l=tr", "ziyaret sayacı: tek kayıt bekleniyordu (s=orbit, l=tr): " + JSON.stringify(log.hits));
     ok(!log.stray.length, "yayındaki adreste izin verilmeyen adrese istek: " + log.stray.join(", ")); ok(!log.errors.length, "konsol: " + log.errors.join(";")); await ctx.close(); }
 
+  // ---- çizelgenin durumu ----
+  const tlWait = (page) => page.waitForFunction(() => { const t = window.__orbit.tl; return t.slots.length > 0 && !t.busy; }, null, { timeout: 60000 });
+  const tlState = (page) => page.evaluate(() => {
+    const P = window.__orbit, t = P.tl, q = (s) => document.querySelector(s), txt = (s) => q(s).textContent.trim(), cells = [...document.querySelectorAll("#tl-strip .tl-cell")];
+    const px = (cv, x, y) => [...cv.getContext("2d").getImageData(x, y, 1, 1).data].slice(0, 3);
+    // Küçük görüntü alana yakın çerçeveye (kenarı 240 m) kırpılmış olmalı: merkezden 30 m uzaktaki dört nokta alanın içinde, 100 m uzaktaki iki köşe dışında kalır.
+    const crop = (cv) => { const mid = px(cv, 72, 72).join(); return [[54, 72], [90, 72], [72, 54], [72, 90]].every((c) => px(cv, c[0], c[1]).join() === mid) && [[12, 132], [132, 12]].every((c) => px(cv, c[0], c[1]).join() !== mid); };
+    const chart = q("#tl-chart"), cd = chart.width && !q("#tl-body").hidden ? chart.getContext("2d").getImageData(0, 0, chart.width, chart.height).data : [];
+    const near = (o, c) => Math.abs(cd[o] - c[0]) < 6 && Math.abs(cd[o + 1] - c[1]) < 6 && Math.abs(cd[o + 2] - c[2]) < 6 && cd[o + 3] > 200;
+    let pink = 0, gray = 0; for (let o = 0; o < cd.length; o += 4) { if (near(o, [255, 120, 190])) pink++; else if (near(o, [107, 118, 111])) gray++; }
+    return { n: t.slots.length, busy: t.busy, days: t.days,
+      slots: t.slots.map((sl, i) => ({ state: sl.state, id: sl.s ? sl.s.item.id : null, i: sl.d && sl.d.i != null ? +sl.d.i.toFixed(2) : null, o: sl.d && sl.d.o != null ? +sl.d.o.toFixed(2) : null,
+        label: cells[i] ? cells[i].querySelector(".d").textContent : "", ph: cells[i] && cells[i].querySelector(".ph") ? cells[i].querySelector(".ph").textContent : "",
+        mid: cells[i] && cells[i].querySelector("canvas") ? px(cells[i].querySelector("canvas"), 72, 72) : null, crop: cells[i] && cells[i].querySelector("canvas") ? crop(cells[i].querySelector("canvas")) : null, mark: cells[i] ? (cells[i].classList.contains("is-a") ? "a" : "") + (cells[i].classList.contains("is-b") ? "b" : "") : "" })),
+      pick: t.pick ? [t.pick.a, t.pick.b] : null, state: txt("#tl-state"), find: q("#tl-find").hidden ? "" : txt("#tl-find-t"), acts: !q("#tl-find").hidden && !q("#tl-acts").hidden, zoom: !q("#tl-find").hidden && !q("#tl-acts").hidden && !q("#tl-zoom").hidden, read: txt("#tl-read"),
+      rows: [...document.querySelectorAll("#tl-rows tr")].map((r) => [...r.children].map((c) => c.textContent).join(" | ")), pressed: [...document.querySelectorAll("#tl-span button")].map((b) => b.getAttribute("aria-pressed") + (b.disabled ? "!" : "")).join(","),
+      stop: !q("#tl-stop").hidden, body: !q("#tl-body").hidden, shown: !q("#tl").hidden, axis: [...document.querySelectorAll("#tl-axis span")].map((e) => e.textContent), pink, gray, aria: chart.getAttribute("aria-label") || "",
+      scroll: [Math.round(q("#tl-scroll").scrollLeft), q("#tl-scroll").scrollWidth, q("#tl-scroll").clientWidth], bytes: P.net.bytes, cogs: P.cogs.size, overflow: document.documentElement.scrollWidth - innerWidth };
+  });
+  const ids = (t) => t.slots.map((x) => (x.id ? x.id.slice(10, 18) : x.state)).join(" ");
+  const SEASON = [109, 239, 109];        // "mevsim" görüntüsünde alanın içi (parlaklık 1,3 ile)
+
+  // 7) paylaşım: alan adresin # bölümüne yazılır; bağlantıyı açan aynı alanı ve aynı iki tarihi görür. İndirilen görsel.
+  { const { ctx, page, log } = await open({ lang: "tr", clip: true });
+    // çokgenlerin yazılıp okunması (delikli, çok parçalı, eksi koordinatlı), özniteliklerin gidiş dönüşü, bozuk bağlantılar
+    const rt = await page.evaluate(() => {
+      const P = window.__orbit, sq = (x, y, d) => [[x - d, y - d], [x + d, y - d], [x + d, y + d], [x - d, y + d], [x - d, y - d]];
+      const polys = [[sq(-70.6512345678, -33.4512345678, 0.001), sq(-70.6512345678, -33.4512345678, 0.0003)], [sq(-70.6472, -33.4489, 0.0005)]];
+      const props = { ilAd: "Şanlıurfa", ilceAd: "Viranşehir", mahalleAd: "Yukarı Köy & Çiftlik #2", adaNo: "0", parselNo: "12", alan: "1.234,56", nitelik: "Tarla + Bağ", mevkii: "Dere=Kenarı / 100%", pafta: "N41-b" };
+      const a = P.normArea(polys, props, { kind: "file", name: "x.kml" }), f = P.fragOf(a, false), b = P.areaOfFrag("#" + f).area;
+      let worst = 0; a.polys.forEach((poly, i) => poly.forEach((r, j) => r.forEach((c, k) => { const d = b.polys[i][j][k]; worst = Math.max(worst, Math.abs(c[0] - d[0]), Math.abs(c[1] - d[1])); })));
+      const bad = []; for (const t of ["#s=!!!", "#s=AAAA", "#s=A", "#s=gA", "#k=1_2", "#k=95_30_200", "#k=37_30_99999", "#k=a_b_c", "#s=" + P.encPolys([[sq(30, 37, 0.2)]]), "#s=" + P.encPolys([[sq(30, 37, 0.000001)]])]) { try { P.areaOfFrag(t); bad.push(t.slice(0, 12)); } catch (e) {} }
+      const named = P.areaOfFrag("#" + P.fragOf(P.normArea([[sq(30, 37, 0.001)]], {}, { kind: "file", name: "Çizdiğim alan.kmz" }), false)).area.props.ad;
+      return { worst, rings: b.polys.map((p) => p.length).join(","), props: JSON.stringify(b.props) === JSON.stringify(props), src: b.src.kind, len: f.length, safe: /^[A-Za-z0-9._%&=+*-]+$/.test(f), bad, named,
+        none: P.areaOfFrag("#") === null && P.areaOfFrag("#foo=1") === null, area: [Math.round(P.polyArea(a)), Math.round(P.polyArea(b))].join("=") };
+    });
+    console.log("bağlantı birimi " + JSON.stringify(rt));
+    ok(rt.worst < 1e-7 && rt.rings === "2,1" && rt.props && rt.src === "link" && rt.safe && rt.none && rt.named === "Çizdiğim alan", "çokgen ya da öznitelik gidiş dönüşü: " + JSON.stringify(rt)); ok(!rt.bad.length, "bozuk bağlantı kabul edildi: " + rt.bad.join(" "));
+    await loadFile(page, "ornek-parsel.kml", kml({ name: "Deneme-101/7", attr: ATTR })); await settled(page, true);
+    let s = await state(page);
+    ok(/^#s=[\w.-]+&il=Burdur&ilce=Bucak&mah=Deneme&ada=101&parsel=7&alan=13\.528,70&nitelik=Tarla&pafta=M24&ad=Deneme-101\/7$/.test(s.hash), "adres çubuğu alanı taşımıyor ya da tarih yazıyor: " + s.hash);
+    ok(s.share && s.newest && !s.chosen && (await page.evaluate(() => document.querySelector("#sh-send").hidden)), "paylaşım satırı, 'en yeni' etiketi ya da Paylaş düğmesi (bu tarayıcıda paylaşım menüsü yok): " + JSON.stringify([s.share, s.newest, s.chosen]));
+    await page.click("#sh-copy"); await page.waitForFunction(() => /kopyalandı/.test(document.querySelector("#sh-msg").textContent)).catch(() => fail("bağlantı kopyalanmadı: " + JSON.stringify(s.shMsg)));
+    const link = await page.evaluate(() => navigator.clipboard.readText()), frag = link.slice(link.indexOf("#"));
+    console.log("bağlantı (" + link.length + " karakter): " + decodeURIComponent(link).replace(base, "…/"));
+    ok(link.startsWith(base + "orbit/#s=") && /&sonra=20261109C&once=20251110B$/.test(link) && !/lang=/.test(link) && link.length < 400, "kopyalanan bağlantı: " + link);
+    // indirilen görsel: dosya adı, boyut, iki görüntünün ortası, sınır çizgisi, logo, alt satırlar
+    const [dl] = await Promise.all([page.waitForEvent("download"), page.click("#sh-png")]), png = fs.readFileSync(await dl.path());
+    console.log("indirilen görsel: " + dl.suggestedFilename() + " " + png.readUInt32BE(16) + "x" + png.readUInt32BE(20) + " " + Math.round(png.length / 1024) + " KB");
+    ok(dl.suggestedFilename() === "orbit-burdur-bucak-deneme-101-7-20251110-20261109.png" && png.slice(1, 4).toString() === "PNG" && png.readUInt32BE(16) === 1512 && png.readUInt32BE(20) === 1076, "indirilen görselin adı ya da boyutu: " + dl.suggestedFilename());
+    ok(/Görüntü indirildi: orbit-burdur/.test((await state(page)).shMsg), "indirme bilgisi yazmadı"); if (OUT) fs.writeFileSync(path.join(OUT, "orbit-7-indirilen.png"), png);
+    const ex = await page.evaluate(() => { const cv = window.__orbit.exportCanvas(), w = cv.width, d = cv.getContext("2d").getImageData(0, 0, w, cv.height).data, at = (x, y) => [d[(y * w + x) * 4], d[(y * w + x) * 4 + 1], d[(y * w + x) * 4 + 2]];
+      let pink = 0, logo = 0, text = 0, name = 0;
+      for (let y = 252; y < 972; y++) for (let x = 28; x < 1484; x++) { const o = (y * w + x) * 4; if (d[o] === 255 && d[o + 1] === 120 && d[o + 2] === 190) pink++; }
+      for (let y = 28; y < 58; y++) for (let x = 28; x < 220; x++) { const o = (y * w + x) * 4; if (d[o] > 200 && d[o + 1] > 200 && d[o + 2] > 180) logo++; }
+      for (let y = 80; y < 120; y++) for (let x = 28; x < 700; x++) { const o = (y * w + x) * 4; if (d[o] > 200 && d[o + 1] > 200 && d[o + 2] > 180) name++; }
+      for (let y = 980; y < 1076; y++) for (let x = 28; x < 1484; x++) { const o = (y * w + x) * 4; if (d[o] > 110) text++; }
+      return { left: at(28 + 360, 252 + 360), right: at(28 + 720 + 16 + 360, 252 + 360), pink, logo, name, text, bg: at(5, 5) }; });
+    console.log("  görselin içi " + JSON.stringify(ex));
+    ok(JSON.stringify(ex.left) === JSON.stringify(GREEN) && JSON.stringify(ex.right) === JSON.stringify(SOIL), "indirilen görselde önce solda (yeşil), sonra sağda (toprak) olmalı: " + JSON.stringify([ex.left, ex.right]));
+    ok(ex.pink > 300 && ex.logo > 150 && ex.name > 400 && ex.text > 300 && ex.bg.join() === "7,11,9", "indirilen görselde sınır çizgisi, logo, ad ya da alt satırlar eksik: " + JSON.stringify(ex));
+    // bağlantı yeni bir tarayıcıda: aynı alan, aynı iki tarih, aynı bilgiler; sınır görüntüye oturur
+    const o2 = await open({ lang: "tr", hash: frag }); await settled(o2.page, true); let r = await state(o2.page);
+    console.log("bağlantıyla açılış: " + r.after + " / " + r.before + " | " + r.info.join(" | "));
+    ok(r.after === s.after && r.before === s.before && r.area === s.area && r.src === "link" && r.polys === 1, "bağlantı aynı alanı ya da aynı tarihleri açmadı: " + JSON.stringify([r.after, r.before, r.area, r.src]));
+    ok(["Yer: Burdur · Bucak · Deneme", "Ada / parsel: 101 / 7", "Yüzölçümü: 13.528,70 m² (13,5 dönüm)", "Nitelik: Tarla", "Pafta: M24", "Sınırdan hesap: 13.546 m² (13,5 dönüm)", "Kaynak: paylaşılan bağlantı", "Merkez: 37.75750, 30.12955"].every((w) => r.info.includes(w)), "bağlantıyla açılan alanın bilgisi: " + r.info.join(" ; "));
+    ok(r.chosen && !r.newest && /&sonra=20261109C&once=20251110B$/.test(r.hash), "tarihli bağlantıda 'belirli bir tarih' satırı, etiket ya da adres: " + JSON.stringify([r.chosen, r.newest, r.hash.slice(-40)]));
+    const same = await o2.page.evaluate((ring) => { const got = window.__orbit.st.parcel.polys[0][0]; return Math.max(...ring.map((c, i) => Math.max(Math.abs(c[0] - got[i][0]), Math.abs(c[1] - got[i][1])))); }, RING);
+    await o2.page.click('#smooth button[data-s="0"]'); const al = await align(o2.page, "#cv-after", "after", SOIL), al2 = await align(o2.page, "#cv-before", "before", GREEN);
+    ok(same < 1e-7 && fits(al) && fits(al2) && al.inOk > 500, "bağlantıdaki sınır dosyadakiyle aynı değil ya da görüntüye oturmuyor: " + same + " " + JSON.stringify(al)); await shot(o2.page, "7-baglanti");
+    // "En yeni görüntüyü göster": tarihler bırakılır, adres yalnız alanı taşır
+    await o2.page.click("#newest"); await o2.page.waitForFunction(() => document.querySelector("#pinned").hidden && window.__orbit.st.pin === null).catch(() => fail("'En yeni görüntüyü göster' satırı kaldırmadı")); await settled(o2.page, true); r = await state(o2.page);
+    ok(r.after === "S2C_36STG_20261109_0_L2A" && r.before === "S2B_35SQB_20251110_0_L2A" && r.newest && !r.chosen && !/sonra=|once=/.test(r.hash) && /^#s=/.test(r.hash), "en yeni görüntüye dönüş: " + JSON.stringify([r.after, r.before, r.newest, r.chosen, r.hash.slice(-30)]));
+    // aynı sekmeye başka bir tarihli bağlantı: 8 Kasım (listede) ve 20 Ekim (listede yok, katalogdan bulunur), yakın görünüm; yeniden yüklenince aynı kalır
+    await o2.page.evaluate((h) => { location.hash = h; }, frag.replace(/&sonra=.*$/, "&sonra=20261108A&once=20261020C&z=near"));
+    const dated = () => o2.page.waitForFunction(() => { const s = window.__orbit.st; return s.after && s.after.scene && s.after.item.id === "S2A_35SQB_20261108_0_L2A" && s.before && s.before.scene && s.before.item.id === "S2C_35SQB_20261020_0_L2A" && document.querySelector("#busy").hidden; }, null, { timeout: 30000 });
+    await dated().catch(() => fail("aynı sekmede açılan tarihli bağlantı gelmedi")); r = await state(o2.page);
+    ok(r.chosen && !r.newest && /&sonra=20261108A&once=20261020C&z=near$/.test(r.hash) && r.hAfter === "8 Kasım 2026" && r.hBefore === "20 Ekim 2026" && (await o2.page.evaluate(() => window.__orbit.st.zoom + "|" + document.querySelector('#zoom button[data-z="near"]').getAttribute("aria-pressed"))) === "near|true", "tarihli bağlantı (8 Kasım, 20 Ekim, yakın): " + JSON.stringify([r.hAfter, r.hBefore, r.hash.slice(-44)]));
+    await o2.page.reload({ waitUntil: "load" }); await dated().catch(() => fail("yeniden yüklenince tarihli bağlantı değişti")); r = await state(o2.page); ok(r.chosen && /&sonra=20261108A&once=20261020C&z=near$/.test(r.hash), "yeniden yüklenince adres: " + r.hash.slice(-44));
+    // tarihli görünümde elle başka geçiş seçilirse adres onu izler
+    await rowButton(o2.page, "9 Kasım", 1); await o2.page.waitForFunction(() => window.__orbit.st.after.item.id === "S2C_36STG_20261109_0_L2A" && document.querySelector("#busy").hidden); r = await state(o2.page);
+    ok(/&sonra=20261109C&once=20261020C&z=near$/.test(r.hash), "tarihli görünümde elle seçilen geçiş adrese yazılmadı: " + r.hash.slice(-44));
+    ok(!o2.log.stray.length && !o2.log.errors.length, "bağlantıyla açılışta izin verilmeyen istek ya da konsol hatası: " + o2.log.stray.concat(o2.log.errors).join(" ; ")); await o2.ctx.close();
+    // bağlantıdaki tarih katalogda yoksa: en yeni görüntü, her zamanki önceki tarih; adresten tarih düşer
+    const o3 = await open({ lang: "tr", hash: "#ornek=1&sonra=20200101A&once=20190101A" }); await settled(o3.page, true); r = await state(o3.page);
+    ok(r.src === "sample" && r.after === "S2C_36STG_20261109_0_L2A" && r.before === "S2B_35SQB_20251110_0_L2A" && r.newest && !r.chosen && r.hash === "#ornek=1" && /bağlantıdaki tarih açılamadı: 20200101A/.test(r.diag), "bağlantıdaki tarih yokken: " + JSON.stringify([r.after, r.before, r.newest, r.chosen, r.hash]));
+    // yalnız "önce" tarihi bulunamazsa: "sonra" bağlantıdaki gibi, "önce" her zamanki arama
+    await o3.page.evaluate(() => { location.hash = "#ornek=1&sonra=20261108A&once=20190101A"; }); await o3.page.waitForFunction(() => { const s = window.__orbit.st; return s.after && s.after.scene && s.after.item.id === "S2A_35SQB_20261108_0_L2A" && s.before && s.before.scene && s.nd.b !== undefined && document.querySelector("#busy").hidden; }, null, { timeout: 30000 }).catch(() => fail("yalnız 'önce' tarihi olmayan bağlantı"));
+    r = await state(o3.page); ok(r.before === "S2B_35SQB_20251110_0_L2A" && r.chosen && /bağlantıdaki tarih açılamadı: 20190101A/.test(r.diag) && r.hash === "#ornek=1&sonra=20261108A&once=20251110B", "yalnız 'önce' tarihi yokken: " + JSON.stringify([r.before, r.chosen, r.hash])); await o3.ctx.close();
+    // konum bağlantısı (İngilizce) ve bozuk bağlantı
+    const o4 = await open({ lang: "en", hash: "#k=37.7575_30.12955_500" }); await settled(o4.page, true); r = await state(o4.page);
+    const form = await o4.page.evaluate(() => [document.querySelector("#loc").value, document.querySelector("#size").value].join("|"));
+    ok(r.src === "loc" && r.info.includes("Source: location; a square 500 m on a side") && r.info.includes("Area: 250,000 m² (250.0 dönüm)") && form === "37.75750, 30.12955|500" && r.hash === "#k=37.7575_30.12955_500" && r.newest && !r.chosen, "konum bağlantısı: " + JSON.stringify([r.src, form, r.hash, r.info]));
+    await o4.page.evaluate(() => { navigator.clipboard.writeText = () => Promise.reject(new Error("izin yok")); });        // pano kapalıysa bağlantı kutuda gösterilir
+    await o4.page.click("#sh-copy"); await wait(300); r = await state(o4.page); ok(/^Could not copy\. Select the link in the box below/.test(r.shMsg), "İngilizce kopyalama bilgisi: " + r.shMsg);
+    ok((await o4.page.evaluate(() => { const b = document.querySelector("#sh-link"); return b.hidden ? "" : b.value; })).endsWith("#k=37.7575_30.12955_500&sonra=20261109C&once=20251110B"), "pano izni yokken bağlantı kutuda gösterilmedi"); await shot(o4.page, "7-kopyalanamadi"); await o4.ctx.close();
+    const o5 = await open({ lang: "tr", hash: "#s=bozuk!!&il=X" }); await wait(500); r = await state(o5.page);
+    ok(/Bağlantıdaki alan okunamadı/.test(r.msg) && !r.src && !o5.log.urls.length, "bozuk bağlantı uyarısı: " + JSON.stringify(r.msg)); await o5.ctx.close();
+    // paylaşım menüsü olan tarayıcı (telefon): başlık, metin ve bağlantı menüye gider
+    const o6 = await open({ lang: "en", share: true, hash: "#ornek=1" }); await settled(o6.page, true); await o6.page.click("#sh-send"); const sh = await o6.page.evaluate(() => window.__shared);
+    console.log("paylaşım menüsü " + JSON.stringify(sh));
+    ok(sh.length === 1 && sh[0].title === "Orbit · Sample area (Burdur)" && sh[0].text === "Sample area (Burdur): satellite images from 10 November 2025 and 9 November 2026" && sh[0].url === base + "orbit/#ornek=1&sonra=20261109C&once=20251110B", "paylaşım menüsüne giden: " + JSON.stringify(sh)); await o6.ctx.close();
+    // yayındaki adreste bağlantıyla açılış: sayaç yine tek kayıt, alan hiçbir isteğe yazılmaz
+    const o7 = await open({ lang: "tr", live: true, hash: frag }); await settled(o7.page, true);
+    const leak = o7.log.urls.filter((u) => /Burdur|Bucak|Deneme|il=|parsel=|[#&?]s=/.test(decodeURIComponent(u)));
+    ok(o7.log.hits.length === 1 && o7.log.hits[0] === "POST hit?t=v&s=orbit&p=&r=&l=tr" && !leak.length && (await state(o7.page)).src === "link", "bağlantıyla açılınca sayaç ya da sızan alan bilgisi: " + JSON.stringify(o7.log.hits) + " " + leak.join(" ")); await o7.ctx.close();
+    // bağlantıya sığmayan sınır: adres boş kalır, düğme nedenini söyler
+    const many = []; for (let i = 0; i < 1500; i++) { const a = i / 1500 * 2 * Math.PI, rr = 0.0009 + 0.0002 * Math.sin(i * 0.7); many.push([+(30.1296 + rr * Math.cos(a)).toFixed(7), +(37.7575 + rr * 0.8 * Math.sin(a)).toFixed(7)]); } many.push(many[0]);
+    await loadFile(page, "ayrintili.geojson", JSON.stringify({ type: "Polygon", coordinates: [many] })); await page.waitForFunction(() => window.__orbit.st.parcel.src.name === "ayrintili.geojson"); await settled(page, false);
+    await page.click("#sh-copy"); await page.waitForFunction(() => /sığmayacak kadar ayrıntılı/.test(document.querySelector("#sh-msg").textContent)).catch(() => fail("ayrıntılı sınırda uyarı çıkmadı"));
+    s = await state(page); ok(s.hash === "" && (await page.evaluate(() => window.__orbit.shareLink())) === null, "bağlantıya sığmayan sınırda adres boş kalmalı: " + s.hash.slice(0, 40));
+    ok(!log.stray.length, "izin verilmeyen adrese istek: " + log.stray.join(", ")); ok(!log.errors.length, "konsol hataları: " + log.errors.join(" ; ")); await ctx.close(); }
+  console.log("paylaşım: bağlantı gidiş dönüşü, tarihli bağlantı, konum ve örnek bağlantısı, bozuk bağlantı, paylaşım menüsü, indirilen görsel tamam");
+
+  // 8) "Ne zaman değişti?" çizelgesi: son bir yıl, aralığa yakından bakma, küçük görüntüden açma, durdurma, İngilizce, telefon
+  { const { ctx, page, log } = await open({ lang: "tr" });
+    ok(!(await tlState(page)).shown, "çizelge, görüntü gelmeden görünüyor");
+    await page.click("#sample"); await settled(page, true);
+    let t = await tlState(page); ok(t.shown && !t.body && t.pressed === "false,false,false" && !t.stop, "çizelge kutusu açılışta: " + JSON.stringify([t.shown, t.body, t.pressed]));
+    const tci = (id) => log.urls.filter((u) => u.includes(id + "/TCI")).length, n0 = tci("S2B_35SQB_20251110_0_L2A");
+    await page.evaluate(() => document.querySelector("#tl").scrollIntoView()); await page.click('#tl-span button[data-d="365"]');
+    t = await tlState(page); ok(t.busy && t.stop && t.pressed === "true!,false!,false!" && t.n === 13 && /^\d+ \/ 13 tarihe bakıldı · .* indirildi…$/.test(t.state), "çizelge kurulurken: " + JSON.stringify([t.busy, t.stop, t.pressed, t.n, t.state]));
+    await tlWait(page); t = await tlState(page);
+    console.log("çizelge (1 yıl): " + ids(t) + " | " + t.state); console.log("  içi " + t.slots.map((x) => x.i).join(" ") + " | çevresi " + t.slots.map((x) => x.o).join(" ") + " | eksen " + t.axis.join(" ") + " | pembe " + t.pink + " gri " + t.gray);
+    ok(ids(t) === "20251110 20251210 20260113 20260207 20260312 err 20260511 20260609 20260710 20260809 20260910 20261010 20261109", "çizelgenin seçtiği görüntüler: " + ids(t));
+    ok(/^12 açık görüntü · 10 Kasım 2025 – 9 Kasım 2026 · [\d.,]+ (KB|MB) indirildi$/.test(t.state) && t.pressed === "true,false,false" && !t.stop && !t.busy, "çizelge bitince durum satırı: " + t.state + " " + t.pressed);
+    const g = (k) => t.slots[k], green = [1, 2, 4, 6, 7], soil = [8, 9, 10, 11, 12];
+    ok(green.every((k) => g(k).i > 19 && g(k).i < 25.5 && g(k).o < 2.5 && JSON.stringify(g(k).mid) === JSON.stringify(GREEN)), "yeşil görüntülerde fark ya da küçük görüntü: " + JSON.stringify(green.map((k) => [g(k).i, g(k).o, g(k).mid])));
+    ok(soil.every((k) => g(k).i === 0 && g(k).o === 0 && JSON.stringify(g(k).mid) === JSON.stringify(SOIL)), "toprak görüntülerde fark sıfır olmalı: " + JSON.stringify(soil.map((k) => [g(k).i, g(k).o, g(k).mid])));
+    ok(g(3).i > 17 && g(3).i < 23 && g(3).o > 8.4 && g(3).o < 11.5 && JSON.stringify(g(3).mid) === JSON.stringify(SEASON), "mevsim görüntüsünde çevre de değişmeli: " + JSON.stringify([g(3).i, g(3).o, g(3).mid]));
+    ok(g(0).i > 17 && g(0).i < 25.5 && g(0).o > 1 && g(0).mark === "b" && g(12).mark === "a" && tci("S2B_35SQB_20251110_0_L2A") === n0, "ekrandaki 'Önce' görüntüsü çizelgede yeniden indirilmemeli ve işaretli olmalı: " + JSON.stringify([g(0).i, g(0).o, g(0).mark, g(12).mark, n0, tci("S2B_35SQB_20251110_0_L2A")]));
+    ok(t.slots.every((x) => x.crop !== false), "küçük görüntüler alanın çevresine kırpılmamış: " + t.slots.map((x) => x.crop).join(" "));
+    ok(g(5).ph === "okunamadı" && g(5).label === "10 Nis 2026" && g(1).label === "10 Ara 2025" && g(12).label === "9 Kas 2026", "sıradaki etiketler: " + JSON.stringify([g(5).ph, g(5).label, g(1).label, g(12).label]));
+    ok(JSON.stringify(t.pick) === "[7,8]" && /^Alanın içi, çevresinden farklı olarak en çok bu aralıkta değişti: 9 Haziran 2026 – 10 Temmuz 2026\. Alanın içi: %2\d,\d → %0,0\. Çevresi: %\d,\d → %0,0\.$/.test(t.find) && t.acts && t.zoom, "en büyük değişimin aralığı: " + JSON.stringify(t.pick) + " " + t.find);
+    ok(t.axis.join(" ") === "%0 %10 %20 %30" && t.pink > 300 && t.gray > 300 && /12 görüntünün son görüntüden farkı/.test(t.aria), "çizgi grafik: " + JSON.stringify([t.axis, t.pink, t.gray, t.aria]));
+    ok(t.rows.length === 12 && /^10 Kasım 2025 \| Sentinel-2B \| %\d\d,\d \| %\d+,\d$/.test(t.rows[0]) && t.rows[11] === "9 Kasım 2026 | Sentinel-2C | %0,0 | %0,0", "tablo görünümü: " + t.rows[0] + " … " + t.rows[11]);
+    ok(t.bytes === log.bytes && t.bytes > 0, "indirilen veri sayacı ağdaki miktarla aynı değil: " + t.bytes + " / " + log.bytes); ok(t.cogs <= 40, "açık dosya sayısı sınırı aşıldı: " + t.cogs); ok(t.overflow <= 0, "çizelge yatay taşma yaptı: " + t.overflow);
+    await shot(page, "8a-cizelge");
+    // imleç: grafikte bir sütunun üstüne gelince o günün iki değeri de yazar
+    const cx = await page.evaluate(() => { const c = document.querySelectorAll("#tl-strip .tl-cell")[3].getBoundingClientRect(), k = document.querySelector("#tl-chart").getBoundingClientRect(); return [c.left + c.width / 2, k.top + k.height / 2]; });
+    await page.mouse.move(cx[0], cx[1]); t = await tlState(page); ok(/^7 Şubat 2026 · Sentinel-2B%\d\d,\d alanın içi%\d+,\d çevresi$/.test(t.read), "imleçle okunan değerler: " + t.read); await shot(page, "8b-imlec");
+    // küçük görüntüye basınca o tarih "Önce" olur; görüntü yeniden indirilmez; sınır yerine oturur
+    const n1 = tci("S2C_36STG_20260609_0_L2A"); await page.click("#tl-strip .tl-cell:nth-child(8)");
+    await page.waitForFunction(() => { const s = window.__orbit.st; return s.before && s.before.scene && s.before.item.id === "S2C_36STG_20260609_0_L2A" && s.nd.b !== undefined; }).catch(() => fail("küçük görüntü 'Önce' olarak açılmadı"));
+    let s = await state(page); t = await tlState(page);
+    ok(tci("S2C_36STG_20260609_0_L2A") === n1 && s.hBefore === "9 Haziran 2026" && /"Önce" görüntüsü: 9 Haziran 2026/.test(s.log.slice(-1)[0]) && t.slots[7].mark === "b" && t.slots[0].mark === "", "küçük görüntüden açış: " + JSON.stringify([n1, tci("S2C_36STG_20260609_0_L2A"), s.hBefore, s.log.slice(-1)[0], t.slots[7].mark]));
+    await page.click('#smooth button[data-s="0"]'); const al = await align(page, "#cv-before", "before", GREEN); ok(fits(al) && al.inOk > 500, "çizelgeden açılan görüntüde sınır oturmuyor: " + JSON.stringify(al)); await page.click('#smooth button[data-s="1"]');
+    // "Bu iki tarihi karşılaştır": iki yana o iki tarih gelir; ekrandaki en yeni görüntü değildir, paylaşım bağlantısı bu tarihleri taşır
+    await page.click("#tl-cmp"); await page.waitForFunction(() => { const s = window.__orbit.st; return s.after && s.after.item.id === "S2B_36STG_20260710_0_L2A" && s.before && s.before.item.id === "S2C_36STG_20260609_0_L2A" && s.nd.a !== undefined && document.querySelector("#busy").hidden; }).catch(() => fail("'Bu iki tarihi karşılaştır' iki görüntüyü açmadı"));
+    s = await state(page); t = await tlState(page);
+    ok(s.chosen && !s.newest && s.hAfter === "10 Temmuz 2026" && s.hash === "#ornek=1" && (await page.evaluate(() => window.__orbit.shareLink())).endsWith("#ornek=1&sonra=20260710B&once=20260609C") && t.slots[8].mark === "a" && t.slots[7].mark === "b", "iki tarihin karşılaştırması: " + JSON.stringify([s.chosen, s.newest, s.hAfter, s.hash, t.slots[8].mark]));
+    await page.evaluate(() => scrollTo(0, 0)); await wait(200); await shot(page, "8c-karsilastir");
+    // "Bu aralığa yakından bak": 9 Haziran ile 10 Temmuz arasındaki geçişler
+    await page.evaluate(() => document.querySelector("#tl").scrollIntoView()); await page.click("#tl-zoom"); await tlWait(page); t = await tlState(page);
+    console.log("çizelge (aralık): " + ids(t) + " | " + t.state + " | " + t.find);
+    ok(ids(t) === "20260609 20260614 none 20260624 20260629 none 20260710" && JSON.stringify(t.pick) === "[1,3]" && /14 Haziran 2026 – 24 Haziran 2026/.test(t.find) && t.acts && !t.zoom && t.pressed === "false,false,false", "aralığa yakından bakış: " + ids(t) + " " + JSON.stringify(t.pick) + " " + t.find);
+    ok(/^5 açık görüntü · 9 Haziran 2026 – 10 Temmuz 2026 · .* indirildi · açık görüntüsü olmayan tarih: 2$/.test(t.state) && t.slots[0].mark === "b" && t.slots[6].mark === "a", "aralık bitince durum satırı: " + t.state); await shot(page, "8d-aralik");
+    // İngilizce: görünen her şey İngilizce
+    await page.click('#lang button[data-lang="en"]'); t = await tlState(page);
+    const tlText = await page.evaluate(() => document.querySelector("#tl").innerText + " " + [...document.querySelectorAll("#tl-strip button")].map((b) => b.getAttribute("aria-label")).join(" ") + " " + document.querySelector("#tl-chart").getAttribute("aria-label") + " " + document.querySelector("#share").innerText + " " + document.querySelector("#pinned").innerText);
+    const trWords = (tlText.match(/Kas|Haz|Tem|Ağu|Eyl|Eki|Oca|Şub|Nis|indirildi|bakıldı|görüntü|Görüntü|Alanın|alanın|evresi|Durdur|Tablo|Tarih|Uydu|Fark|fark|Bağlantı|Paylaş|Önce|Sonra|olarak|yakından|karşılaştır|En yeni|bakıyorsun|Son /g) || []).filter((v, i, a) => a.indexOf(v) === i);
+    ok(!trWords.length, "çizelgede ya da paylaşım satırında İngilizcede Türkçe sözcük kaldı: " + trWords.join(", "));
+    ok(/^Clear images: 5 · 9 June 2026 – 10 July 2026 · [\d.,]+ (KB|MB) downloaded · dates with no clear image: 2$/.test(t.state) && /^Unlike its surroundings, the inside of the area changed most in this interval: 14 June 2026 – 24 June 2026\. Inside the area: 2\d\.\d% → 0\.0%\. Around it: \d\.\d% → 0\.0%\.$/.test(t.find) && t.slots[1].label === "14 Jun 2026" && t.slots[2].ph === "no clear image" && t.axis[1] === "10%", "İngilizce çizelge: " + t.state + " | " + t.find + " | " + t.slots[1].label + " | " + t.axis.join(" "));
+    await shot(page, "8e-en"); await page.click('#lang button[data-lang="tr"]');
+    // son 5 yıl: on bir tarih, altı ayda bir; çoğunda görüntü yok
+    await page.click("#newest"); await page.waitForFunction(() => { const s = window.__orbit.st; return s.after && s.after.item.id === "S2C_36STG_20261109_0_L2A" && document.querySelector("#pinned").hidden && document.querySelector("#busy").hidden; }).catch(() => fail("çizelgeden sonra en yeni görüntüye dönülmedi"));
+    await page.click('#tl-span button[data-d="1826"]'); await tlWait(page); t = await tlState(page); console.log("çizelge (5 yıl): " + ids(t) + " | " + t.state);
+    ok(t.n === 11 && ids(t) === "none none none none none none none none 20251110 20260511 20261109" && t.pressed === "false,false,true" && t.slots[0].label === "9 Kas 2021", "son 5 yıl: " + ids(t) + " " + t.slots[0].label);
+    // alan değişince çizelge sıfırlanır
+    await page.click("#sample"); await settled(page, true); t = await tlState(page); ok(t.n === 0 && !t.body && t.shown && t.pressed === "false,false,false" && t.state === "", "alan değişince çizelge sıfırlanmadı: " + JSON.stringify([t.n, t.body, t.pressed, t.state]));
+    ok(!log.stray.length, "izin verilmeyen adrese istek: " + log.stray.join(", ")); ok(!log.errors.length, "konsol hataları: " + log.errors.join(" ; ")); await ctx.close(); }
+  // durdurma: ağ yavaşken "Durdur" kalan tarihleri bırakır; sonradan gelen yanıtlar ekranı değiştirmez
+  { const { ctx, page, log } = await open({ lang: "tr", hash: "#ornek=1", slow: 250 }); await settled(page, true);
+    await page.click('#tl-span button[data-d="365"]'); await wait(700); await page.click("#tl-stop"); let t = await tlState(page); const snap = ids(t);
+    ok(!t.busy && !t.stop && /^Durduruldu\. \d+ açık görüntü · /.test(t.state) && t.slots.some((x) => x.state === "skip" && x.ph === "bakılmadı") && t.pressed === "true,false,false", "durdurma: " + snap + " | " + t.state);
+    await wait(2500); t = await tlState(page); ok(ids(t) === snap && !t.busy, "durdurulduktan sonra çizelge değişti: " + snap + " -> " + ids(t)); ok(!log.errors.length, "konsol hataları: " + log.errors.join(" ; ")); await ctx.close(); }
+  // telefon: sıra kendi içinde kayar, sayfa taşmaz; en yeni görüntü görünür
+  for (const lang of ["tr", "en"]) { const { ctx, page, log } = await open({ lang, hash: "#ornek=1", viewport: { width: 390, height: 844 }, dsf: 2, mobile: true }); await settled(page, true);
+    const o0 = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth); ok(o0 <= 0, "telefonda paylaşım satırı taşıyor (" + lang + "): " + o0);
+    await page.evaluate(() => document.querySelector("#tl").scrollIntoView()); await page.tap('#tl-span button[data-d="365"]'); await tlWait(page); await wait(300); const t = await tlState(page);
+    ok(t.overflow <= 0 && t.scroll[1] > t.scroll[2] + 300 && t.scroll[0] + t.scroll[2] >= t.scroll[1] - 2, "telefonda çizelge (" + lang + "): taşma " + t.overflow + ", kaydırma " + t.scroll.join("/")); ok(!log.errors.length, "konsol: " + log.errors.join(";"));
+    await shot(page, "8f-telefon-" + lang); await page.evaluate(() => document.querySelector("#share").scrollIntoView({ block: "center" })); await shot(page, "8f-telefon-" + lang + "-paylas"); await ctx.close(); }
+  console.log("çizelge: son bir yıl, mevsim ve bulut, aralığa yakından bakış, küçük görüntüden açış, durdurma, İngilizce, son 5 yıl, telefon tamam");
+
   await browser.close(); srv.close();
-  console.log(bad.length ? "\nOrbit denemesi TUTMADI: " + bad.length + " sorun\n- " + bad.join("\n- ") : "\nOrbit denemesi tamam (koordinat, dosya ve konumla alan, akış, hizalama, iki dil, yedek yollar, masaüstü, telefon, sayaç)");
+  console.log(bad.length ? "\nOrbit denemesi TUTMADI: " + bad.length + " sorun\n- " + bad.join("\n- ") : "\nOrbit denemesi tamam (koordinat, dosya ve konumla alan, akış, hizalama, iki dil, yedek yollar, masaüstü, telefon, sayaç, paylaşım bağlantısı, indirilen görsel, çizelge)");
   process.exit(bad.length ? 1 : 0);
 })().catch((e) => { console.error(e); process.exit(2); });

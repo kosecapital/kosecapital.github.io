@@ -75,7 +75,7 @@ Yayımlamak: `python3 build.py && node tools/check.cjs && git add -A && git comm
 
 ## Orbit
 
-Orbit bir arazinin sınırını ziyaretçiden alır; üstüne en yeni bulutsuz Sentinel-2 görüntüsünü koyar ve eski bir tarihle kaydırmalı karşılaştırır. Ad Alper'in seçimidir (14 Kasım 2026).
+Orbit bir arazinin sınırını ziyaretçiden alır; üstüne en yeni bulutsuz Sentinel-2 görüntüsünü koyar ve eski bir tarihle kaydırmalı karşılaştırır. İstenince geçmiş görüntüleri sıraya dizer ("Ne zaman değişti?"); karşılaştırma bir bağlantıyla ya da indirilen görselle paylaşılır. Ad Alper'in seçimidir (14 Kasım 2026).
 
 - **Sınır nereden gelir.** Üç yol vardır, üçü de tarayıcıda çalışır:
   - Sınır dosyası: KML, KMZ ya da GeoJSON (seçilir, sürüklenip bırakılır ya da metni yapıştırılır). Parsel için dosya, TKGM Parsel Sorgu uygulamasının kendi "İndir" menüsünden alınır; sayfa bunu üç adımda anlatır. Dosyadaki öznitelikler (il, ilçe, mahalle, ada, parsel, yüzölçümü, nitelik) adları tutuyorsa bilgi kutusuna yazılır.
@@ -92,10 +92,21 @@ Orbit bir arazinin sınırını ziyaretçiden alır; üstüne en yeni bulutsuz S
 - **Sınırlar.** Alan en çok 10 km genişliğinde, en az bir piksel (100 m²) olabilir; dosya en çok 5 MB. Büyük alanlarda görüntü penceresi alanın kendisiyle sınırlı kalır. Koordinatlar enlem ve boylam olmalıdır (DXF ve Shape okunmaz).
 - **Bulut denetimi.** En yeni geçişten geriye gidilir; alanın çevresi sınıf haritasında (SCL) bulutluysa geçiş atlanır. "Sahnede bulut" karenin tamamı, "alanın üstü" yalnız alanın çevresi içindir.
 - **Yeşillik puanı.** Sınırın içindeki ortalama NDVI (kırmızı ve yakın kızılötesi bant). Sayfa yalnız değişimi söyler; "inşaat başladı" gibi bir hüküm vermez.
+- **Paylaşım (15 Kasım 2026).** Sunucu gerekmez:
+  - Alan, adresin `#` bölümüne yazılır: `s=` sınır (köşeler 1e-7 derece hassasiyetle, bir öncekine göre fark olarak), `k=` konum karesi (enlem_boylam_kenar), `ornek=1`; dosyadan gelen bilgiler `il`, `ilce`, `mah`, `ada`, `parsel`, `alan`, `nitelik`, `mevkii`, `pafta`, `ad`. Tarayıcı `#` bölümünü sunucuya göndermez; alan yine yalnız ziyaretçide kalır, sayaç da onu göndermez (deneme bunu sayar). Bu yüzden alan asla `?` bölümüne yazılmaz.
+  - Adres çubuğu yalnız alanı taşır: yer imi her zaman en yeni görüntüyü açar. "Bağlantıyı kopyala" ve "Paylaş" (yalnız paylaşım menüsü olan tarayıcıda görünür) ekrandaki iki tarihi de yazar (`sonra=20261109C&once=20251110B`: gün ve uydu). Açan kişi aynı alanı ve aynı iki tarihi görür; "En yeni görüntüyü göster" ile en yeniye döner. Tarihli bağlantıyla gelindiyse adres tarihleri taşımayı sürdürür (yeniden yükleyince görünüm değişmesin).
+  - Bağlantı 3.800 karakteri aşarsa (çok ayrıntılı sınır) bağlantı verilmez; sayfa nedenini söyler.
+  - "Görüntüyü indir": tarihli önce/sonra görseli (PNG). Üstünde logo, alanın adı, iki görüntü, sınır, ölçek, yeşillik puanı ve kaynak satırı vardır. Kaynak satırı ("değiştirilmiş Copernicus Sentinel verisi içerir") çıkarılmaz; Copernicus verisini dağıtmanın koşuludur.
+- **"Ne zaman değişti?" çizelgesi (15 Kasım 2026).** İstenince çalışır (son 1, 2 ya da 5 yıl): eşit aralıklı en çok 12 tarihe en yakın açık görüntüyü bulur ve küçük hâllerini sıraya dizer.
+  - Her görüntü sıradaki son görüntüyle karşılaştırılır: alanın içi ve çevresi için ayrı ayrı ortalama renk farkı (0 aynı, 100 tam zıt). Çevre bir ölçüdür: mevsim ve kar ikisini de değiştirir; yalnız alanın içi değişiyorsa değişim alana özgüdür.
+  - Sayfa hüküm vermez ("inşaat başladı" demez); yalnız alanın içinin çevresinden en çok ayrıldığı iki tarihi söyler. "Bu iki tarihi karşılaştır" o ikisini büyük ekrana koyar; "Bu aralığa yakından bak" aralıktaki geçişleri dizer.
+  - Ölçü yeşillik puanı değildir: çıplak toprakta başlayan inşaat yeşilliği değiştirmez; ayrıca yeşillik için her tarihte iki dosya daha inmesi gerekirdi. Sıradaki bir görüntüye basılınca o tarih "Önce" olur ve yeşillik puanı her zamanki gibi hesaplanır.
+  - Her görüntü ayrıca indirilir. İnen veri miktarı düğmelerin yanında yazar; "Durdur" kalan tarihleri bırakır. Okunan dosyalar işi bitince bırakılır (bellek dolmasın).
+  - Grafik: alanın içi ürünün vurgu rengiyle ve yuvarlak noktayla, çevresi vurgusuz griyle (`#6B766F`) ve kare noktayla çizilir; ayrım yalnız renge bağlı değildir. Değerler imleçle ve "Tablo olarak göster" ile de okunur.
 - **Uyarılar.** Okunamayan dosya ya da anlaşılmayan konum, ilgili kutunun hemen altında iki dilde açıklanır; ekrandaki alan değişmez. "Tanı bilgisi" kutusu neyin çalışıp neyin çalışmadığını iki dilde yazar.
 - **Henüz yok:** il, ilçe, ada ve parselden kendiliğinden sınır (TKGM izni gerekir); haritada sınır çizme; alanı takibe alma ve değişince haber verme; 10 metreden net (ücretli) görüntü. Bunlar yokken sayfada sözü edilmez.
 - **Ana sayfa.** Orbit ana sayfada dördüncü üründür (14 Kasım 2026, Alper'in isteğiyle). Durumu "Yayında", vurgu rengi `#FF78BE`; ikisi de Alper başka bir şey söyleyene kadar böyle kalır. Ana sayfadaki bölüm yalnız uygulamanın bugün yaptığını anlatır.
-- **Deneme.** Örnek görüntüler gerçek karelerin koordinat düzeninde üretilir (35SQB ve 36STG); deneme, sınır çizgisinin görüntüye piksel piksel oturduğunu iki UTM diliminde de sayar. Sınır dosyası biçimleri (KML, sıkıştırılmış ve düz KMZ, GeoJSON, delikli ve kapanmamış halka), konum biçimleri ve okunamayan dosyalar ayrı ayrı denenir. Gerçek servisler denemede çağrılmaz.
+- **Deneme.** Örnek görüntüler gerçek karelerin koordinat düzeninde üretilir (35SQB ve 36STG); deneme, sınır çizgisinin görüntüye piksel piksel oturduğunu iki UTM diliminde de sayar. Sınır dosyası biçimleri (KML, sıkıştırılmış ve düz KMZ, GeoJSON, delikli ve kapanmamış halka), konum biçimleri ve okunamayan dosyalar ayrı ayrı denenir. Paylaşım bağlantısı yeni bir tarayıcıda açılıp aynı alanı ve aynı iki tarihi verdiği sayılarak denenir; indirilen görselin boyutuna ve piksellerine bakılır. Çizelge için örnek veride bir yıla yayılmış geçişler vardır (alanın içi 14 Haziran'a kadar yeşil, 24 Haziran'dan sonra toprak; bir tarihte her yer daha parlak; bulutlu ve okunamayan geçişler): deneme, seçilen tarihleri, fark değerlerini ve bulunan aralığı sayar. Gerçek servisler denemede çağrılmaz; bu yüzden gerçek görüntüyle davranış yalnız yayındaki sayfada görülür.
 
 ## Logo
 

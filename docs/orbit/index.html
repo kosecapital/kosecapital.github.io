@@ -33,6 +33,7 @@
   /* Renkler ana sayfayla aynı; Orbit'in vurgu rengi --accent. */
   --ink:#070B09; --ink-2:#0D1411; --ink-3:#131C17; --line:#27332C; --bone:#ECE8DC; --mute:#929D96; --hi:#FFFFFF;
   --accent:#FF78BE; --ok:#7BD88F; --warn:#E8B45A; --bad:#F08A7B;
+  --dim:#6B766F;       /* çizelgede çevrenin çizgisi: vurgusuz gri */
   --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
   --f-body:"Archivo","Helvetica Neue",Arial,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -125,6 +126,10 @@ dl.info dd{margin:0;overflow-wrap:anywhere}
 .taga{right:10px;color:var(--accent)}
 .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem;color:var(--mute);font-size:.98rem}
 .busy{position:absolute;left:10px;bottom:10px;right:10px;font:500 .74rem var(--f-mono);background:rgba(7,11,9,.82);padding:.4rem .55rem;border-radius:2px;pointer-events:none}
+.pinned,.share{display:flex;flex-wrap:wrap;gap:.5rem .8rem;align-items:center;max-width:760px;margin:.7rem auto 0}
+.pinned{font-size:.86rem;color:var(--mute)}
+.share .note{margin:0;flex:1 1 200px}
+.linkbox{display:block;max-width:760px;margin:.5rem auto 0;font:400 .76rem var(--f-mono)!important;min-height:38px!important}
 .ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem 1.4rem;max-width:760px;margin:1rem auto 0}
 .ctrl label{margin:0 0 .35rem}
 .seg{display:flex;gap:0}
@@ -157,6 +162,39 @@ td .ghost{min-height:30px;padding:.25rem .55rem}
 td small{display:none;font:400 .72rem var(--f-mono);color:var(--mute);white-space:nowrap}
 .ds{display:none}
 .more{padding:.8rem 1.1rem 0}
+
+/* "Ne zaman değişti?" çizelgesi: küçük görüntüler ve altında, aynı sütunlara oturan fark çizgisi */
+.tl{padding-bottom:1.6rem}
+.tl-bar{display:flex;flex-wrap:wrap;gap:.6rem .9rem;align-items:center;margin-top:.9rem}
+.tl-bar .note{margin:0}
+.tl-scroll{overflow-x:auto;margin-top:1rem;padding-bottom:.3rem}
+.tl-in{--g:40px;--n:13;min-width:calc(var(--g) + var(--n) * 80px)}
+.tl-strip{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:6px;margin-left:var(--g)}
+.tl-cell{display:flex;flex-direction:column;gap:.3rem;min-width:0;padding:0;background:none;border:0;color:inherit;font:inherit;text-align:center;cursor:pointer}
+.tl-cell.none{cursor:default}
+.tl-cell canvas,.tl-cell .ph{display:block;width:100%;aspect-ratio:1/1;border:1px solid var(--line);border-radius:2px;background:var(--ink)}
+.tl-cell .ph{display:flex;align-items:center;justify-content:center;padding:.2rem;font:400 .62rem/1.25 var(--f-mono);color:var(--mute)}
+.tl-cell:hover canvas{border-color:var(--mute)}
+.tl-cell.is-b canvas{outline:2px solid var(--bone);outline-offset:-2px}        /* büyük ekrandaki "Önce" */
+.tl-cell.is-a canvas{outline:2px solid var(--accent);outline-offset:-2px}      /* büyük ekrandaki "Sonra" */
+.tl-cell .d{font:500 .66rem/1.2 var(--f-mono);color:var(--mute);white-space:nowrap}
+.tl-key{position:sticky;left:0;display:flex;flex-wrap:wrap;gap:.2rem 1.1rem;width:max-content;max-width:calc(100vw - 96px);margin-top:.9rem;font:500 .72rem var(--f-mono);color:var(--mute)}
+.tl-key .unit{color:var(--bone)}
+.lk{display:inline-block;position:relative;width:20px;height:0;margin-right:.45rem;border-top:2px solid var(--dim);vertical-align:middle}       /* çizgi anahtarı: gri kare çevresi, vurgu rengi yuvarlak alanın içi */
+.lk::after{content:"";position:absolute;left:6px;top:-5px;width:8px;height:8px;background:var(--dim)}
+.lk.a{border-color:var(--accent)}
+.lk.a::after{background:var(--accent);border-radius:50%}
+.tl-plot{display:flex;margin-top:.4rem}
+.tl-axis{position:sticky;left:0;z-index:1;flex:0 0 var(--g);height:150px;background:var(--ink-2);font:400 .66rem var(--f-mono);color:var(--mute);font-variant-numeric:tabular-nums}
+.tl-axis span{position:absolute;right:7px;transform:translateY(-50%)}
+#tl-chart{flex:1 1 0;min-width:0;width:100%;height:150px;display:block;touch-action:pan-x}
+.tl-read{display:flex;flex-wrap:wrap;gap:.2rem 1.1rem;min-height:1.6em;margin-top:.6rem;font-size:.84rem;color:var(--mute)}
+.tl-read b{font:500 .8rem var(--f-mono);color:var(--bone)}
+.tl-read .when{font:500 .8rem var(--f-mono);color:var(--bone)}
+.tl-find{display:flex;flex-wrap:wrap;gap:.6rem .9rem;align-items:center;border-left-color:var(--accent)}
+.tl-find > span:first-child{flex:1 1 320px}
+.tl-tab table{min-width:0}
+.tl-tab th:first-child,.tl-tab td:first-child{padding-left:0}
 
 .foot{border-top:1px solid var(--line)}
 .foot .wrap{padding-top:1.3rem;padding-bottom:2rem;font-size:.82rem;color:var(--mute);display:flex;flex-direction:column;gap:.35rem}
@@ -245,7 +283,7 @@ td small{display:none;font:400 .72rem var(--f-mono);color:var(--mute);white-spac
   <section class="viewer" aria-live="polite">
     <div class="heads">
       <div class="head before"><div class="k"><span class="tr">Önce</span><span class="en">Before</span></div><div class="v" id="h-before">—</div><div class="s" id="s-before">&nbsp;</div></div>
-      <div class="head after"><div class="k"><span class="tr">Sonra (en yeni)</span><span class="en">After (latest)</span></div><div class="v" id="h-after">—</div><div class="s" id="s-after">&nbsp;</div></div>
+      <div class="head after"><div class="k"><span class="tr">Sonra<span class="new" hidden> (en yeni)</span></span><span class="en">After<span class="new" hidden> (latest)</span></span></div><div class="v" id="h-after">—</div><div class="s" id="s-after">&nbsp;</div></div>
     </div>
     <div class="stage single" id="stage" style="--split:50">
       <canvas id="cv-before" width="720" height="720" aria-hidden="true"></canvas>
@@ -256,6 +294,18 @@ td small{display:none;font:400 .72rem var(--f-mono);color:var(--mute);white-spac
       <div class="empty" id="empty"><span><span class="tr">Bir sınır dosyası yükle, bir konum yapıştır ya da örnek alanı aç.</span><span class="en">Load a boundary file, paste a location, or open the sample area.</span></span></div>
       <div class="busy" id="busy" hidden></div>
     </div>
+
+    <div class="pinned" id="pinned" hidden>
+      <span><span class="tr">Belirli bir tarihe bakıyorsun.</span><span class="en">You are looking at a chosen date.</span></span>
+      <button class="ghost" type="button" id="newest"><span class="tr">En yeni görüntüyü göster</span><span class="en">Show the latest image</span></button>
+    </div>
+    <div class="share" id="share" hidden>
+      <button class="ghost" type="button" id="sh-copy"><span class="tr">Bağlantıyı kopyala</span><span class="en">Copy link</span></button>
+      <button class="ghost" type="button" id="sh-send" hidden><span class="tr">Paylaş</span><span class="en">Share</span></button>
+      <button class="ghost" type="button" id="sh-png"><span class="tr">Görüntüyü indir</span><span class="en">Download image</span></button>
+      <span class="note" id="sh-msg" role="status"></span>
+    </div>
+    <input class="linkbox" type="text" id="sh-link" readonly hidden>
 
     <div class="ctrl" id="ctrl" hidden>
       <div>
@@ -311,6 +361,54 @@ td small{display:none;font:400 .72rem var(--f-mono);color:var(--mute);white-spac
   </section>
 </div>
 
+<div class="wrap tl" id="tl" hidden>
+  <div class="panel">
+    <h2><span class="tr">Ne zaman değişti?</span><span class="en">When did it change?</span></h2>
+    <p class="note" style="margin-top:0"><span class="tr">Geçmişten en çok 12 açık görüntü getirir ve sırayla gösterir. Altındaki çizgi, her görüntünün sıradaki son görüntüden ne kadar farklı olduğunu söyler. Her görüntü ayrıca indirilir; ne kadar veri indiği düğmelerin yanında yazar.</span><span class="en">Fetches up to 12 clear images from the past and shows them in order. The line below tells how different each image is from the last one in the row. Each image is downloaded separately; the amount of data is written next to the buttons.</span></p>
+    <div class="tl-bar">
+      <div class="seg" id="tl-span" role="group">
+        <button class="ghost" type="button" data-d="365" aria-pressed="false"><span class="tr">Son 1 yıl</span><span class="en">Last year</span></button>
+        <button class="ghost" type="button" data-d="730" aria-pressed="false"><span class="tr">Son 2 yıl</span><span class="en">Last 2 years</span></button>
+        <button class="ghost" type="button" data-d="1826" aria-pressed="false"><span class="tr">Son 5 yıl</span><span class="en">Last 5 years</span></button>
+      </div>
+      <button class="ghost" type="button" id="tl-stop" hidden><span class="tr">Durdur</span><span class="en">Stop</span></button>
+      <span class="note" id="tl-state" role="status"></span>
+    </div>
+    <div id="tl-body" hidden>
+      <div class="tl-scroll" id="tl-scroll"><div class="tl-in" id="tl-in">
+        <div class="tl-strip" id="tl-strip"></div>
+        <div class="tl-key">
+          <span class="unit"><span class="tr">Son görüntüden fark (%)</span><span class="en">Difference from the last image (%)</span></span>
+          <span><i class="lk a"></i><span class="tr">Alanın içi</span><span class="en">Inside the area</span></span>
+          <span><i class="lk"></i><span class="tr">Çevresi</span><span class="en">Around it</span></span>
+        </div>
+        <div class="tl-plot"><div class="tl-axis" id="tl-axis" aria-hidden="true"></div><canvas id="tl-chart" role="img"></canvas></div>
+      </div></div>
+      <div class="tl-read" id="tl-read"></div>
+      <div class="msg tl-find" id="tl-find" hidden>
+        <span id="tl-find-t"></span>
+        <span class="row" id="tl-acts">
+          <button class="ghost" type="button" id="tl-cmp"><span class="tr">Bu iki tarihi karşılaştır</span><span class="en">Compare these two dates</span></button>
+          <button class="ghost" type="button" id="tl-zoom"><span class="tr">Bu aralığa yakından bak</span><span class="en">Look closer at this interval</span></button>
+        </span>
+      </div>
+      <p class="note"><span class="tr">Fark, piksellerin renginin son görüntüye göre ortalama ne kadar değiştiğidir: 0 aynı, 100 tam zıt demektir. Mevsim, hasat ve kar da farkı büyütür; çevresi de aynı anda değişiyorsa neden büyük olasılıkla budur. Kararı görüntülere bakarak ver.</span><span class="en">The difference is how much the colour of the pixels changed on average compared with the last image: 0 means identical, 100 means opposite. Season, harvest and snow also raise the difference; if the surroundings change at the same time, that is the likely cause. Decide by looking at the images.</span></p>
+      <details class="tl-tab">
+        <summary><span class="tr">Tablo olarak göster</span><span class="en">Show as a table</span></summary>
+        <div class="tblw"><table>
+          <thead><tr>
+            <th><span class="tr">Tarih</span><span class="en">Date</span></th>
+            <th><span class="tr">Uydu</span><span class="en">Satellite</span></th>
+            <th><span class="tr">Alanın içi</span><span class="en">Inside the area</span></th>
+            <th><span class="tr">Çevresi</span><span class="en">Around it</span></th>
+          </tr></thead>
+          <tbody id="tl-rows"></tbody>
+        </table></div>
+      </details>
+    </div>
+  </div>
+</div>
+
 <div class="wrap passes" id="passes" hidden>
   <div class="panel">
     <h2><span class="tr">Son geçişler</span><span class="en">Recent passes</span></h2>
@@ -332,7 +430,7 @@ td small{display:none;font:400 .72rem var(--f-mono);color:var(--mute);white-spac
 
 <footer class="foot"><div class="wrap">
   <span><span class="tr">Uydu görüntüsü: değiştirilmiş Copernicus Sentinel verisi içerir (ESA). Katalog ve dosyalar: Earth Search (Element 84), AWS açık veri.</span><span class="en">Satellite imagery: contains modified Copernicus Sentinel data (ESA). Catalogue and files: Earth Search (Element 84), AWS Open Data.</span></span>
-  <span><span class="tr">Sınır, yüklediğin dosyadan ya da yazdığın konumdan gelir; sayfa onu doğrulamaz. Bilgilendirme amaçlıdır; resmî işlemde tapu kaydı esas alınır.</span><span class="en">The boundary comes from the file you load or the location you type; the page does not verify it. For information only; the land registry is authoritative.</span></span>
+  <span><span class="tr">Sınır, yüklediğin dosyadan, yazdığın konumdan ya da açtığın bağlantıdan gelir; sayfa onu doğrulamaz. Bilgilendirme amaçlıdır; resmî işlemde tapu kaydı esas alınır.</span><span class="en">The boundary comes from the file you load, the location you type or the link you open; the page does not verify it. For information only; the land registry is authoritative.</span></span>
   <span>© 2024–2026 Kose Capital</span>
 </div></footer>
 
@@ -402,8 +500,29 @@ var S = {
   eBig: ["Dosya çok büyük (5 MB'tan fazla).", "The file is too large (more than 5 MB)."],
   eLoc: ["Konum anlaşılamadı. Enlem ve boylamı şöyle yaz: 37.7575, 30.1296. Google Haritalar'da bir noktaya sağ tıklayınca çıkan koordinatı da yapıştırabilirsin.", "The location was not understood. Type latitude and longitude like this: 37.7575, 30.1296. You can also paste the coordinates shown when you right-click a point in Google Maps."],
   eShort: ["Kısa bağlantı buradan açılamıyor. Haritada noktaya sağ tıklayıp koordinatı kopyala ve onu yapıştır.", "A short link cannot be opened from here. Right-click the point on the map, copy the coordinates and paste them."],
+  eLink: ["Bağlantıdaki alan okunamadı. Bağlantının tamamını kopyaladığından emin ol.", "The area in the link could not be read. Make sure you copied the whole link."],
   sampleName: ["Örnek alan (Burdur)", "Sample area (Burdur)"],
-  srcFile: ["dosya: {0}", "file: {0}"], srcLoc: ["konum; kenarı {0} olan kare", "location; a square {0} on a side"], srcSample: ["örnek", "sample"], srcPaste: ["yapıştırılan metin", "pasted text"],
+  srcFile: ["dosya: {0}", "file: {0}"], srcLoc: ["konum; kenarı {0} olan kare", "location; a square {0} on a side"], srcSample: ["örnek", "sample"], srcPaste: ["yapıştırılan metin", "pasted text"], srcLink: ["paylaşılan bağlantı", "shared link"],
+  shCopied: ["Bağlantı kopyalandı. Açan kişi aynı alanı ve aynı tarihleri görür.", "Link copied. Whoever opens it sees the same area and the same dates."],
+  shManual: ["Kopyalanamadı. Bağlantıyı aşağıdaki kutudan seçip kopyala.", "Could not copy. Select the link in the box below and copy it."],
+  shTooBig: ["Bu sınır bir bağlantıya sığmayacak kadar ayrıntılı. Görüntüyü indirip gönderebilirsin.", "This boundary is too detailed to fit in a link. You can download the image and send that."],
+  shSaved: ["Görüntü indirildi: {0}", "Image downloaded: {0}"], shPngErr: ["Görüntü hazırlanamadı.", "The image could not be prepared."],
+  shText2: ["{0}: {1} ve {2} tarihli uydu görüntüleri", "{0}: satellite images from {1} and {2}"], shText1: ["{0}: {1} tarihli uydu görüntüsü", "{0}: satellite image from {1}"],
+  shLink: ["Paylaşım bağlantısı", "Share link"],
+  pinMiss: ["Bağlantıdaki {0} tarihli görüntü bulunamadı.", "The image dated {0} from the link was not found."],
+  xBefore: ["ÖNCE", "BEFORE"], xAfter: ["SONRA", "AFTER"], xCentre: ["merkez {0}", "centre {0}"],
+  xScore: ["Yeşillik puanı: önce {0} · sonra {1} · fark {2}", "Greenness: before {0} · after {1} · change {2}"],
+  xCredit: ["Uydu görüntüsü: değiştirilmiş Copernicus Sentinel verisi içerir ({0}). Piksel başına 10 metre.", "Satellite imagery: contains modified Copernicus Sentinel data ({0}). 10 m per pixel."],
+  tlBusy: ["{0} / {1} tarihe bakıldı · {2} indirildi…", "{0} of {1} dates checked · {2} downloaded…"],
+  tlDone: ["{0} açık görüntü · {1} – {2} · {3} indirildi", "Clear images: {0} · {1} – {2} · {3} downloaded"],
+  tlGaps: [" · açık görüntüsü olmayan tarih: {0}", " · dates with no clear image: {0}"], tlStopped: ["Durduruldu. ", "Stopped. "],
+  tlNone: ["açık görüntü yok", "no clear image"], tlSkip: ["bakılmadı", "not checked"],
+  tlIn: ["alanın içi", "inside the area"], tlOut: ["çevresi", "around it"],
+  tlHint: ["Bir tarihin üstüne gel ya da dokun: o günün değerleri burada yazar. Küçük görüntüye basınca o tarih \"Önce\" olarak açılır.", "Hover over or tap a date: its values are written here. Press a small image to open that date as \"Before\"."],
+  tlOpen: ["{0}: \"Önce\" olarak aç", "{0}: open as \"Before\""],
+  tlFind: ["Alanın içi, çevresinden farklı olarak en çok bu aralıkta değişti: {0} – {1}. Alanın içi: {2} → {3}. Çevresi: {4} → {5}.", "Unlike its surroundings, the inside of the area changed most in this interval: {0} – {1}. Inside the area: {2} → {3}. Around it: {4} → {5}."],
+  tlFlat: ["Alanın içi hiçbir aralıkta çevresinden fazla değişmedi.", "In no interval did the inside of the area change more than its surroundings."],
+  tlAria: ["Çizgi grafik: {0} görüntünün son görüntüden farkı; alanın içi ve çevresi. Değerler aşağıdaki tabloda.", "Line chart: difference of {0} images from the last image; inside the area and around it. The values are in the table below."],
   searching: ["Uydu kataloğunda son geçişler aranıyor…", "Searching the satellite catalogue for recent passes…"],
   stacDown: ["Uydu kataloğuna ulaşılamadı. İnternet bağlantını kontrol edip yeniden dene.", "The satellite catalogue could not be reached. Check your connection and try again."],
   noPass: ["Bu konum için geçiş bulunamadı.", "No pass was found for this location."],
@@ -449,6 +568,8 @@ function fmtNum(x, dec) {
   var s = Math.abs(x).toFixed(dec == null ? 0 : dec).split("."), g = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, LANG === "tr" ? "." : ",");
   return (x < 0 ? "−" : "") + g + (s[1] ? (LANG === "tr" ? "," : ".") + s[1] : "");
 }
+function pct(x, dec) { var v = fmtNum(x, dec == null ? 1 : dec); return LANG === "tr" ? "%" + v : v + "%"; }
+function fmtBytes(b) { return b < 1e6 ? fmtNum(Math.round(b / 1e3), 0) + " KB" : fmtNum(b / 1e6, 1) + " MB"; }
 function pickLang() {
   try { var s = localStorage.getItem("kc.lang"); if (s === "tr" || s === "en") return s; } catch (e) {}
   var m = /[?&]lang=(tr|en)\b/.exec(location.search); if (m) return m[1];
@@ -460,8 +581,9 @@ function setLang(l) {
   $$("option[data-tr]").forEach(function (o) { o.textContent = o.getAttribute("data-" + l); });
   $("#home").href = "../?lang=" + l;
   var md = document.querySelector('meta[name="description"]'); if (md) md.content = T("desc");
-  logLines = []; say(""); showDiag(); inMsg("");
-  refreshTexts();
+  $("#sh-link").setAttribute("aria-label", T("shLink"));
+  logLines = []; say(""); showDiag(); inMsg(""); shMsg("");
+  refreshTexts(); tlRender();
 }
 $("#lang").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; setLang(b.dataset.lang); try { localStorage.setItem("kc.lang", b.dataset.lang); } catch (e) {} });
 
@@ -470,7 +592,7 @@ var diag = [];
 function diagText() { return diag.map(function (d) { return d[0] + " " + d[LANG === "tr" ? 1 : 2]; }).join("\n"); }
 function showDiag() { var el = $("#diag"); if (el) el.textContent = diagText(); }
 function note(tr, en) {          // tanı satırı: Türkçesi ve İngilizcesi
-  diag.push([new Date().toISOString().slice(11, 19), tr, en == null ? tr : en]); if (diag.length > 120) diag.shift();
+  diag.push([new Date().toISOString().slice(11, 19), tr, en == null ? tr : en]); if (diag.length > 300) diag.shift();
   showDiag();
 }
 function errText(e) { return !e ? "?" : e.http ? "HTTP " + e.http + (e.text ? " " + String(e.text).slice(0, 120) : "") : (e.name || "Error") + ": " + (e.message || e); }
@@ -674,7 +796,7 @@ function areaName(p, lang) {
   if (s.kind === "sample") return Tin(lang || LANG, "sampleName");
   return s.name ? String(s.name).replace(/\.[a-z0-9]+$/i, "") : "";
 }
-function srcText(p, lang) { var s = p.src || {}, l = lang || LANG; return s.kind === "file" ? Tin(l, "srcFile", s.name) : s.kind === "loc" ? Tin(l, "srcLoc", fmtSide(s.side)) : s.kind === "sample" ? Tin(l, "srcSample") : Tin(l, "srcPaste"); }
+function srcText(p, lang) { var s = p.src || {}, l = lang || LANG; return s.kind === "file" ? Tin(l, "srcFile", s.name) : s.kind === "loc" ? Tin(l, "srcLoc", fmtSide(s.side)) : s.kind === "sample" ? Tin(l, "srcSample") : s.kind === "link" ? Tin(l, "srcLink") : Tin(l, "srcPaste"); }
 
 function inMsg(text, loc) {          // uyarı: dosya için dosya kutusunun, konum için konum kutusunun altında
   $$("#in-msg, #loc-msg").forEach(function (m) { m.hidden = true; m.textContent = ""; });
@@ -709,6 +831,89 @@ $("#go").addEventListener("click", goLoc);
 $("#loc").addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); goLoc(); } });
 $("#size").addEventListener("change", function () { var s = st.parcel && st.parcel.src; if (s && s.kind === "loc") { try { useArea(squareArea(s.lat, s.lon, +this.value || 200)); } catch (e) { inFail(e, "konum"); } } });
 $("#sample").addEventListener("click", function () { inMsg(""); useArea(normArea(SAMPLE, {}, { kind: "sample" })); });
+
+/* ---------- bağlantı: alan, adresin # bölümüne yazılır ----------
+   Tarayıcı adresin # bölümünü sunucuya göndermez; alan yine yalnız ziyaretçide kalır. Bağlantıyı açan aynı alanı görür.
+   Biçim: s=sınır (çokgenler) | k=enlem_boylam_kenar (konum karesi) | ornek=1; il, ilce, mah, ada, parsel, alan, nitelik, mevkii, pafta, ad;
+   once ve sonra = görüntünün günü ve uydusu (20261109C); z = yakınlık (near ya da wide). */
+var B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_", LINK_MAX = 3800;
+var PROPS = { ilAd: "il", ilceAd: "ilce", mahalleAd: "mah", adaNo: "ada", parselNo: "parsel", alan: "alan", nitelik: "nitelik", mevkii: "mevkii", pafta: "pafta", ad: "ad" };
+// Köşeler 1e-7 derece hassasiyetle, bir önceki köşeye göre fark olarak yazılır. Halkalar "." ile, çokgenler ".." ile ayrılır; halkayı kapatan son köşe yazılmaz.
+function encPolys(polys) {
+  var px = 0, py = 0;
+  function num(v) { var z = v < 0 ? -2 * v - 1 : 2 * v, t = ""; do { var c = z % 32; z = Math.floor(z / 32); t += B64.charAt(z ? c + 32 : c); } while (z); return t; }
+  return polys.map(function (poly) { return poly.map(function (r) {
+    var t = ""; for (var i = 0; i < r.length - 1; i++) { var x = Math.round(r[i][0] * 1e7), y = Math.round(r[i][1] * 1e7); t += num(x - px) + num(y - py); px = x; py = y; }
+    return t;
+  }).join("."); }).join("..");
+}
+function decPolys(text) {
+  var px = 0, py = 0;
+  return String(text).split("..").map(function (poly) { return poly.split(".").map(function (t) {
+    var vals = [], i = 0, r = [];
+    while (i < t.length) {
+      var z = 0, m = 1, c;
+      do { if (i >= t.length) throw new Error("link"); c = B64.indexOf(t.charAt(i++)); if (c < 0) throw new Error("link"); z += (c % 32) * m; m *= 32; } while (c >= 32);
+      vals.push(z % 2 ? -(z + 1) / 2 : z / 2);
+    }
+    if (vals.length % 2) throw new Error("link");
+    for (var k = 0; k < vals.length; k += 2) { px += vals[k]; py += vals[k + 1]; r.push([px / 1e7, py / 1e7]); }
+    return r;
+  }); });
+}
+function passKey(g) { return g.t.toISOString().slice(0, 10).replace(/-/g, "") + g.sat; }
+function keyDate(k) { return new Date(Date.UTC(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8), 9)); }
+function fragOf(p, dated) {          // dated: ekrandaki iki tarih de yazılır (paylaşım bağlantısı)
+  var q = new URLSearchParams(), s = p.src || {}, pr = p.props || {}, k;
+  if (s.kind === "sample") q.set("ornek", "1");
+  else if (s.kind === "loc") q.set("k", [+s.lat.toFixed(7), +s.lon.toFixed(7), s.side].join("_"));
+  else {
+    q.set("s", encPolys(p.polys));
+    for (k in PROPS) if (pr[k] != null && pr[k] !== "") q.set(PROPS[k], pr[k]);
+    if (!q.has("ad") && !(pr.ilAd || pr.ilceAd || pr.mahalleAd || pr.parselNo != null) && s.name) q.set("ad", String(s.name).replace(/\.[a-z0-9]+$/i, ""));
+  }
+  if (dated) {
+    var a = st.after && st.after.scene ? passKey(st.after.pass) : st.pin && st.pin.a, b = st.before && st.before.scene ? passKey(st.before.pass) : st.pin && !st.pin.done && st.pin.b;
+    if (a) { q.set("sonra", a); if (b) q.set("once", b); }
+  }
+  if (st.zoom !== "mid") q.set("z", st.zoom);
+  return q.toString();
+}
+function areaOfFrag(text) {          // adresin # bölümünden alan; alan yoksa null, bozuksa hata
+  var q = new URLSearchParams(String(text || "").replace(/^#/, "")), p = null, k, v;
+  if (q.get("ornek")) p = normArea(SAMPLE, {}, { kind: "sample" });
+  else if (q.get("k")) {
+    var m = q.get("k").split("_").map(Number);
+    if (m.length !== 3 || !m.every(isFinite) || Math.abs(m[0]) > 85 || Math.abs(m[1]) > 180 || !(m[2] >= 10 && m[2] <= 10000)) throw new Error("link");
+    p = squareArea(m[0], m[1], m[2]);
+  } else if (q.get("s")) {
+    var props = {};
+    for (k in PROPS) { v = q.get(PROPS[k]); if (v != null) { v = v.replace(/\s+/g, " ").trim().slice(0, 120); if (v) props[k] = v; } }
+    p = normArea(decPolys(q.get("s")), props, { kind: "link" });
+  }
+  if (!p) return null;
+  var re = /^\d{8}[A-D]?$/, a = q.get("sonra"), b = q.get("once"), z = q.get("z");
+  return { area: p, pin: a && re.test(a) ? { a: a, b: b && re.test(b) ? b : null } : null, zoom: z === "near" || z === "wide" ? z : "mid" };
+}
+function shareLink() { var f = fragOf(st.parcel, true); return f.length > LINK_MAX ? null : location.origin + location.pathname + "#" + f; }
+function syncAddr() {                // adres çubuğu alanı taşır (yer imi her zaman en yeni görüntüyü açar); tarihleri yalnız tarihli bir bağlantıyla gelindiyse taşır
+  if (!st.parcel) return;
+  var f = fragOf(st.parcel, !!st.pin); if (f.length > LINK_MAX) f = "";
+  if (f === st.frag) return;
+  st.frag = f;
+  try { history.replaceState(null, "", f ? "#" + f : location.pathname + location.search); } catch (e) {}
+}
+function fillLoc(p) { if (p.src.kind === "loc") { $("#loc").value = p.src.lat.toFixed(5) + ", " + p.src.lon.toFixed(5); if ($('#size option[value="' + p.src.side + '"]')) $("#size").value = String(p.src.side); } }
+function setZoom(z) { st.zoom = z; $$("#zoom button").forEach(function (x) { x.setAttribute("aria-pressed", String(x.dataset.z === z)); }); }
+function openFrag() {                // adreste alan varsa onu açar
+  var h = location.hash.replace(/^#/, ""), got = null;
+  if (!h) return false;
+  try { got = areaOfFrag(h); } catch (e) { inMsg(T("eLink")); note("bağlantı okunamadı: " + errText(e), "the link could not be read: " + errText(e)); return false; }
+  if (!got) return false;
+  inMsg(""); setZoom(got.zoom); fillLoc(got.area); useArea(got.area, got.pin);
+  return true;
+}
+window.addEventListener("hashchange", function () { if (location.hash.replace(/^#/, "") !== (st.frag || "")) openFrag(); });
 
 /* ---------- koordinat hesabı ---------- */
 var WA = 6378137, WF = 1 / 298.257223563;
@@ -820,16 +1025,34 @@ function ensureAssets(it) {          // "fields" süzgeci çalışmadıysa kayd�
 }
 
 /* ---------- görüntü dosyaları (COG) ---------- */
-var cogs = new Map();
+var cogs = new Map(), net = { bytes: 0 };          // net.bytes: görüntü dosyalarından inen veri (bayt)
+function cogClient(url) {            // geotiff.js'in kendi istemcisiyle aynı isteği yapar; yalnız inen baytı da sayar
+  return { url: url, request: function (o) {
+    o = o || {};
+    return fetch(url, { headers: o.headers, signal: o.signal }).then(function (r) {
+      return { ok: r.ok, status: r.status, getHeader: function (n) { return r.headers.get(n) || undefined; },
+        getData: function () { return r.arrayBuffer().then(function (b) { net.bytes += b.byteLength; return b; }); } };
+    });
+  } };
+}
+function heldCogs() {                // ekrandaki iki görüntünün dosyaları açık kalır (yakınlık değişince yeniden okunur)
+  var k = {}; [st.after, st.before].forEach(function (x) { if (x && x.item) ["visual", "scl", "red", "nir"].forEach(function (a) { if (x.item[a]) k[x.item[a].href] = 1; }); }); return k;
+}
+function dropCogs(it) {              // çizelge için okunan dosyalar işi bitince bırakılır (bellek dolmasın)
+  var keep = heldCogs(); ["visual", "scl"].forEach(function (a) { if (it[a] && !keep[it[a].href]) cogs.delete(it[a].href); });
+}
 function openCog(href) {
-  if (!cogs.has(href)) {
-    var p = withTimeout(GeoTIFF.fromUrl(href, { blockSize: 65536, cacheSize: 256 }).then(function (tiff) { return tiff.getImage(0); }).then(function (img) {
+  var hit = cogs.get(href);
+  if (hit) { cogs.delete(href); cogs.set(href, hit); }       // son kullanılan sona geçer
+  else {
+    var p = withTimeout(GeoTIFF.fromCustomClient(cogClient(href), { blockSize: 65536, cacheSize: 256 }).then(function (tiff) { return tiff.getImage(0); }).then(function (img) {
       var o = img.getOrigin(), r = img.getResolution(), gk = null;
       try { gk = img.getGeoKeys ? img.getGeoKeys() : img.geoKeys; } catch (e) {}
       return { img: img, ox: o[0], oy: o[1], rx: r[0], ry: r[1], w: img.getWidth(), h: img.getHeight(), epsg: gk && gk.ProjectedCSTypeGeoKey ? gk.ProjectedCSTypeGeoKey : null };
     }), 60000, "cog");
     p.then(function (c) { var d = c.w + "x" + c.h + ", EPSG " + c.epsg; note(tail(href) + " açıldı: " + d, tail(href) + " opened: " + d); }, function (e) { note(tail(href) + " açılamadı: " + errText(e), tail(href) + " could not be opened: " + errText(e)); cogs.delete(href); });
     cogs.set(href, p);
+    if (cogs.size > 40) { var keep = heldCogs(); cogs.forEach(function (v, k) { if (cogs.size > 28 && k !== href && !keep[k]) cogs.delete(k); }); }      // en eski açılanlar kapanır
   }
   return cogs.get(href);
 }
@@ -887,16 +1110,17 @@ function loadScene(it, frame) {
     return withTimeout(cog.img.readRasters({ window: [x0, y0, x1, y1], interleave: true }), 90000, "read").then(function (data) {
       var w = x1 - x0, h = y1 - y0;
       var nb = Math.round(data.length / (w * h)); note(it.id + " görüntü parçası: " + w + "x" + h + " piksel, " + nb + " bant", it.id + " image window: " + w + "x" + h + " pixels, " + nb + " bands");
-      return { it: it, A: A, x0: x0, y0: y0, w: w, h: h, spp: Math.round(data.length / (w * h)), data: data, mpp: Math.abs(cog.rx) };
+      return { it: it, A: A, x0: x0, y0: y0, w: w, h: h, spp: Math.round(data.length / (w * h)), data: data, mpp: Math.abs(cog.rx), H: frame.H };
     });
   });
 }
-function paint(cv, sc, opt) {
-  var N = CFG.N, ctx = cv.getContext("2d"), im = ctx.createImageData(N, N), out = im.data, A = sc.A, w = sc.w, h = sc.h, spp = sc.spp, d = sc.data, gain = opt.gain, smooth = opt.smooth;
-  var o = 0, u, v, cx, cy, i, j, k, r, g, b;
+function paint(cv, sc, opt) {         // opt.crop: görüntünün ortasındaki bu oranı gösterir (1: tamamı); tuval küçükse görüntü küçülür
+  var N = cv.width, ctx = cv.getContext("2d"), im = ctx.createImageData(N, N), out = im.data, A = sc.A, w = sc.w, h = sc.h, spp = sc.spp, d = sc.data, gain = opt.gain, smooth = opt.smooth;
+  var o = 0, u, v, cx, cy, i, j, k, r, g, b, crop = opt.crop || 1, q = CFG.N / N * crop, c0 = CFG.N / 2 * (1 - crop), U, V;
   function px(ii, jj, c) { return d[(jj * w + ii) * spp + (spp >= 3 ? c : 0)]; }
   for (v = 0; v < N; v++) for (u = 0; u < N; u++, o += 4) {
-    cx = A.a * (u + 0.5) + A.b * (v + 0.5) + A.c - sc.x0; cy = A.d * (u + 0.5) + A.e * (v + 0.5) + A.f - sc.y0;
+    U = c0 + (u + 0.5) * q; V = c0 + (v + 0.5) * q;
+    cx = A.a * U + A.b * V + A.c - sc.x0; cy = A.d * U + A.e * V + A.f - sc.y0;
     i = Math.floor(cx); j = Math.floor(cy);
     if (i < 0 || j < 0 || i >= w || j >= h) { out[o] = 13; out[o + 1] = 20; out[o + 2] = 17; out[o + 3] = 255; continue; }
     k = (j * w + i) * spp; r = d[k]; g = spp >= 3 ? d[k + 1] : r; b = spp >= 3 ? d[k + 2] : r;
@@ -939,7 +1163,10 @@ function ndvi(it, parcel) {
 }
 
 /* ---------- ekran ---------- */
-var st = { parcel: null, frame: null, zoom: "mid", gain: 1.3, smooth: true, passes: [], after: null, before: null, run: 0, brun: 0, preDays: 365, preDate: null, nd: { a: undefined, b: undefined } };
+var st = { parcel: null, frame: null, zoom: "mid", gain: 1.3, smooth: true, passes: [], after: null, before: null, run: 0, brun: 0, preDays: 365, preDate: null, nd: { a: undefined, b: undefined },
+  newest: null,      // en yeni açık geçiş (ekrandaki "Sonra" bu değilse "belirli bir tarihe bakıyorsun" satırı çıkar)
+  pin: null,         // tarihli bir bağlantıyla gelindiyse o tarihler: { a: "20261109C", b: "20251110B" }
+  frag: "" };        // adres çubuğuna yazılan son # bölümü
 var logLines = [];
 function say(text) {
   if (text) { logLines.push(text); if (logLines.length > 5) logLines.shift(); }
@@ -959,6 +1186,9 @@ function drawOverlay() {
   if (cv.width !== size) { cv.width = size; cv.height = size; }
   var ctx = cv.getContext("2d"); ctx.clearRect(0, 0, size, size);
   if (!st.parcel || !st.frame) return;
+  drawMarks(ctx, size, dpr);
+}
+function drawMarks(ctx, size, dpr) {          // sınır çizgisi, ölçek çubuğu, kuzey oku: ekrandaki katman ve indirilen görsel aynısını çizer
   var f = st.frame, accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#FF78BE";
   function path() { ctx.beginPath(); st.parcel.polys.forEach(function (poly) { poly.forEach(function (r) { r.forEach(function (c, i) { var p = f.toUV(c[0], c[1]); if (i) ctx.lineTo(p[0] * size, p[1] * size); else ctx.moveTo(p[0] * size, p[1] * size); }); ctx.closePath(); }); }); }
   ctx.lineJoin = "round";
@@ -984,7 +1214,7 @@ function repaint() {
   if (st.before && st.before.scene) paint($("#cv-before"), st.before.scene, opt);
   $("#stage").classList.toggle("single", !(st.before && st.before.scene));
   $("#empty").hidden = !!st.parcel;
-  drawOverlay();
+  drawOverlay(); tlPaint();
 }
 function showInfo() {
   var p = st.parcel, d = $("#info"); d.innerHTML = "";
@@ -1009,7 +1239,7 @@ function showRows() {
   var tb = $("#rows"); tb.innerHTML = "";
   st.passes.forEach(function (g) {
     var tr = document.createElement("tr");
-    if (st.after && st.after.pass === g) tr.className = "is-after"; else if (st.before && st.before.pass === g) tr.className = "is-before";
+    if (st.after && st.after.pass.key === g.key) tr.className = "is-after"; else if (st.before && st.before.pass.key === g.key) tr.className = "is-before";
     function td(text, cls) { var c = document.createElement("td"); if (cls) c.className = cls; c.textContent = text; tr.appendChild(c); return c; }
     var c0 = td(""), dl = document.createElement("span"), ds = document.createElement("span"), sm = document.createElement("small");
     dl.className = "dl"; dl.textContent = fmtDate(g.t); ds.className = "ds"; ds.textContent = fmtShort(g.t); sm.textContent = T("sat", g.sat); c0.appendChild(dl); c0.appendChild(ds); c0.appendChild(sm);
@@ -1035,17 +1265,21 @@ function showScore() {
 }
 function refreshTexts() {
   if (!st.parcel) return;
-  setHead("after", st.after && st.after.scene ? st.after : null); setHead("before", st.before && st.before.scene ? st.before : null);
-  showInfo(); showRows(); showScore(); drawOverlay();
+  var has = !!(st.after && st.after.scene), chosen = has && !(st.newest && st.newest.key === st.after.pass.key);
+  setHead("after", has ? st.after : null); setHead("before", st.before && st.before.scene ? st.before : null);
+  $$(".head.after .new").forEach(function (e) { e.hidden = !has || chosen; });
+  $("#pinned").hidden = !chosen; $("#share").hidden = !has; $("#sh-send").hidden = typeof navigator.share !== "function"; if (!has) shMsg("");
+  $("#tl").hidden = !has; tlMarks();
+  showInfo(); showRows(); showScore(); drawOverlay(); syncAddr();
 }
 
 /* ---------- akış ---------- */
-function useArea(p) {
+function useArea(p, pin) {            // pin: tarihli bir bağlantıdaki iki tarih (yoksa en yeni açık görüntü aranır)
   var pts = 0; p.polys.forEach(function (poly) { poly.forEach(function (r) { pts += r.length - 1; }); });
   var at = p.lat0.toFixed(5) + "," + p.lon0.toFixed(5), fmt = p.src && p.src.format ? " (" + p.src.format + ")" : "";
   note("alan: " + areaName(p, "tr") + " · " + srcText(p, "tr") + fmt + " · " + p.polys.length + " çokgen, " + pts + " köşe · merkez " + at, "area: " + areaName(p, "en") + " · " + srcText(p, "en") + fmt + " · " + p.polys.length + " polygons, " + pts + " points · centre " + at);
-  st.parcel = p; st.frame = makeFrame(p, st.zoom); st.passes = []; st.after = null; st.before = null; st.nd = { a: undefined, b: undefined };
-  var run = ++st.run; logLines = [];
+  st.parcel = p; st.frame = makeFrame(p, st.zoom); st.passes = []; st.after = null; st.before = null; st.nd = { a: undefined, b: undefined }; st.newest = null; st.pin = pin || null;
+  var run = ++st.run; logLines = []; tlReset();
   try { localStorage.setItem("kc.orbit.last", JSON.stringify({ v: 2, polys: p.polys, props: p.props, src: p.src })); } catch (e) {}
   $("#ctrl").hidden = true; $("#score").hidden = true;
   ["#cv-after", "#cv-before"].forEach(function (id) { var c = $(id); c.getContext("2d").clearRect(0, 0, c.width, c.height); });
@@ -1056,16 +1290,52 @@ function useArea(p) {
     if (run !== st.run) return;
     st.passes = passes; showRows();
     if (!passes.length) { say(T("noPass")); return; }
-    return showLatest(run);
+    return st.pin ? showPinned(run) : showLatest(run);
   }).catch(function (e) { if (run === st.run) say(e && e.http ? T("stacDown") + " (HTTP " + e.http + ")" : T("stacDown")); });
 }
+// Tarihli bağlantı: bağlantıdaki iki günün geçişi açılır. Biri bulunamazsa onun yerine her zamanki arama yapılır.
+function passOn(key) {               // "20261109C": o günün geçişi (listede yoksa katalogdan)
+  var day = key.slice(0, 4) + "-" + key.slice(4, 6) + "-" + key.slice(6, 8), sat = key.slice(8);
+  function pick(list) { return list.filter(function (g) { return g.t.toISOString().slice(0, 10) === day && (!sat || g.sat === sat); })[0] || null; }
+  var hit = pick(st.passes);
+  return hit ? Promise.resolve(hit) : stacSearch(st.parcel, { datetime: day + "T00:00:00Z/" + day + "T23:59:59Z", limit: 20 }).then(pick, function () { return null; });
+}
+function pinSlot(which, key, run) {
+  return passOn(key).then(function (g) {
+    if (run !== st.run || !g) return false;
+    return evalPass(g, st.parcel).then(function () {
+      if (run !== st.run) return false;
+      showRows();
+      if (g.status !== "clear" && g.status !== "cloud") return false;
+      return setSlot(which, g, run).then(function () { return run === st.run && !!st[which] && st[which].pass === g; });
+    });
+  });
+}
+function pinMiss(key) { say(T("pinMiss", fmtDate(keyDate(key)))); note("bağlantıdaki tarih açılamadı: " + key, "the date in the link could not be opened: " + key); }
+function showPinned(run) {
+  var pin = st.pin;
+  return pinSlot("after", pin.a, run).then(function (ok) {
+    if (run !== st.run) return;
+    if (!ok) { st.pin = null; pinMiss(pin.a); return showLatest(run); }
+    $("#ctrl").hidden = false; say(T("pickedA", passName(st.after.pass)));
+    if (!pin.b) { pin.done = true; return findBefore(run); }
+    return pinSlot("before", pin.b, run).then(function (ok2) {
+      if (run !== st.run) return;
+      pin.done = true;
+      if (!ok2) { pinMiss(pin.b); return findBefore(run); }
+      say(T("pickedB", passName(st.before.pass)));
+    });
+  });
+}
+$("#newest").addEventListener("click", function () { if (!st.parcel || !st.passes.length) return; st.pin = null; showLatest(st.run); });
 function showLatest(run) {
   return findClear(st.passes, run).then(function (g) {
     if (run !== st.run) return;
     if (!g) { say(T("noClear", st.passes.length)); return; }
+    st.newest = g;
     return setSlot("after", g, run).then(function () {
       if (run !== st.run) return;
-      if (!st.after) return showLatest(run);            // dosya okunamadı: sıradaki açık geçiş
+      if (!(st.after && st.after.pass === g)) return showLatest(run);            // dosya okunamadı: sıradaki açık geçiş
       say(T("shown", passName(g))); $("#ctrl").hidden = false;
       return findBefore(run);
     });
@@ -1089,10 +1359,10 @@ function findClear(passes, run, order, alive) {
   }
   return next();
 }
-function setSlot(which, g, run) {
-  var it = g.pick || g.items[0];
-  say(T("loadingImg", passName(g)));
-  return loadScene(it, st.frame).then(function (scene) {
+function setSlot(which, g, run, ready) {       // ready: çizelgenin önceden okuduğu görüntü (aynı çerçevedeyse yeniden indirilmez)
+  var it = ready ? ready.it : g.pick || g.items[0];
+  if (!ready) say(T("loadingImg", passName(g)));
+  return (ready ? Promise.resolve(ready) : loadScene(it, st.frame)).then(function (scene) {
     if (run !== st.run) return;
     st[which] = { pass: g, item: it, scene: scene };
     st.nd[which === "after" ? "a" : "b"] = undefined;
@@ -1147,7 +1417,7 @@ function reloadScenes() {            // yakınlık değişince iki görüntü ye
   ["after", "before"].forEach(function (w) { if (st[w]) jobs.push(loadScene(st[w].item, st.frame).then(function (sc) { if (run === st.run && st[w]) st[w].scene = sc; }, function () { if (run === st.run) { say(T("imgErr", passName(st[w].pass))); st[w] = null; } })); });
   Promise.all(jobs).then(function () { if (run === st.run) { repaint(); refreshTexts(); } });
 }
-$("#zoom").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; st.zoom = b.dataset.z; $$("#zoom button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); reloadScenes(); });
+$("#zoom").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; setZoom(b.dataset.z); syncAddr(); reloadScenes(); });
 $("#smooth").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; st.smooth = b.dataset.s === "1"; $$("#smooth button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); repaint(); });
 $("#gain").addEventListener("input", function () { st.gain = parseFloat(this.value) || 1.3; repaint(); });
 $("#pre").addEventListener("change", function () {
@@ -1167,21 +1437,321 @@ $("#cmp").addEventListener("input", function () { setSplit(parseFloat(this.value
 })();
 window.addEventListener("resize", drawOverlay);
 
+/* ---------- paylaşım: bağlantı ve indirilen görsel ---------- */
+function shMsg(text, link) {         // düğmelerin yanındaki bilgi satırı; kopyalanamayan bağlantı kutuda gösterilir
+  var box = $("#sh-link"); $("#sh-msg").textContent = text || ""; box.hidden = !link; clearTimeout(shMsg.t);
+  if (link) { box.value = link; try { box.focus(); box.select(); } catch (e) {} }
+  else if (text) shMsg.t = setTimeout(function () { $("#sh-msg").textContent = ""; }, 7000);
+}
+function shareName() { return areaName(st.parcel) || st.parcel.lat0.toFixed(5) + ", " + st.parcel.lon0.toFixed(5); }
+function shareText() {
+  var b = st.before && st.before.scene ? fmtDate(st.before.pass.t) : "", a = fmtDate(st.after.pass.t);
+  return b ? T("shText2", shareName(), b, a) : T("shText1", shareName(), a);
+}
+$("#sh-copy").addEventListener("click", function () {
+  var link = shareLink(); if (!link) { shMsg(T("shTooBig")); return; }
+  function done() { shMsg(T("shCopied")); } function manual() { shMsg(T("shManual"), link); }
+  try { navigator.clipboard.writeText(link).then(done, manual); } catch (e) { manual(); }
+});
+$("#sh-send").addEventListener("click", function () {
+  var link = shareLink(); if (!link) { shMsg(T("shTooBig")); return; }
+  try { navigator.share({ title: "Orbit · " + shareName(), text: shareText(), url: link }).catch(function (e) { if (!e || e.name !== "AbortError") shMsg(T("shManual"), link); }); }
+  catch (e) { shMsg(T("shManual"), link); }
+});
+function slug(t) { return String(t).toLowerCase().replace(/̇/g, "").replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48); }
+function exportName() { var b = st.before && st.before.scene ? passKey(st.before.pass).slice(0, 8) + "-" : ""; return "orbit-" + (slug(shareName()) || "alan") + "-" + b + passKey(st.after.pass).slice(0, 8) + ".png"; }
+// İndirilen görsel: üstte alanın adı, altında tarihleriyle iki görüntü (önce yoksa tek görüntü), sınır, ölçek ve kaynak satırı.
+function exportCanvas() {
+  var two = !!(st.before && st.before.scene), N = CFG.N, pad = 28, gap = 16, W = pad * 2 + (two ? 2 * N + gap : N), inner = W - pad * 2;
+  var both = typeof st.nd.a === "number" && typeof st.nd.b === "number" && two, top = 252, H = top + N + (both ? 104 : 72);
+  var cv = document.createElement("canvas"), ctx = cv.getContext("2d"), css = getComputedStyle(document.documentElement);
+  function C(n, d) { return css.getPropertyValue(n).trim() || d; }
+  var ink = C("--ink", "#070B09"), bone = C("--bone", "#ECE8DC"), mute = C("--mute", "#929D96"), line = C("--line", "#27332C"), accent = C("--accent", "#FF78BE");
+  var MONO = "'IBM Plex Mono',monospace", SANS = "Archivo,'Helvetica Neue',Arial,sans-serif";
+  cv.width = W; cv.height = H; ctx.fillStyle = ink; ctx.fillRect(0, 0, W, H); ctx.textBaseline = "alphabetic";
+  function text(t, x, y, font, size, color, maxW, align) {      // sığmayan metin küçülür; yine sığmazsa sonu kesilir
+    t = String(t); ctx.textAlign = align || "left"; ctx.fillStyle = color;
+    for (var z = size; z >= size * 0.72; z--) { ctx.font = font.replace("#", z); if (!maxW || ctx.measureText(t).width <= maxW) break; }
+    if (maxW) while (t.length > 4 && ctx.measureText(t).width > maxW) t = t.slice(0, -2).replace(/\s+$/, "") + "…";
+    ctx.fillText(t, x, y); return ctx.measureText(t).width;
+  }
+  // üst satır: logo, uygulamanın adı, sitenin adresi
+  var svg = $(".brand svg"), path = svg && svg.querySelector("path"), vb = svg ? (svg.getAttribute("viewBox") || "").split(/\s+/).map(Number) : [], x = pad;
+  if (path && vb.length === 4 && vb[3] > 0 && typeof Path2D === "function") { var k = 24 / vb[3]; ctx.save(); ctx.translate(pad, 30); ctx.scale(k, k); ctx.fillStyle = bone; ctx.fill(new Path2D(path.getAttribute("d"))); ctx.restore(); x = pad + vb[2] * k + 16; }
+  ctx.fillStyle = line; ctx.fillRect(x, 28, 1, 28); text("Orbit", x + 16, 48, "500 #px " + MONO, 15, accent);
+  var canon = document.querySelector('link[rel="canonical"]'), site = (canon ? canon.href : location.origin + location.pathname).replace(/^https?:\/\//, "").replace(/\/$/, "");
+  text(site, W - pad, 48, "400 #px " + MONO, 13, mute, inner - (x - pad) - 110, "right");
+  // alanın adı ve yüzölçümü
+  var calc = polyArea(st.parcel);
+  text(shareName(), pad, 110, "560 #px " + SANS, 30, bone, inner);
+  text(T("donum", fmtNum(calc, 0), fmtNum(calc / 1000, 1)) + " · " + T("xCentre", st.parcel.lat0.toFixed(5) + ", " + st.parcel.lon0.toFixed(5)), pad, 138, "400 #px " + MONO, 14, mute, inner);
+  // görüntüler
+  (two ? [["before", st.before, pad], ["after", st.after, pad + N + gap]] : [["after", st.after, pad]]).forEach(function (q) {
+    var slot = q[1], px = q[2];
+    text(T(q[0] === "after" ? "xAfter" : "xBefore"), px, 184, "500 #px " + MONO, 13, q[0] === "after" ? accent : mute);
+    text(fmtDate(slot.pass.t), px, 218, "540 #px " + SANS, 28, bone, N);
+    text(T("sat", slot.pass.sat) + (slot.pass.status === "cloud" ? " · " + T("stCloud", slot.pass.cloudPct) : ""), px, 240, "400 #px " + MONO, 13, mute, N);
+    ctx.drawImage($(q[0] === "after" ? "#cv-after" : "#cv-before"), px, top, N, N);
+    ctx.save(); ctx.translate(px, top); ctx.beginPath(); ctx.rect(0, 0, N, N); ctx.clip(); drawMarks(ctx, N, 1.5); ctx.restore();
+    ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.strokeRect(px + 0.5, top + 0.5, N - 1, N - 1);
+  });
+  // alt satırlar: yeşillik puanı (iki görüntü de varsa) ve kaynak
+  var y = top + N + 32;
+  if (both) { text(T("xScore", fmtNum(st.nd.b, 2), fmtNum(st.nd.a, 2), (st.nd.a - st.nd.b > 0 ? "+" : "") + fmtNum(st.nd.a - st.nd.b, 2)), pad, y, "400 #px " + MONO, 15, bone, inner); y += 30; }
+  var years = [st.before && two ? trDay(st.before.pass.t).getUTCFullYear() : null, trDay(st.after.pass.t).getUTCFullYear()].filter(function (v, i, a) { return v && a.indexOf(v) === i; }).join(", ");
+  text(T("xCredit", years), pad, y, "400 #px " + MONO, 13, mute, inner);
+  return cv;
+}
+$("#sh-png").addEventListener("click", function () {
+  if (!(st.after && st.after.scene)) return;
+  try {
+    var name = exportName(), bin = atob(exportCanvas().toDataURL("image/png").split(",")[1]), u8 = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    var url = URL.createObjectURL(new Blob([u8], { type: "image/png" })), a = document.createElement("a");
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+    shMsg(T("shSaved", name));
+  } catch (e) { shMsg(T("shPngErr")); note("görsel hazırlanamadı: " + errText(e), "the image could not be prepared: " + errText(e)); }
+});
+
+/* ---------- "Ne zaman değişti?" çizelgesi ----------
+   İstenince geçmişe eşit aralıklı tarihler koyar; her tarihe en yakın açık görüntüyü bulur ve küçük hâlini sıraya dizer.
+   Her görüntü, sıradaki son görüntüyle piksel piksel karşılaştırılır: alanın içi ve çevresi için ayrı ayrı ortalama renk farkı.
+   Çevre bir ölçüdür: mevsim ya da kar alanın içini de çevresini de değiştirir; yalnız alanın içi değişiyorsa değişim alana özgüdür.
+   Sayfa hüküm vermez; yalnız farkın en çok hangi iki tarih arasında ayrıştığını söyler. */
+var tl = { run: 0, busy: false, stopped: false, slots: [], seen: {}, geom: null, ref: null, days: 0, pick: null, hover: -1, bytes0: 0 };
+function tlReset() { tl.run++; tl.busy = false; tl.stopped = false; tl.slots = []; tl.seen = {}; tl.geom = null; tl.ref = null; tl.days = 0; tl.pick = null; tl.hover = -1; tlRender(); }
+function tlGeom() {                  // çizelgenin baktığı pencere (alana yakın çerçeve) ve bu pencerede alanın içi ile dışını ayıran ızgara
+  var p = st.parcel, f = makeFrame(p, "near"), cell = Math.max(2.5, Math.min(10, Math.sqrt(polyArea(p) / 30)), 2 * f.H / 240), n = Math.max(8, Math.round(2 * f.H / cell));
+  var rings = [], mask = new Uint8Array(n * n);
+  p.polys.forEach(function (poly) { poly.forEach(function (r) { rings.push(r.map(function (c) { return f.toXY(c[0], c[1]); })); }); });
+  for (var j = 0; j < n; j++) for (var i = 0; i < n; i++) mask[j * n + i] = inPoly(-f.H + (i + 0.5) / n * 2 * f.H, f.H - (j + 0.5) / n * 2 * f.H, rings) ? 1 : 0;
+  return { frame: f, H: f.H, n: n, mask: mask };
+}
+function tlGrid(sc, g) {             // görüntüyü ızgaranın her gözünde bir kez örnekler (en yakın piksel); görüntüler ayrı karelerden gelse de aynı yerler karşılaştırılır
+  var n = g.n, out = new Uint8Array(n * n * 3), N = CFG.N, crop = g.H / sc.H, c0 = N / 2 * (1 - crop), A = sc.A, o = 0;
+  for (var j = 0; j < n; j++) for (var i = 0; i < n; i++, o += 3) {
+    var U = c0 + (i + 0.5) / n * N * crop, V = c0 + (j + 0.5) / n * N * crop;
+    var x = Math.floor(A.a * U + A.b * V + A.c - sc.x0), y = Math.floor(A.d * U + A.e * V + A.f - sc.y0);
+    if (x < 0 || y < 0 || x >= sc.w || y >= sc.h) continue;
+    var k = (y * sc.w + x) * sc.spp; out[o] = sc.data[k]; out[o + 1] = sc.spp >= 3 ? sc.data[k + 1] : sc.data[k]; out[o + 2] = sc.spp >= 3 ? sc.data[k + 2] : sc.data[k];
+  }
+  return out;
+}
+function tlDiff(a, b, mask) {        // ortalama renk farkı, yüzde: 0 aynı, 100 tam zıt. i: alanın içi, o: çevresi
+  var si = 0, ni = 0, so = 0, no = 0;
+  for (var p = 0, o = 0; p < mask.length; p++, o += 3) {
+    if (!(a[o] + a[o + 1] + a[o + 2]) || !(b[o] + b[o + 1] + b[o + 2])) continue;       // veri yok
+    var d = Math.abs(a[o] - b[o]) + Math.abs(a[o + 1] - b[o + 1]) + Math.abs(a[o + 2] - b[o + 2]);
+    if (mask[p]) { si += d; ni++; } else { so += d; no++; }
+  }
+  return { i: ni ? si / ni / 7.65 : null, o: no ? so / no / 7.65 : null };
+}
+function tlSample(g, it, scene) { var x = { pass: g, item: it, scene: scene, grid: tlGrid(scene, tl.geom) }; tl.seen[g.key] = x; return x; }
+function tlNearest(passes, t, used, alive) {      // hedef tarihe en yakın açık geçiş; en çok altı geçişin bulutuna bakar
+  var list = passes.filter(function (g) { return !used[g.key] && g.cloud < 60; }).sort(function (a, b) { return Math.abs(a.t - t) - Math.abs(b.t - t); }).slice(0, 6), i = 0, failed = false;
+  function next() {
+    if (!alive() || i >= list.length) return Promise.resolve(failed ? "err" : null);       // hiçbiri açık değil; dosyası okunamayan olduysa "okunamadı"
+    var g = list[i++];
+    if (tl.seen[g.key]) return Promise.resolve(tl.seen[g.key].pass);
+    return evalPass(g, st.parcel).then(function () { g.items.forEach(dropCogs); if (g.status === "error") failed = true; return g.status === "clear" ? g : next(); });
+  }
+  return next();
+}
+function tlBuild(from, to, first, last, days) {   // first ve last: iki uçtaki hazır görüntü (dönem düğmelerinde yalnız son görüntü hazırdır)
+  var run = ++tl.run, area = st.run, span = to - from, n = Math.max(2, Math.min(days === 1826 ? 11 : 13, Math.floor(span / (5 * 864e5)) + 1)), step = span / (n - 1), i;
+  function alive() { return run === tl.run && area === st.run; }
+  function iso(d) { return d.toISOString().slice(0, 19) + "Z"; }
+  tl.busy = true; tl.stopped = false; tl.days = days || 0; tl.pick = null; tl.hover = -1; tl.bytes0 = net.bytes; tl.ref = last; tl.slots = [];
+  for (i = 0; i < n; i++) tl.slots.push({ t: new Date(from.getTime() + i * step), s: null, state: "wait" });
+  tl.slots[n - 1] = { t: last.pass.t, s: last, state: "ok" }; if (first) tl.slots[0] = { t: first.pass.t, s: first, state: "ok" };
+  var todo = [], used = {}, active = 0; used[last.pass.key] = 1; if (first) used[first.pass.key] = 1;
+  for (i = n - 2; i >= (first ? 1 : 0); i--) todo.push(i);            // yeniden eskiye doğru dolar
+  function one(i) {
+    var sl = tl.slots[i], half = Math.min(step / 2, 45 * 864e5), a = new Date(sl.t.getTime() - half), b = new Date(Math.min(sl.t.getTime() + half, to.getTime() - 60000));     // tarihin iki yanında en çok 45 gün
+    return stacSearch(st.parcel, { datetime: iso(a) + "/" + iso(b), limit: 200 }).then(function (passes) {
+      return alive() ? tlNearest(passes, sl.t, used, alive) : null;
+    }).then(function (g) {
+      if (!alive()) return;
+      if (!g || g === "err") { sl.state = g ? "err" : "none"; return; }
+      used[g.key] = 1;
+      if (tl.seen[g.key]) { sl.s = tl.seen[g.key]; sl.state = "ok"; return; }
+      var it = g.pick || g.items[0];
+      return loadScene(it, st.frame).then(function (sc) { dropCogs(it); if (alive()) { sl.s = tlSample(g, it, sc); sl.state = "ok"; } });
+    }).catch(function (e) { if (alive()) { sl.state = "err"; note("çizelge: " + fmtDate(sl.t) + " okunamadı: " + errText(e), "timeline: " + fmtDate(sl.t) + " could not be read: " + errText(e)); } })
+      .then(function () { if (alive()) tlRender(); });
+  }
+  function pump() {
+    if (!alive()) return;
+    while (active < 3 && todo.length) { active++; one(todo.shift()).then(function () { active--; pump(); }); }
+    if (!active && !todo.length) tlEnd();
+  }
+  tlRender(); tlEdge(); pump();
+}
+function tlEnd() { tl.busy = false; tl.pick = tlPick(); tlRender(); tlEdge(); }
+function tlEdge() { var sc = $("#tl-scroll"); sc.scrollLeft = sc.scrollWidth; }        // dar ekranda en yeni görüntü görünsün
+function tlPick() {                  // alanın içindeki değişimin, çevresindeki aynı yönlü değişimden en çok fazla olduğu ardışık iki görüntü
+  var best = null, prev = -1;
+  tl.slots.forEach(function (sl, i) {
+    if (!sl.s || !sl.d || sl.d.i == null) return;
+    if (prev >= 0) {
+      var p = tl.slots[prev], a = sl.d.i - p.d.i, b = (sl.d.o || 0) - (p.d.o || 0), sc = Math.abs(a) - (a * b > 0 ? Math.min(Math.abs(a), Math.abs(b)) : 0);
+      if (sc > 1e-6 && (!best || sc > best.sc)) best = { a: prev, b: i, sc: sc };
+    }
+    prev = i;
+  });
+  return best;
+}
+function tlStart(days) {
+  if (tl.busy || !(st.after && st.after.scene)) return;
+  if (!tl.geom) tl.geom = tlGeom();
+  [st.after, st.before].forEach(function (x) { if (x && x.scene && !tl.seen[x.pass.key]) tlSample(x.pass, x.item, x.scene); });       // ekrandaki görüntüler yeniden indirilmez
+  var to = st.after.pass.t;
+  tlBuild(new Date(to.getTime() - days * 864e5), to, null, tl.seen[st.after.pass.key], days);
+}
+$("#tl-span").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (b) tlStart(+b.dataset.d); });
+$("#tl-stop").addEventListener("click", function () {
+  if (!tl.busy) return;
+  tl.run++; tl.stopped = true; tl.slots.forEach(function (sl) { if (sl.state === "wait") sl.state = "skip"; }); tlEnd();
+});
+function tlOpen(i, which) {          // sıradaki görüntüyü büyük ekranda açar; çerçeve aynıysa yeniden indirmez
+  var x = tl.slots[i] && tl.slots[i].s, run = st.run; which = which || "before";
+  if (!x) return Promise.resolve();
+  return setSlot(which, x.pass, run, x.scene.H === st.frame.H ? x.scene : null).then(function () {
+    if (run !== st.run || !st[which] || st[which].pass !== x.pass) return;
+    $("#ctrl").hidden = false; say(T(which === "after" ? "pickedA" : "pickedB", passName(x.pass)));
+    try { $("#stage").scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e) {}
+  });
+}
+$("#tl-cmp").addEventListener("click", function () { var p = tl.pick; if (p && !tl.busy) tlOpen(p.a, "before").then(function () { return tlOpen(p.b, "after"); }); });
+$("#tl-zoom").addEventListener("click", function () { var p = tl.pick; if (p && !tl.busy) { var a = tl.slots[p.a].s, b = tl.slots[p.b].s; tlBuild(a.pass.t, b.pass.t, a, b, 0); } });
+function tlHover(i) { if (i === tl.hover) return; tl.hover = i; tlChart(); tlRead(); }
+function tlRender() {
+  var n = tl.slots.length, ok = tl.slots.filter(function (sl) { return sl.s; }), done = tl.slots.filter(function (sl) { return sl.state !== "wait"; }).length, got = fmtBytes(net.bytes - tl.bytes0);
+  $$("#tl-span button").forEach(function (b) { b.disabled = tl.busy; b.setAttribute("aria-pressed", String(n > 0 && +b.dataset.d === tl.days)); });
+  $("#tl-stop").hidden = !tl.busy; $("#tl-body").hidden = !n;
+  var none = tl.slots.filter(function (sl) { return sl.state === "none"; }).length;
+  $("#tl-state").textContent = !n ? "" : tl.busy ? T("tlBusy", done, n, got)
+    : (tl.stopped ? T("tlStopped") : "") + T("tlDone", ok.length, fmtDate(ok[0].s.pass.t), fmtDate(ok[ok.length - 1].s.pass.t), got) + (none ? T("tlGaps", none) : "");
+  if (!n) return;
+  tl.slots.forEach(function (sl) { if (sl.s && !sl.d) sl.d = tlDiff(sl.s.grid, tl.ref.grid, tl.geom.mask); });
+  var strip = $("#tl-strip"); strip.innerHTML = ""; $("#tl-in").style.setProperty("--n", n);
+  tl.slots.forEach(function (sl, i) {
+    var cell = document.createElement(sl.s ? "button" : "div"), d = document.createElement("span");
+    cell.className = "tl-cell" + (sl.s ? "" : " none"); d.className = "d";
+    if (sl.s) {
+      var cv = document.createElement("canvas"); cv.width = cv.height = 144; cell.type = "button"; cell.appendChild(cv);
+      cell.setAttribute("aria-label", T("tlOpen", fmtDate(sl.s.pass.t))); d.textContent = fmtShort(sl.s.pass.t);
+      cell.addEventListener("click", function () { tlHover(i); if (!(st.after && st.after.pass.key === sl.s.pass.key)) tlOpen(i); });      // "Sonra" görüntüsü "Önce" olarak açılmaz
+      cell.addEventListener("focus", function () { tlHover(i); }); cell.addEventListener("pointerenter", function () { tlHover(i); });
+    } else {
+      var ph = document.createElement("span"); ph.className = "ph"; ph.textContent = sl.state === "wait" ? "…" : T(sl.state === "skip" ? "tlSkip" : sl.state === "err" ? "stErr" : "tlNone"); cell.appendChild(ph);
+      d.textContent = fmtShort(sl.t);
+    }
+    cell.appendChild(d); strip.appendChild(cell);
+  });
+  tlPaint(); tlMarks(); tlChart(); tlRead();
+  var tb = $("#tl-rows"); tb.innerHTML = "";
+  ok.forEach(function (sl) {
+    var tr = document.createElement("tr");
+    [fmtDate(sl.s.pass.t), T("sat", sl.s.pass.sat), sl.d.i == null ? "—" : pct(sl.d.i), sl.d.o == null ? "—" : pct(sl.d.o)].forEach(function (t, k) { var td = document.createElement("td"); td.textContent = t; if (k > 1) td.className = "num"; tr.appendChild(td); });
+    tb.appendChild(tr);
+  });
+  var box = $("#tl-find"), p = tl.pick;
+  box.hidden = tl.busy || ok.length < 2;
+  if (!box.hidden) {
+    $("#tl-acts").hidden = !p;
+    if (!p) $("#tl-find-t").textContent = T("tlFlat");
+    else {
+      var a = tl.slots[p.a], b = tl.slots[p.b], v = function (x) { return x == null ? "—" : pct(x); };
+      $("#tl-find-t").textContent = T("tlFind", fmtDate(a.s.pass.t), fmtDate(b.s.pass.t), v(a.d.i), v(b.d.i), v(a.d.o), v(b.d.o));
+      $("#tl-zoom").hidden = b.s.pass.t - a.s.pass.t < 12 * 864e5;        // aralık zaten kısaysa içinde bakacak başka geçiş kalmaz
+    }
+  }
+}
+function tlPaint() {                 // küçük görüntüler: büyük görüntüyle aynı parlaklık ve görünüm, alanın çevresine kırpılmış, üstünde sınır
+  var g = tl.geom, cells = $$("#tl-strip .tl-cell"); if (!g) return;
+  var accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#FF78BE";
+  tl.slots.forEach(function (sl, i) {
+    var cv = cells[i] && cells[i].querySelector("canvas"); if (!cv || !sl.s) return;
+    paint(cv, sl.s.scene, { gain: st.gain, smooth: st.smooth, crop: g.H / sl.s.scene.H });
+    var ctx = cv.getContext("2d"), size = cv.width;
+    function path() { ctx.beginPath(); st.parcel.polys.forEach(function (poly) { poly.forEach(function (r) { r.forEach(function (c, k) { var q = g.frame.toUV(c[0], c[1]); if (k) ctx.lineTo(q[0] * size, q[1] * size); else ctx.moveTo(q[0] * size, q[1] * size); }); ctx.closePath(); }); }); }
+    ctx.lineJoin = "round"; path(); ctx.strokeStyle = "rgba(0,0,0,.7)"; ctx.lineWidth = 3.5; ctx.stroke(); path(); ctx.strokeStyle = accent; ctx.lineWidth = 1.5; ctx.stroke();
+  });
+}
+function tlMarks() {                 // büyük ekrandaki "Önce" ve "Sonra" görüntüleri sırada işaretlenir
+  var cells = $$("#tl-strip .tl-cell"), a = st.after && st.after.scene ? st.after.pass.key : "", b = st.before && st.before.scene ? st.before.pass.key : "";
+  tl.slots.forEach(function (sl, i) { if (!cells[i]) return; var k = sl.s ? sl.s.pass.key : null; cells[i].classList.toggle("is-a", !!k && k === a); cells[i].classList.toggle("is-b", !!k && k === b); });
+}
+function tlChart() {                 // iki çizgi: alanın içi (vurgu rengi, yuvarlak nokta) ve çevresi (gri, kare nokta); sütunlar küçük görüntülerle aynı hizada
+  var cv = $("#tl-chart"), axis = $("#tl-axis"), cells = $$("#tl-strip .tl-cell"), w = cv.clientWidth, h = cv.clientHeight;
+  if (!cells.length || !w) return;
+  var dpr = Math.min(3, window.devicePixelRatio || 1), ctx = cv.getContext("2d"), css = getComputedStyle(document.documentElement);
+  function C(n, d) { return css.getPropertyValue(n).trim() || d; }
+  var accent = C("--accent", "#FF78BE"), dim = C("--dim", "#6B766F"), line = C("--line", "#27332C"), surf = C("--ink-2", "#0D1411"), bone = C("--bone", "#ECE8DC"), mute = C("--mute", "#929D96");
+  if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+  var left = cv.getBoundingClientRect().left, xs = cells.map(function (c) { var r = c.getBoundingClientRect(); return r.left + r.width / 2 - left; });
+  var top = 28, bot = h - 10, max = 0, peak = -1;
+  tl.slots.forEach(function (sl, i) { if (!sl.d) return; max = Math.max(max, sl.d.i || 0, sl.d.o || 0); if (sl.d.i != null && (peak < 0 || sl.d.i > tl.slots[peak].d.i)) peak = i; });
+  var step = [1, 2, 5, 10, 20, 25, 50].filter(function (x) { return max / x <= 4; })[0] || 50, hi = Math.max(step, Math.ceil(max / step - 1e-9) * step);
+  function Y(v) { return bot - v / hi * (bot - top); }
+  axis.innerHTML = ""; ctx.lineWidth = 1; ctx.strokeStyle = line;
+  for (var v = 0; v <= hi + 1e-9; v += step) {           // ızgara: ince, düz, geri planda
+    var gy = Math.round(Y(v)) + 0.5; ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    var sp = document.createElement("span"); sp.textContent = pct(v, 0); sp.style.top = gy + "px"; axis.appendChild(sp);
+  }
+  if (tl.pick && !tl.busy) { ctx.globalAlpha = 0.1; ctx.fillStyle = accent; ctx.fillRect(xs[tl.pick.a], top - 14, xs[tl.pick.b] - xs[tl.pick.a], bot - top + 14); ctx.globalAlpha = 1; }   // işaretli aralık
+  if (tl.hover >= 0 && tl.slots[tl.hover] && tl.slots[tl.hover].s) { var hx = Math.round(xs[tl.hover]) + 0.5; ctx.strokeStyle = mute; ctx.beginPath(); ctx.moveTo(hx, top - 14); ctx.lineTo(hx, bot); ctx.stroke(); }
+  [["o", dim], ["i", accent]].forEach(function (sr) {
+    var pts = []; tl.slots.forEach(function (sl, i) { if (sl.d && sl.d[sr[0]] != null) pts.push([xs[i], Y(sl.d[sr[0]])]); });
+    ctx.strokeStyle = sr[1]; ctx.lineWidth = 2; ctx.lineJoin = "round"; ctx.lineCap = "round"; ctx.beginPath();
+    pts.forEach(function (q, k) { if (k) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); ctx.stroke();
+    pts.forEach(function (q) {                           // nokta: 8 piksel, çevresinde 2 piksel zemin rengi halka
+      ctx.fillStyle = surf; ctx.beginPath(); if (sr[0] === "i") ctx.arc(q[0], q[1], 6, 0, 6.2832); else ctx.rect(q[0] - 6, q[1] - 6, 12, 12); ctx.fill();
+      ctx.fillStyle = sr[1]; ctx.beginPath(); if (sr[0] === "i") ctx.arc(q[0], q[1], 4, 0, 6.2832); else ctx.rect(q[0] - 4, q[1] - 4, 8, 8); ctx.fill();
+    });
+  });
+  if (peak >= 0 && tl.slots[peak].d.i > 0) {            // tek etiket: alanın içindeki en büyük fark
+    ctx.font = "500 11px 'IBM Plex Mono',monospace"; ctx.textBaseline = "bottom"; ctx.fillStyle = bone;
+    var label = pct(tl.slots[peak].d.i), tw = ctx.measureText(label).width, lx = Math.max(2, Math.min(w - tw - 2, xs[peak] - tw / 2));
+    ctx.textAlign = "left"; ctx.fillText(label, lx, Y(tl.slots[peak].d.i) - 9);
+  }
+  cv.setAttribute("aria-label", T("tlAria", tl.slots.filter(function (sl) { return sl.s; }).length));
+}
+function tlRead() {                  // seçili tarihin değerleri: önce değer, sonra adı
+  var el = $("#tl-read"), sl = tl.slots[tl.hover]; el.innerHTML = "";
+  if (!sl || !sl.s) { el.textContent = tl.slots.length ? T("tlHint") : ""; return; }
+  var when = document.createElement("span"); when.className = "when"; when.textContent = passName(sl.s.pass); el.appendChild(when);
+  [["a", "tlIn", sl.d && sl.d.i], ["", "tlOut", sl.d && sl.d.o]].forEach(function (q) {
+    var sp = document.createElement("span"), k = document.createElement("i"), b = document.createElement("b");
+    k.className = "lk " + q[0]; b.textContent = q[2] == null ? "—" : pct(q[2]); sp.appendChild(k); sp.appendChild(b); sp.appendChild(document.createTextNode(" " + T(q[1]))); el.appendChild(sp);
+  });
+}
+(function () {
+  var cv = $("#tl-chart");
+  function at(ev) { var best = -1, bd = 1e9; $$("#tl-strip .tl-cell").forEach(function (c, i) { var r = c.getBoundingClientRect(), d = Math.abs(ev.clientX - r.left - r.width / 2); if (d < bd && tl.slots[i] && tl.slots[i].s) { bd = d; best = i; } }); tlHover(best); }
+  cv.addEventListener("pointermove", at); cv.addEventListener("pointerdown", at);
+})();
+window.addEventListener("resize", function () { if (tl.slots.length) tlChart(); });
+
 /* ---------- başla ---------- */
 note("sayfa: " + location.host + location.pathname + " · " + navigator.userAgent, "page: " + location.host + location.pathname + " · " + navigator.userAgent);
 setLang(pickLang());
 (function () {
+  var linked = openFrag();           // adreste alan varsa (paylaşılan bağlantı ya da yer imi) o açılır; yoksa son bakılan alan
   try {
     var last = JSON.parse(localStorage.getItem("kc.orbit.last") || "null");
-    if (last && last.v === 2) {
+    if (linked) last = null;
+    else if (last && last.v === 2) {
       var p = normArea(last.polys, last.props, last.src);
-      if (p.src.kind === "loc") { $("#loc").value = p.src.lat.toFixed(5) + ", " + p.src.lon.toFixed(5); if ($('#size option[value="' + p.src.side + '"]')) $("#size").value = String(p.src.side); }
-      useArea(p);
+      fillLoc(p); useArea(p);
     } else if (last) localStorage.removeItem("kc.orbit.last");             // eski sürümün kaydı
     for (var i = localStorage.length - 1; i >= 0; i--) { var k = localStorage.key(i); if (/^kc\.orbit\.(il$|ilce\.|mah\.)/.test(k)) localStorage.removeItem(k); }   // eski sürümün sakladığı listeler
   } catch (e) {}
 })();
-window.__orbit = { utm: utm, st: st, makeFrame: makeFrame, parseBoundary: parseBoundary, parseLoc: parseLoc, squareArea: squareArea, normArea: normArea, useArea: useArea, polyArea: polyArea, mapProps: mapProps, SAMPLE: SAMPLE, CFG: CFG };
+window.__orbit = { utm: utm, st: st, makeFrame: makeFrame, parseBoundary: parseBoundary, parseLoc: parseLoc, squareArea: squareArea, normArea: normArea, useArea: useArea, polyArea: polyArea, mapProps: mapProps, SAMPLE: SAMPLE, CFG: CFG,
+  tl: tl, net: net, cogs: cogs, fragOf: fragOf, areaOfFrag: areaOfFrag, encPolys: encPolys, decPolys: decPolys, shareLink: shareLink, exportCanvas: exportCanvas, exportName: exportName };
 })();
 </script>
 <script>

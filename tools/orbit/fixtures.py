@@ -89,6 +89,15 @@ def part(n, inside, marker, xx, yy):
     a = np.full((1, n, n), 4); a[0][:, : n // 2 - 1] = 8; return a
 write("36STG", "36STG_partly_SCL.tif", 20, "uint8", 1, part)
 
+# "Ne zaman değişti?" çizelgesinin denemesi için 36STG karesinde iki görüntü daha. Zeminleri "sonra" görüntüsüyle aynıdır (seed 1);
+# böylece alanın çevresindeki fark bilinir: ilkinde sıfır, ikincisinde her yerde 24 birim (mevsim farkı gibi).
+write("36STG", "36STG_green_TCI.tif", 10, "uint8", 3, tci("before", 1))             # alanın içi yeşil, çevresi "sonra" ile aynı
+def season(n, inside, marker, xx, yy):                                                # her yer 24 birim daha parlak; alanın içi yeşil
+    a = np.clip(fields(n, xx, yy, 1).astype(int) + 24, 0, 255)
+    for b, c in enumerate((84, 184, 84)): a[b][inside] = c; a[b][marker] = 250
+    return a
+write("36STG", "36STG_season_TCI.tif", 10, "uint8", 3, season)
+
 # gerçek dosya bant bant yazılmış olabilir: aynı içerik INTERLEAVE=BAND ile
 def bandil(src, dst):
     with rasterio.open(os.path.join(OUT, src)) as a:
