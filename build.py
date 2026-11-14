@@ -3,8 +3,10 @@
 
 Girdi : src/body.html (sayfa), src/land.txt (harita noktaları), src/logo.json (tools/logo.py üretir),
         src/castle.json (Castle rakamları; Castle deposundaki docs/data/summary.json'ın kopyası),
-        src/site.json (alan adı), assets/ (logo, simge, paylaşım görseli)
+        src/site.json (alan adı), assets/ (logo, simge, paylaşım görseli),
+        src/orbit.html (Orbit uygulaması), node_modules/geotiff (Orbit'in görüntü dosyası okuyucusu)
 Çıktı : docs/            yayımlanan site (GitHub Pages bu klasörü yayımlar): index.html, fonts/, favicon.svg, ...
+        docs/orbit/index.html   Orbit uygulaması (tek dosya; yazı tipleri ../fonts/ klasöründen)
         dist/artifact.html   Claude'daki önizleme (yazı tipleri Google Fonts'tan)
 
 Kullanım: python3 build.py [--castle <Castle deposundaki docs/data/summary.json>]
@@ -30,6 +32,8 @@ MONTHS = {"en": ["January", "February", "March", "April", "May", "June", "July",
           "tr": ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]}
 DESC = ("Kose Capital builds and runs three systems: Castle (value investing), Bazaar (AI sales) "
         "and Apex (exchange connectivity for Borsa Istanbul).")
+ORBIT_DESC = ("Orbit shows the latest cloud-free Sentinel-2 satellite image of a land parcel in Türkiye "
+              "and compares it with an earlier date.")
 
 
 def font_faces():
@@ -63,6 +67,45 @@ def castle_numbers():
     return {"__K_COUNTRIES__": str(k["countries"]), "__K_CASTLES__": str(k["castles"]),
             "__K_COMPANIES_EN__": grp(k["companies"], ","), "__K_COMPANIES_TR__": grp(k["companies"], "."),
             "__K_ASOF_EN__": "%d %s %s" % (int(d), MONTHS["en"][int(m) - 1], y), "__K_ASOF_TR__": "%d %s %s" % (int(d), MONTHS["tr"][int(m) - 1], y)}
+
+
+def build_orbit(logo_svg, faces, files, base):
+    """Orbit uygulaması: src/orbit.html -> docs/orbit/index.html. Yazı tipleri ana sayfanınkilerdir (../fonts/);
+    görüntü dosyası okuyucusu (geotiff.js) sayfaya gömülür, böylece sayfa dışarıdan kitaplık yüklemez."""
+    page = (SRC / "orbit.html").read_text(encoding="utf-8")
+    pkg = NM / "geotiff"
+    meta = json.loads((pkg / "package.json").read_text(encoding="utf-8"))
+    lib = (pkg / "dist-browser" / "geotiff.js").read_text(encoding="utf-8")
+    lib = re.sub(r"//# sourceMappingURL=.*$", "", lib, flags=re.M).replace("</script", "<\\/script").replace("<!--", "<\\!--")
+    deps = []
+    for name in sorted(meta.get("dependencies", {})):
+        d = json.loads((NM / name / "package.json").read_text(encoding="utf-8"))
+        deps.append("%s %s (%s)" % (name, d.get("version", "?"), d.get("license", "?")))
+    notice = ("/*\ngeotiff.js %s\n\n%s\nBu derleme şu paketleri de içerir: %s.\n*/\n"
+              % (meta["version"], (pkg / "LICENSE").read_text(encoding="utf-8").strip().replace("*/", "* /"), ", ".join(deps)))
+    head = ['<meta name="description" content="%s">' % ORBIT_DESC, '<meta name="theme-color" content="#070B09">',
+            '<link rel="icon" href="../favicon.svg" type="image/svg+xml">']
+    if (ASSETS / "apple-touch-icon.png").exists():
+        head.append('<link rel="apple-touch-icon" href="../apple-touch-icon.png">')
+    head += ['<meta property="og:type" content="website">', '<meta property="og:site_name" content="Kose Capital">',
+             '<meta property="og:title" content="Orbit · Kose Capital">', '<meta property="og:description" content="%s">' % ORBIT_DESC]
+    if base:
+        url = base + "orbit/"
+        head += ['<link rel="canonical" href="%s">' % url,
+                 '<link rel="alternate" hreflang="en" href="%s?lang=en">' % url, '<link rel="alternate" hreflang="tr" href="%s?lang=tr">' % url,
+                 '<link rel="alternate" hreflang="x-default" href="%s">' % url, '<meta property="og:url" content="%s">' % url]
+        if (ASSETS / "og.png").exists():
+            head += ['<meta property="og:image" content="%sog.png">' % base, '<meta property="og:image:width" content="1200">',
+                     '<meta property="og:image:height" content="630">', '<meta name="twitter:card" content="summary_large_image">']
+    head += ['<link rel="preload" as="font" type="font/woff2" crossorigin href="../fonts/%s">' % f.name for f in files if "latin-wdth" in f.name]
+    fills = {"<!--__HEAD__-->": "\n".join(head), "/*__FONTS__*/": faces.replace("url(fonts/", "url(../fonts/"),
+             "<!--__LOGO__-->": logo_svg, "/*__GEOTIFF__*/": notice + lib}
+    for key, val in fills.items():
+        assert page.count(key) == 1, key
+        page = page.replace(key, val)
+    (DOCS / "orbit").mkdir(parents=True, exist_ok=True)
+    (DOCS / "orbit" / "index.html").write_text(page, encoding="utf-8")
+    return len(page.encode()), meta["version"]
 
 
 def main():
@@ -124,8 +167,10 @@ def main():
            "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1,viewport-fit=cover\">\n"
            + "\n".join(extra) + "\n" + head + "</head>\n<body>\n" + rest + "</body>\n</html>\n")
     (DOCS / "index.html").write_text(doc, encoding="utf-8")
+    orbit_size, geotiff = build_orbit(fills["<!--__LOGO__-->"], faces, files, base)
     print("docs/index.html %d bayt | dist/artifact.html %d bayt | yazı tipi %d dosya | alan adı: %s"
           % (len(doc.encode()), len(art.encode()), len(files), domain or "yok"))
+    print("docs/orbit/index.html %d bayt | geotiff %s" % (orbit_size, geotiff))
 
 
 if __name__ == "__main__":
