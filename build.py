@@ -34,9 +34,9 @@ MONTHS = {"en": ["January", "February", "March", "April", "May", "June", "July",
 # betik çalıştırmayan paylaşım önizlemeleri (WhatsApp, LinkedIn) ise bu sabit metni gösterir: önce Türkçe, sonra İngilizce.
 # Metinler sayfadakilerle aynı olmalı (src/body.html DESC, src/orbit.html desc ve title); denemeler bunu karşılaştırır.
 DESC_TR = ("Kose Capital dört sistem kurar ve işletir: Castle (değer yatırımı), Bazaar (yapay zekâyla satış), "
-           "Apex (Borsa İstanbul için borsa bağlantısı) ve Orbit (Türkiye'deki arazilerin uydu görüntüsü).")
+           "Apex (Borsa İstanbul için ITCH ve OUCH bağlantısı) ve Orbit (Türkiye'deki arazilerin uydu görüntüsü).")
 DESC_EN = ("Kose Capital builds and runs four systems: Castle (value investing), Bazaar (AI sales), "
-           "Apex (exchange connectivity for Borsa Istanbul) and Orbit (satellite imagery of land in Türkiye).")
+           "Apex (ITCH and OUCH connectivity for Borsa Istanbul) and Orbit (satellite imagery of land in Türkiye).")
 DESC = DESC_TR + " / " + DESC_EN
 ORBIT_TR = ("Türkiye'deki bir arsanın, tarlanın ya da arazinin en yeni bulutsuz uydu görüntüsü. Eski bir tarihle karşılaştır, ne zaman değiştiğini gör. Ücretsiz, kayıt gerekmez.")
 ORBIT_EN = ("The latest cloud-free satellite image of a plot, field or piece of land in Türkiye. Compare it with an earlier date and see when it changed. Free, no sign-up.")
