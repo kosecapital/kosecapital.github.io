@@ -24,7 +24,7 @@ Sayfa Türkçe ve İngilizcedir.
 
 ```
 docs/                yayımlanan site (GitHub Pages kökü). Elle düzenleme; build.py üretir.
-  index.html, fonts/, favicon.svg, apple-touch-icon.png, og.png, CNAME (alan adı bağlıysa), robots.txt ve sitemap.xml (alan adı bağlıysa)
+  index.html, fonts/, favicon.svg, apple-touch-icon.png, og.png, logo.png, CNAME (alan adı bağlıysa), robots.txt ve sitemap.xml (alan adı bağlıysa)
   orbit/index.html   Orbit uygulaması (tek dosya)
 src/
   body.html          sayfanın kendisi: stil, metin (iki dil), betik. Tek dosya.
@@ -75,6 +75,9 @@ Yayımlamak: `python3 build.py && node tools/check.cjs && git add -A && git comm
   - Her sayfanın üç adresi vardır: `?lang=tr`, `?lang=en` ve dilsiz adres (tarayıcının dili). Her adres kendini asıl sayfa (canonical) gösterir. Sayfa tek dosya olduğu için bu etiket betikle yazılır; sabit HTML'de canonical yoktur. Sabit bir etiket bütün dilleri dilsiz adrese bağlıyordu; Google'ın tarayıcısı İngilizce açtığından Türkçe sürüm dizine girmiyordu. Sabit canonical geri eklenmez (denemeler tutmaz).
   - `build.py` `robots.txt` ve `sitemap.xml` yazar: ana sayfa, Orbit ve Castle, her biri üç adresiyle ve dil bağlantılarıyla.
   - Tarayıcıda açıklama (Orbit'te başlık da) seçilen dile döner. Sabit `<head>` metni betik çalıştırmayan paylaşım önizlemeleri içindir: önce Türkçe, sonra İngilizce. Bu metinler `build.py` içindedir ve sayfadakilerle aynı olmalıdır; denemeler karşılaştırır.
+  - Ana sayfanın başlığı da seçilen dile döner (`TITLE` in `src/body.html`): "Kose Capital · Değer yatırımı, yapay zekâyla satış, borsa bağlantısı, uydu görüntüsü". Sabit `<title>` Türkçe olandır.
+  - Ana sayfada Google'a şirket tanımı vardır (schema.org `Organization` ve `WebSite`, `build.py` yazar): ad, adres, logo (`docs/logo.png`, `assets/png/kose-capital-mark.png`'nin kopyası: açık zeminde koyu simge) ve info@kosecapital.com. Sayfada yazmayan bilgi (açık adres, kişi adı, sosyal hesaplar) Alper vermeden girmez.
+  - Eski sitenin (Wix) Google'da kalan adresleri yeni sayfaya yönlendirilir: `build.py` içindeki `OLD` listesi (şimdilik `/our-services` → ana sayfa; 15 Kasım 2026'da Search Console'da dizinde görüldü). Her biri için `docs/<adres>/index.html` yazılır; sitemap'e girmez. Search Console'da yeni eski adres görülürse listeye eklenir.
   - Search Console ve Bing hesabı Alper'indir. Sahiplik doğrulama dosyaları `src/verify/` klasörüne konur; `build.py` onları sitenin köküne kopyalar. Silinirse doğrulama düşer.
 - **İletişim.** Tek adres: info@kosecapital.com. Form yoktur.
 - **Ziyaret sayacı.** Ana sayfanın ve Orbit'in sonunda şirketin kendi sayacı çağrılır (Cloudflare Worker; kodu Castle deposunda `counter/`). Ana sayfaya Alper kendisi ekledi (13 Kasım 2026), Orbit'e onun isteğiyle eklendi (14 Kasım 2026); 5. kuraldaki "dışarıdan izleme kodu" değildir, başka izleme kodu eklenmez. Yalnız yayındaki alan adında, sayfa açılınca bir kez çalışır: ana sayfa `s=home`, Orbit `s=orbit` ile. Çerez yoktur; Orbit'te hangi alana bakıldığı gönderilmez. İki sayfa denemesi de yayındaki adresi taklit edip tek kayıt gittiğini sayar.

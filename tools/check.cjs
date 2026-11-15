@@ -174,6 +174,14 @@ function serve() {
     if (!/^<\?xml version="1.0" encoding="UTF-8"\?>\n<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9" xmlns:xhtml="http:\/\/www.w3.org\/1999\/xhtml">\n/.test(map) || !map.endsWith("</urlset>\n")) fail("sitemap.xml başı ya da sonu bozuk");
     const html = fs.readFileSync(path.join(DOCS, "index.html"), "utf8"), dm = /var DESC = \{ en: "([^"]+)",\s*tr: "([^"]+)" \}/.exec(html), D = dm ? { en: dm[1], tr: dm[2] } : null;
     if (!D) fail("sayfadaki DESC metinleri bulunamadı");
+    const tm = /var TITLE = \{ en: "([^"]+)", tr: "([^"]+)" \}/.exec(html), TT = tm ? { en: tm[1], tr: tm[2] } : null;
+    if (!TT || !/^Kose Capital · /.test(TT.tr) || !/^Kose Capital · /.test(TT.en)) fail("sayfadaki TITLE metinleri: " + JSON.stringify(TT));
+    if (html.match(/<title>([^<]*)<\/title>/)[1] !== (TT && TT.tr)) fail("sabit sayfa başlığı Türkçe başlıkla aynı değil");
+    // Google'a şirket tanımı (schema.org): ad, adres, logo, e-posta; logo dosyası sitede ve en az 112 piksel
+    const ld = [...html.matchAll(/<script type="application\/ld\+json">([^<]*)<\/script>/g)].map((m) => JSON.parse(m[1]));
+    const org = ld.length === 1 && ld[0]["@graph"].find((x) => x["@type"] === "Organization"), web = ld.length === 1 && ld[0]["@graph"].find((x) => x["@type"] === "WebSite");
+    if (!org || org.name !== "Kose Capital" || org.url !== H || org.logo !== H + "logo.png" || org.email !== "info@kosecapital.com" || !web || web.url !== H || web.publisher["@id"] !== org["@id"]) fail("şirket tanımı (ld+json): " + JSON.stringify(ld));
+    const logo = fs.readFileSync(path.join(DOCS, "logo.png")); if (logo.slice(1, 4).toString() !== "PNG" || logo.readUInt32BE(16) < 112 || logo.readUInt32BE(20) < 112) fail("logo.png yok ya da 112 pikselden küçük");
     if (/<link rel="canonical"/.test(html)) fail("sabit HTML'de canonical etiketi olmamalı (bütün dilleri tek adrese bağlar)");
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, locale: "en-US" }), seen = [];
     await ctx.route("**/*", (route) => {
@@ -190,10 +198,18 @@ function serve() {
       const r = await page.evaluate(() => ({ c: [...document.querySelectorAll('link[rel="canonical"]')].map((l) => l.href), d: document.querySelector('meta[name="description"]').content, lang: document.documentElement.lang, t: document.title }));
       seen.push(q + " → " + r.c.join(","));
       if (r.c.length !== 1 || r.c[0] !== canon) fail("asıl sayfa etiketi (" + (q || "dilsiz adres") + "): " + JSON.stringify(r.c) + ", beklenen " + canon);
-      if (r.lang !== lang || r.d !== D[lang] || r.t !== "Kose Capital") fail("dil, açıklama ya da başlık (" + (q || "dilsiz adres") + "): " + JSON.stringify([r.lang, r.d.slice(0, 40), r.t]));
+      if (r.lang !== lang || r.d !== D[lang] || r.t !== (TT && TT[lang])) fail("dil, açıklama ya da başlık (" + (q || "dilsiz adres") + "): " + JSON.stringify([r.lang, r.d.slice(0, 40), r.t]));
       if (!q) { const st = html.match(/<meta name="description" content="([^"]*)">/)[1]; if (st !== D.tr + " / " + D.en) fail("sabit açıklama sayfadaki iki metinle aynı değil: " + st.slice(0, 80)); }
     }
     console.log("asıl sayfa etiketleri: " + seen.join(" | "));
+    // eski sitenin adresi (/our-services): "sayfa bulunamadı" yerine ana sayfaya gider; dil eki korunur
+    for (const [from, to] of [["our-services/", H], ["our-services/?lang=tr", H + "?lang=tr"]]) {      // sonunda / olmayan adresi GitHub Pages kendisi / ile açar
+      await page.goto(H + from, { waitUntil: "load" }); await page.waitForURL((u) => !/our-services/.test(String(u)), { timeout: 5000 }).catch(() => {});
+      if (page.url() !== to) fail("eski adres " + from + " yönlendirmesi: " + page.url() + ", beklenen " + to);
+    }
+    const old = fs.readFileSync(path.join(DOCS, "our-services", "index.html"), "utf8");
+    if (!old.includes('<link rel="canonical" href="' + H + '">') || !old.includes('<meta http-equiv="refresh" content="0; url=/">')) fail("eski adres sayfasının etiketleri");
+    if (/our-services/.test(map)) fail("eski adres sitemap.xml'e girmemeli");
     await ctx.close(); }
 
   // hareket azaltma: tek kare, döngü yok

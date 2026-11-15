@@ -42,6 +42,9 @@ ORBIT_TR = ("Türkiye'deki bir arsanın, tarlanın ya da arazinin en yeni buluts
 ORBIT_EN = ("The latest cloud-free satellite image of a plot, field or piece of land in Türkiye. Compare it with an earlier date and see when it changed. Free, no sign-up.")
 ORBIT_DESC = ORBIT_TR + " / " + ORBIT_EN
 ORBIT_OG = "Orbit · Arazinin en yeni uydu görüntüsü / The latest satellite image of a piece of land"
+# Eski sitenin (Wix) Google'da kalan adresleri. Yeni sitede yoklar; açılınca "sayfa bulunamadı" yerine yeni sayfaya gider.
+# Search Console'da (Pages) görünen eski adresler buraya eklenir. Değer: gidilecek yol ("" ana sayfa). Bunlar sitemap.xml'e girmez.
+OLD = {"our-services": ""}
 # Google'a sayfaların listesi. Castle ayrı depodadır ama aynı alan adında (/castle/) durur; dili de adresteki ?lang= ile seçer.
 PAGES = ["", "orbit/", "castle/"]
 
@@ -52,6 +55,33 @@ def canonical(url):
     Google da o zaman Türkçe sürümü ayrı bir sayfa olarak dizine almazdı. Google'ın önerdiği gibi etiket sabit HTML'de hiç yoktur."""
     return ('<script>(function(){var m=/[?&]lang=(tr|en)\\b/.exec(location.search),k=document.createElement("link");'
             'k.rel="canonical";k.href="%s"+(m?"?lang="+m[1]:"");document.head.appendChild(k);})();</script>' % url)
+
+
+def org_data(base):
+    """Google'a şirketin kendisi: adı, adresi, logosu, e-postası (schema.org). "Kose Capital" aramasında sonucun
+    yanında doğru ad ve logo görünsün diye. Yalnız sayfada zaten yazan bilgiler girer; adres ve kişi adı yoktur."""
+    org, site = base + "#org", base + "#site"
+    data = {"@context": "https://schema.org", "@graph": [
+        {"@type": "Organization", "@id": org, "name": "Kose Capital", "url": base, "logo": base + "logo.png", "email": "info@kosecapital.com"},
+        {"@type": "WebSite", "@id": site, "name": "Kose Capital", "url": base, "publisher": {"@id": org}, "inLanguage": ["tr", "en"]}]}
+    return '<script type="application/ld+json">%s</script>' % json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+
+
+def old_pages(base):
+    """Her eski adres için küçük bir sayfa: hemen yeni adrese gider (Google bunu kalıcı yönlendirme sayar), betiksiz tarayıcıda bağlantı gösterir."""
+    for old, new in OLD.items():
+        to = "/" + new
+        canon = '<link rel="canonical" href="%s%s">\n' % (base, new) if base else ""
+        page = ('<!doctype html>\n<html lang="tr">\n<head>\n<meta charset="utf-8">\n<title>Kose Capital</title>\n'
+                '<meta name="viewport" content="width=device-width,initial-scale=1">\n%s'
+                '<meta http-equiv="refresh" content="0; url=%s">\n'
+                '<script>location.replace("%s" + location.search + location.hash);</script>\n'
+                '<style>body{margin:0;padding:2rem;background:#070B09;color:#ECE8DC;font:16px/1.5 Arial,sans-serif}a{color:#ECE8DC}</style>\n'
+                '</head>\n<body>\n<p>Bu sayfa taşındı: <a href="%s">Kose Capital ana sayfası</a></p>\n'
+                '<p lang="en">This page has moved: <a href="%s">Kose Capital home page</a></p>\n</body>\n</html>\n') % (canon, to, to, to, to)
+        (DOCS / old).mkdir(parents=True, exist_ok=True)
+        (DOCS / old / "index.html").write_text(page, encoding="utf-8")
+    return len(OLD)
 
 
 def seo_files(base):
@@ -172,6 +202,8 @@ def main():
     for name in ("favicon.svg", "apple-touch-icon.png", "og.png"):
         if (ASSETS / name).exists():
             shutil.copyfile(ASSETS / name, DOCS / name)
+    if (ASSETS / "png" / "kose-capital-mark.png").exists():          # Google'ın arama sonucunda gösterdiği logo: açık zeminde koyu simge
+        shutil.copyfile(ASSETS / "png" / "kose-capital-mark.png", DOCS / "logo.png")
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")
     for f in sorted((SRC / "verify").glob("*")) if (SRC / "verify").is_dir() else []:     # Search Console ve Bing doğrulama dosyaları: sitenin köküne
         shutil.copyfile(f, DOCS / f.name)
@@ -199,6 +231,7 @@ def main():
         if (ASSETS / "og.png").exists():
             extra += ['<meta property="og:image" content="%sog.png">' % base, '<meta property="og:image:width" content="1200">',
                       '<meta property="og:image:height" content="630">', '<meta name="twitter:card" content="summary_large_image">']
+        extra.append(org_data(base))
     extra += ['<link rel="preload" as="font" type="font/woff2" crossorigin href="fonts/%s">' % f.name for f in files if "latin-wdth" in f.name]
     doc = ("<!doctype html>\n<html lang=\"en\" data-lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n"
            "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1,viewport-fit=cover\">\n"
@@ -206,9 +239,10 @@ def main():
     (DOCS / "index.html").write_text(doc, encoding="utf-8")
     orbit_size, geotiff = build_orbit(fills["<!--__LOGO__-->"], faces, files, base)
     urls = seo_files(base) if base else 0
+    moved = old_pages(base)
     print("docs/index.html %d bayt | dist/artifact.html %d bayt | yazı tipi %d dosya | alan adı: %s"
           % (len(doc.encode()), len(art.encode()), len(files), domain or "yok"))
-    print("docs/orbit/index.html %d bayt | geotiff %s | sitemap.xml %d adres" % (orbit_size, geotiff, urls))
+    print("docs/orbit/index.html %d bayt | geotiff %s | sitemap.xml %d adres | eski adres yönlendirmesi %d" % (orbit_size, geotiff, urls, moved))
 
 
 if __name__ == "__main__":
