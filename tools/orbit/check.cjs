@@ -213,8 +213,8 @@ function serve() {
       old: ["#il", "#ilce", "#mah", "#ada", "#parsel", "#tkgm-msg", "#tkgm-link"].filter((q) => document.querySelector(q)).join(","), empty: !document.querySelector("#empty").hidden, how: document.querySelector("#how a").getAttribute("href"),
       fonts: [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/["']/g, "")).filter((v, i, a) => a.indexOf(v) === i) }));
     console.log("masaüstü-tr " + JSON.stringify(head));
-    ok(head.title === "Orbit · Kose Capital" && head.lang === "tr" && head.home === "../?lang=tr" && head.logo, "başlık, dil, ana sayfa bağlantısı ya da logo");
-    ok(head.desc.startsWith("Orbit, Türkiye'deki") && head.icon === "../favicon.svg", "açıklama satırı ya da site simgesi"); ok(/\/orbit\/$/.test(head.canon), "canonical adresi: " + head.canon);
+    ok(head.title === "Orbit · Arazinin en yeni uydu görüntüsü · Kose Capital" && head.lang === "tr" && head.home === "../?lang=tr" && head.logo, "başlık, dil, ana sayfa bağlantısı ya da logo");
+    ok(head.desc.startsWith("Türkiye'deki bir arsa") && head.icon === "../favicon.svg", "açıklama satırı ya da site simgesi"); ok(head.canon === "https://www.kosecapital.com/orbit/?lang=tr", "canonical adresi: " + head.canon);
     ok(head.fonts.includes("Archivo") && head.fonts.includes("IBM Plex Mono"), "yazı tipi yüklenmedi: " + head.fonts);
     ok(!head.old && head.empty && head.how === "https://parselsorgu.tkgm.gov.tr/", "eski parsel formu duruyor ya da açılış boş değil: " + JSON.stringify(head));
     await shot(page, "1a-bos");
@@ -270,10 +270,10 @@ function serve() {
     const mix = await page.evaluate(() => {
       const vis = (e) => e.getClientRects().length > 0, de = document.documentElement;
       const ui = ["#h-after", "#s-after", "#h-before", "#s-before", "#rows", "#log", "#tag-a", "#tag-b", "#nd-t", "#diag"].map((i) => document.querySelector(i).textContent).join(" ") + " " + [...document.querySelectorAll("#info dt, #info a, #rows button, #pre option")].map((e) => e.textContent).join(" ");
-      return { tr: [...document.querySelectorAll(".tr")].filter(vis).length, lang: de.lang, home: document.querySelector("#home").getAttribute("href"), desc: document.querySelector('meta[name="description"]').content.slice(0, 11),
+      return { tr: [...document.querySelectorAll(".tr")].filter(vis).length, lang: de.lang, home: document.querySelector("#home").getAttribute("href"), desc: document.querySelector('meta[name="description"]').content.slice(0, 10), title: document.title,
         words: (ui.match(/Önce|Sonra|bulutlu|açık|kapsam|okunamadı|gün önce|bugün|dün|Kasım|Ekim|Yüzölçümü|Nitelik|Mevkii|Pafta|Sınırdan|Kaynak|Merkez|Karşılaştır|Haritalar|piksel|kayıt|yeşillik|katalog|çokgen|köşe|dosya:|ay önce|yıl önce|Tarih seç/g) || []).filter((v, i, a) => a.indexOf(v) === i) };
     });
-    ok(mix.tr === 0 && mix.lang === "en" && mix.home === "../?lang=en" && mix.desc === "Orbit shows", "dil düğmesi: " + JSON.stringify(mix)); ok(!mix.words.length, "İngilizcede Türkçe arayüz sözcüğü kaldı: " + mix.words.join(", "));
+    ok(mix.tr === 0 && mix.lang === "en" && mix.home === "../?lang=en" && mix.desc === "The latest" && mix.title === "Orbit · The latest satellite image of a piece of land · Kose Capital", "dil düğmesi: " + JSON.stringify(mix)); ok(!mix.words.length, "İngilizcede Türkçe arayüz sözcüğü kaldı: " + mix.words.join(", "));
     await shot(page, "1d-en");
     // yeniden açılış: son alan ve dil kendiliğinden gelir
     await page.reload({ waitUntil: "load" }); await settled(page, true); const re = await state(page);
@@ -388,6 +388,17 @@ function serve() {
     await page.click("#sample"); await settled(page, true); await page.click('#lang button[data-lang="en"]'); await wait(300);
     console.log("sayaç " + JSON.stringify(log.hits));
     ok(log.hits.length === 1 && log.hits[0] === "POST hit?t=v&s=orbit&p=&r=&l=tr", "ziyaret sayacı: tek kayıt bekleniyordu (s=orbit, l=tr): " + JSON.stringify(log.hits));
+    // Google: Türkçe adres kendini asıl sayfa gösterir; başlık ve açıklama dile göre değişir; sabit metin iki dili de taşır
+    const head = () => page.evaluate(() => ({ c: [...document.querySelectorAll('link[rel="canonical"]')].map((l) => l.href), t: document.title, d: document.querySelector('meta[name="description"]').content }));
+    const en = await head(); await page.click('#lang button[data-lang="tr"]'); await wait(200); const tr = await head();
+    const html = fs.readFileSync(path.join(__dirname, "..", "..", "docs", "orbit", "index.html"), "utf8"), stTitle = html.match(/<title>([^<]*)<\/title>/)[1], stDesc = html.match(/<meta name="description" content="([^"]*)">/)[1];
+    console.log("başlık TR: " + tr.t + " | EN: " + en.t + " | asıl sayfa: " + tr.c.join(","));
+    ok(tr.c.length === 1 && tr.c[0] === LIVE + "orbit/?lang=tr" && en.c.join() === tr.c.join(), "asıl sayfa etiketi: " + JSON.stringify([tr.c, en.c]));
+    ok(tr.t === "Orbit · Arazinin en yeni uydu görüntüsü · Kose Capital" && en.t === "Orbit · The latest satellite image of a piece of land · Kose Capital" && stTitle === tr.t, "sayfa başlığı: " + JSON.stringify([tr.t, en.t, stTitle]));
+    ok(/^Türkiye'deki bir arsanın, tarlanın ya da arazinin en yeni bulutsuz uydu görüntüsü\./.test(tr.d) && /^The latest cloud-free satellite image of a plot, field or piece of land in Türkiye\./.test(en.d) && stDesc === tr.d + " / " + en.d, "açıklama: " + JSON.stringify([tr.d, en.d, stDesc]));
+    ok(!/<link rel="canonical"/.test(html), "sabit HTML'de canonical etiketi olmamalı");
+    const site = await page.evaluate(() => { const c = window.__orbit.exportCanvas(), d = c.getContext("2d"); return document.querySelector('link[rel="canonical"]').href.split("?")[0]; });
+    ok(site === LIVE + "orbit/", "indirilen görsele yazılan adres: " + site);
     ok(!log.stray.length, "yayındaki adreste izin verilmeyen adrese istek: " + log.stray.join(", ")); ok(!log.errors.length, "konsol: " + log.errors.join(";")); await ctx.close(); }
 
   // ---- çizelgenin durumu ----
@@ -575,6 +586,6 @@ function serve() {
   console.log("çizelge: son bir yıl, mevsim ve bulut, aralığa yakından bakış, küçük görüntüden açış, durdurma, İngilizce, son 5 yıl, telefon tamam");
 
   await browser.close(); srv.close();
-  console.log(bad.length ? "\nOrbit denemesi TUTMADI: " + bad.length + " sorun\n- " + bad.join("\n- ") : "\nOrbit denemesi tamam (koordinat, dosya ve konumla alan, akış, hizalama, iki dil, yedek yollar, masaüstü, telefon, sayaç, paylaşım bağlantısı, indirilen görsel, çizelge)");
+  console.log(bad.length ? "\nOrbit denemesi TUTMADI: " + bad.length + " sorun\n- " + bad.join("\n- ") : "\nOrbit denemesi tamam (koordinat, dosya ve konumla alan, akış, hizalama, iki dil, yedek yollar, masaüstü, telefon, sayaç, paylaşım bağlantısı, indirilen görsel, çizelge, Google için başlık ve adres)");
   process.exit(bad.length ? 1 : 0);
 })().catch((e) => { console.error(e); process.exit(2); });

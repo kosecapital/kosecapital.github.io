@@ -24,7 +24,7 @@ Sayfa Türkçe ve İngilizcedir.
 
 ```
 docs/                yayımlanan site (GitHub Pages kökü). Elle düzenleme; build.py üretir.
-  index.html, fonts/, favicon.svg, apple-touch-icon.png, og.png, CNAME (alan adı bağlıysa)
+  index.html, fonts/, favicon.svg, apple-touch-icon.png, og.png, CNAME (alan adı bağlıysa), robots.txt ve sitemap.xml (alan adı bağlıysa)
   orbit/index.html   Orbit uygulaması (tek dosya)
 src/
   body.html          sayfanın kendisi: stil, metin (iki dil), betik. Tek dosya.
@@ -33,6 +33,7 @@ src/
   logo.json          üst şeritteki logo (tools/logo.py üretir)
   castle.json        Castle rakamlarının sayfaya yazılan son hâli (Castle deposundaki docs/data/summary.json'ın kopyası)
   site.json          alan adı: {"domain": "www.kosecapital.com"}. Dosya yoksa site alan adsız derlenir.
+  verify/            Search Console ve Bing doğrulama dosyaları (varsa); sitenin köküne kopyalanır
 assets/              logo dosyaları (SVG ve PNG), site simgesi, paylaşım görseli
 tools/
   logo.py            logoyu çizer: assets/*.svg ve src/logo.json
@@ -70,6 +71,11 @@ Yayımlamak: `python3 build.py && node tools/check.cjs && git add -A && git comm
 - **Üst şerit.** Menü 720 pikselin altında gizlenir; dil düğmesi hiçbir genişlikte sıkışmaz.
 - **Castle rakamları.** Yayındaki sayfa ülke, şirket ve kale sayısını `/castle/data/summary.json` dosyasından okur (Castle deposu her derlemede yeniler). Okuyamazsa `src/castle.json`'dan yazılmış son rakamlar kalır.
 - **Castle ve Orbit bağlantıları.** Yayında `/castle/?lang=…` ve `/orbit/?lang=…`, önizlemede tam adres.
+- **Google için (15 Kasım 2026).** Amaç: Türkçe arayan Türkçe sayfayı bulsun.
+  - Her sayfanın üç adresi vardır: `?lang=tr`, `?lang=en` ve dilsiz adres (tarayıcının dili). Her adres kendini asıl sayfa (canonical) gösterir. Sayfa tek dosya olduğu için bu etiket betikle yazılır; sabit HTML'de canonical yoktur. Sabit bir etiket bütün dilleri dilsiz adrese bağlıyordu; Google'ın tarayıcısı İngilizce açtığından Türkçe sürüm dizine girmiyordu. Sabit canonical geri eklenmez (denemeler tutmaz).
+  - `build.py` `robots.txt` ve `sitemap.xml` yazar: ana sayfa, Orbit ve Castle, her biri üç adresiyle ve dil bağlantılarıyla.
+  - Tarayıcıda açıklama (Orbit'te başlık da) seçilen dile döner. Sabit `<head>` metni betik çalıştırmayan paylaşım önizlemeleri içindir: önce Türkçe, sonra İngilizce. Bu metinler `build.py` içindedir ve sayfadakilerle aynı olmalıdır; denemeler karşılaştırır.
+  - Search Console ve Bing hesabı Alper'indir. Sahiplik doğrulama dosyaları `src/verify/` klasörüne konur; `build.py` onları sitenin köküne kopyalar. Silinirse doğrulama düşer.
 - **İletişim.** Tek adres: info@kosecapital.com. Form yoktur.
 - **Ziyaret sayacı.** Ana sayfanın ve Orbit'in sonunda şirketin kendi sayacı çağrılır (Cloudflare Worker; kodu Castle deposunda `counter/`). Ana sayfaya Alper kendisi ekledi (13 Kasım 2026), Orbit'e onun isteğiyle eklendi (14 Kasım 2026); 5. kuraldaki "dışarıdan izleme kodu" değildir, başka izleme kodu eklenmez. Yalnız yayındaki alan adında, sayfa açılınca bir kez çalışır: ana sayfa `s=home`, Orbit `s=orbit` ile. Çerez yoktur; Orbit'te hangi alana bakıldığı gönderilmez. İki sayfa denemesi de yayındaki adresi taklit edip tek kayıt gittiğini sayar.
 
@@ -105,6 +111,7 @@ Orbit bir arazinin sınırını ziyaretçiden alır; üstüne en yeni bulutsuz S
   - Grafik: alanın içi ürünün vurgu rengiyle ve yuvarlak noktayla, çevresi vurgusuz griyle (`#6B766F`) ve kare noktayla çizilir; ayrım yalnız renge bağlı değildir. Değerler imleçle ve "Tablo olarak göster" ile de okunur.
 - **Uyarılar.** Okunamayan dosya ya da anlaşılmayan konum, ilgili kutunun hemen altında iki dilde açıklanır; ekrandaki alan değişmez. "Tanı bilgisi" kutusu neyin çalışıp neyin çalışmadığını iki dilde yazar.
 - **Henüz yok:** il, ilçe, ada ve parselden kendiliğinden sınır (TKGM izni gerekir); haritada sınır çizme; alanı takibe alma ve değişince haber verme; 10 metreden net (ücretli) görüntü. Bunlar yokken sayfada sözü edilmez.
+- **Arama başlığı.** Türkçe: "Orbit · Arazinin en yeni uydu görüntüsü · Kose Capital"; açıklama "arsa", "tarla", "arazi" ve "uydu görüntüsü" sözcüklerini taşır (Türkçe aramalar bunlarla yapılır). "Güncel" yazılmaz: gösterilen, alanın üstünde bulut olmayan en yeni görüntüdür, haftalar önceye ait olabilir.
 - **Ana sayfa.** Orbit ana sayfada dördüncü üründür (14 Kasım 2026, Alper'in isteğiyle). Durumu "Yayında", vurgu rengi `#FF78BE`; ikisi de Alper başka bir şey söyleyene kadar böyle kalır. Ana sayfadaki bölüm yalnız uygulamanın bugün yaptığını anlatır.
 - **Deneme.** Örnek görüntüler gerçek karelerin koordinat düzeninde üretilir (35SQB ve 36STG); deneme, sınır çizgisinin görüntüye piksel piksel oturduğunu iki UTM diliminde de sayar. Sınır dosyası biçimleri (KML, sıkıştırılmış ve düz KMZ, GeoJSON, delikli ve kapanmamış halka), konum biçimleri ve okunamayan dosyalar ayrı ayrı denenir. Paylaşım bağlantısı yeni bir tarayıcıda açılıp aynı alanı ve aynı iki tarihi verdiği sayılarak denenir; indirilen görselin boyutuna ve piksellerine bakılır. Çizelge için örnek veride bir yıla yayılmış geçişler vardır (alanın içi 14 Haziran'a kadar yeşil, 24 Haziran'dan sonra toprak; bir tarihte her yer daha parlak; bulutlu ve okunamayan geçişler): deneme, seçilen tarihleri, fark değerlerini ve bulunan aralığı sayar. Gerçek servisler denemede çağrılmaz; bu yüzden gerçek görüntüyle davranış yalnız yayındaki sayfada görülür.
 

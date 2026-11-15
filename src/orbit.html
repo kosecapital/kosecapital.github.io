@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Orbit · Kose Capital</title>
+<title>Orbit · Arazinin en yeni uydu görüntüsü · Kose Capital</title>
 <!--__HEAD__-->
 <style>
 /*__FONTS__*/
@@ -436,7 +436,8 @@ var SAMPLE = [[[[30.1288, 37.757], [30.1299, 37.7569], [30.1304, 37.7576], [30.1
 /* ---------- dil ---------- */
 var LANG = "tr";
 var S = {
-  desc: ["Orbit, Türkiye'deki bir arazinin en yeni bulutsuz Sentinel-2 uydu görüntüsünü gösterir ve eski bir tarihle karşılaştırır.", "Orbit shows the latest cloud-free Sentinel-2 satellite image of a piece of land in Türkiye and compares it with an earlier date."],
+  desc: ["Türkiye'deki bir arsanın, tarlanın ya da arazinin en yeni bulutsuz uydu görüntüsü. Eski bir tarihle karşılaştır, ne zaman değiştiğini gör. Ücretsiz, kayıt gerekmez.", "The latest cloud-free satellite image of a plot, field or piece of land in Türkiye. Compare it with an earlier date and see when it changed. Free, no sign-up."],
+  title: ["Orbit · Arazinin en yeni uydu görüntüsü · Kose Capital", "Orbit · The latest satellite image of a piece of land · Kose Capital"],
   eFile: ["Bu dosya okunamadı. KML, KMZ ya da GeoJSON biçiminde bir sınır dosyası yükle.", "This file could not be read. Load a boundary file in KML, KMZ or GeoJSON format."],
   eNoPoly: ["Dosyada kapalı bir alan yok. Nokta ya da açık bir çizgi değil, araziyi çevreleyen bir sınır gerekir.", "There is no closed area in the file. A boundary that encloses the land is needed, not a point or an open line."],
   eCoords: ["Dosyadaki koordinatlar enlem ve boylam değil. Dosyayı KML ya da GeoJSON olarak indirip yeniden dene.", "The coordinates in the file are not latitude and longitude. Download the file as KML or GeoJSON and try again."],
@@ -528,6 +529,7 @@ function setLang(l) {
   $$("option[data-tr]").forEach(function (o) { o.textContent = o.getAttribute("data-" + l); });
   $("#home").href = "../?lang=" + l;
   var md = document.querySelector('meta[name="description"]'); if (md) md.content = T("desc");
+  document.title = T("title");
   $("#sh-link").setAttribute("aria-label", T("shLink"));
   logLines = []; say(""); showDiag(); inMsg(""); shMsg("");
   refreshTexts(); tlRender();
@@ -1426,7 +1428,7 @@ function exportCanvas() {
   var svg = $(".brand svg"), path = svg && svg.querySelector("path"), vb = svg ? (svg.getAttribute("viewBox") || "").split(/\s+/).map(Number) : [], x = pad;
   if (path && vb.length === 4 && vb[3] > 0 && typeof Path2D === "function") { var k = 24 / vb[3]; ctx.save(); ctx.translate(pad, 30); ctx.scale(k, k); ctx.fillStyle = bone; ctx.fill(new Path2D(path.getAttribute("d"))); ctx.restore(); x = pad + vb[2] * k + 16; }
   ctx.fillStyle = line; ctx.fillRect(x, 28, 1, 28); text("Orbit", x + 16, 48, "500 #px " + MONO, 15, accent);
-  var canon = document.querySelector('link[rel="canonical"]'), site = (canon ? canon.href : location.origin + location.pathname).replace(/^https?:\/\//, "").replace(/\/$/, "");
+  var canon = document.querySelector('link[rel="canonical"]'), site = (canon ? canon.href.split("?")[0] : location.origin + location.pathname).replace(/^https?:\/\//, "").replace(/\/$/, "");      // dil eki (?lang=) görsele yazılmaz
   text(site, W - pad, 48, "400 #px " + MONO, 13, mute, inner - (x - pad) - 110, "right");
   // alanın adı ve yüzölçümü
   var calc = polyArea(st.parcel);

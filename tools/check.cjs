@@ -130,7 +130,7 @@ function serve() {
 
   // Orbit bağlantısı boşa çıkmaz: sayfa aynı sitede /orbit/ yolunda durur
   { const ctx = await browser.newContext(), r = await ctx.request.get(base + "orbit/?lang=tr"), t = r.ok() ? await r.text() : "";
-    if (!t.includes("<title>Orbit · Kose Capital</title>")) fail("/orbit/ sayfası yok ya da başlığı farklı (" + r.status() + ")");
+    if (!t.includes("<title>Orbit · Arazinin en yeni uydu görüntüsü · Kose Capital</title>")) fail("/orbit/ sayfası yok ya da başlığı farklı (" + r.status() + ")");
     await ctx.close(); }
 
   // açılış kendiliğinden döner: dört ürün sırayla gelir, sonra başa döner (sayfanın saati ileri alınır)
@@ -162,6 +162,40 @@ function serve() {
     if (links !== "/castle/?lang=en /orbit/?lang=en") fail("yayındaki adreste Castle ve Orbit bağlantıları: " + links);
     await ctx.close(); }
 
+  // Google: robots.txt, sitemap.xml ve her dil adresinin kendini asıl sayfa göstermesi (yayındaki adres taklit edilir)
+  { const robots = fs.readFileSync(path.join(DOCS, "robots.txt"), "utf8"), map = fs.readFileSync(path.join(DOCS, "sitemap.xml"), "utf8"), H = "https://www.kosecapital.com/";
+    if (robots !== "User-agent: *\nAllow: /\n\nSitemap: " + H + "sitemap.xml\n") fail("robots.txt: " + JSON.stringify(robots));
+    const locs = [...map.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]), want = [];
+    for (const p of ["", "orbit/", "castle/"]) want.push(H + p, H + p + "?lang=tr", H + p + "?lang=en");
+    if (locs.join(" ") !== want.join(" ")) fail("sitemap.xml adresleri: " + locs.join(" "));
+    const units = map.split("<url>").slice(1);
+    units.forEach((u, i) => { const p = want[i].replace(/\?lang=\w+$/, ""), alts = [...u.matchAll(/hreflang="([^"]+)" href="([^"]+)"/g)].map((m) => m[1] + "=" + m[2]).join(" ");
+      if (alts !== "tr=" + p + "?lang=tr en=" + p + "?lang=en x-default=" + p) fail("sitemap.xml dil bağlantıları (" + want[i] + "): " + alts); });
+    if (!/^<\?xml version="1.0" encoding="UTF-8"\?>\n<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9" xmlns:xhtml="http:\/\/www.w3.org\/1999\/xhtml">\n/.test(map) || !map.endsWith("</urlset>\n")) fail("sitemap.xml başı ya da sonu bozuk");
+    const html = fs.readFileSync(path.join(DOCS, "index.html"), "utf8"), dm = /var DESC = \{ en: "([^"]+)",\s*tr: "([^"]+)" \}/.exec(html), D = dm ? { en: dm[1], tr: dm[2] } : null;
+    if (!D) fail("sayfadaki DESC metinleri bulunamadı");
+    if (/<link rel="canonical"/.test(html)) fail("sabit HTML'de canonical etiketi olmamalı (bütün dilleri tek adrese bağlar)");
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, locale: "en-US" }), seen = [];
+    await ctx.route("**/*", (route) => {
+      const u = route.request().url(), m = /^https:\/\/www\.kosecapital\.com(\/[^?#]*)/.exec(u);
+      if (!m) return route.abort("failed");
+      let p = decodeURIComponent(m[1]); if (p.endsWith("/")) p += "index.html";
+      const f = path.join(DOCS, p);
+      if (!f.startsWith(DOCS) || !fs.existsSync(f)) return route.fulfill({ status: 404, body: "yok" });
+      return route.fulfill({ status: 200, contentType: TYPES[path.extname(f)] || "application/octet-stream", body: fs.readFileSync(f) });
+    });
+    const page = await ctx.newPage();
+    for (const [q, lang, canon] of [["?lang=tr", "tr", H + "?lang=tr"], ["?lang=en", "en", H + "?lang=en"], ["", "en", H], ["?utm_source=x&lang=tr", "tr", H + "?lang=tr"]]) {
+      await page.goto(H + q, { waitUntil: "load" });
+      const r = await page.evaluate(() => ({ c: [...document.querySelectorAll('link[rel="canonical"]')].map((l) => l.href), d: document.querySelector('meta[name="description"]').content, lang: document.documentElement.lang, t: document.title }));
+      seen.push(q + " → " + r.c.join(","));
+      if (r.c.length !== 1 || r.c[0] !== canon) fail("asıl sayfa etiketi (" + (q || "dilsiz adres") + "): " + JSON.stringify(r.c) + ", beklenen " + canon);
+      if (r.lang !== lang || r.d !== D[lang] || r.t !== "Kose Capital") fail("dil, açıklama ya da başlık (" + (q || "dilsiz adres") + "): " + JSON.stringify([r.lang, r.d.slice(0, 40), r.t]));
+      if (!q) { const st = html.match(/<meta name="description" content="([^"]*)">/)[1]; if (st !== D.tr + " / " + D.en) fail("sabit açıklama sayfadaki iki metinle aynı değil: " + st.slice(0, 80)); }
+    }
+    console.log("asıl sayfa etiketleri: " + seen.join(" | "));
+    await ctx.close(); }
+
   // hareket azaltma: tek kare, döngü yok
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
   const page = await ctx.newPage(); await page.goto(base, { waitUntil: "networkidle" }); await page.waitForTimeout(400);
@@ -171,6 +205,6 @@ function serve() {
   await ctx.close();
 
   await browser.close(); srv.close();
-  console.log(bad.length ? "\nsayfa denemesi TUTMADI: " + bad.length + " sorun" : "\nsayfa denemesi tamam (iki dil, masaüstü, tablet, telefon, dört görsel, logo, canlı rakamlar, sayaç, hareket azaltma)");
+  console.log(bad.length ? "\nsayfa denemesi TUTMADI: " + bad.length + " sorun" : "\nsayfa denemesi tamam (iki dil, masaüstü, tablet, telefon, dört görsel, logo, canlı rakamlar, sayaç, Google için adresler, hareket azaltma)");
   process.exit(bad.length ? 1 : 0);
 })();

@@ -30,10 +30,45 @@ FONT_CSS = [
 KEEP = ("latin", "latin-ext")           # Türkçe harfler latin-ext içinde
 MONTHS = {"en": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
           "tr": ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]}
-DESC = ("Kose Capital builds and runs four systems: Castle (value investing), Bazaar (AI sales), "
-        "Apex (exchange connectivity for Borsa Istanbul) and Orbit (satellite imagery of land in Türkiye).")
-ORBIT_DESC = ("Orbit shows the latest cloud-free Sentinel-2 satellite image of a piece of land in Türkiye "
-              "and compares it with an earlier date.")
+# Sayfanın kendi <head> bölümü. Tarayıcıda dil seçilince betik açıklamayı (ve Orbit'te başlığı) o dile çevirir;
+# betik çalıştırmayan paylaşım önizlemeleri (WhatsApp, LinkedIn) ise bu sabit metni gösterir: önce Türkçe, sonra İngilizce.
+# Metinler sayfadakilerle aynı olmalı (src/body.html DESC, src/orbit.html desc ve title); denemeler bunu karşılaştırır.
+DESC_TR = ("Kose Capital dört sistem kurar ve işletir: Castle (değer yatırımı), Bazaar (yapay zekâyla satış), "
+           "Apex (Borsa İstanbul için borsa bağlantısı) ve Orbit (Türkiye'deki arazilerin uydu görüntüsü).")
+DESC_EN = ("Kose Capital builds and runs four systems: Castle (value investing), Bazaar (AI sales), "
+           "Apex (exchange connectivity for Borsa Istanbul) and Orbit (satellite imagery of land in Türkiye).")
+DESC = DESC_TR + " / " + DESC_EN
+ORBIT_TR = ("Türkiye'deki bir arsanın, tarlanın ya da arazinin en yeni bulutsuz uydu görüntüsü. Eski bir tarihle karşılaştır, ne zaman değiştiğini gör. Ücretsiz, kayıt gerekmez.")
+ORBIT_EN = ("The latest cloud-free satellite image of a plot, field or piece of land in Türkiye. Compare it with an earlier date and see when it changed. Free, no sign-up.")
+ORBIT_DESC = ORBIT_TR + " / " + ORBIT_EN
+ORBIT_OG = "Orbit · Arazinin en yeni uydu görüntüsü / The latest satellite image of a piece of land"
+# Google'a sayfaların listesi. Castle ayrı depodadır ama aynı alan adında (/castle/) durur; dili de adresteki ?lang= ile seçer.
+PAGES = ["", "orbit/", "castle/"]
+
+
+def canonical(url):
+    """Her dil adresi kendini asıl sayfa olarak gösterir: /?lang=tr Türkçe, /?lang=en İngilizce, / tarayıcının dili.
+    Sayfa tek dosya olduğundan etiket betikle yazılır. Sabit bir etiket bütün dilleri dile bakmayan adrese bağlardı;
+    Google da o zaman Türkçe sürümü ayrı bir sayfa olarak dizine almazdı. Google'ın önerdiği gibi etiket sabit HTML'de hiç yoktur."""
+    return ('<script>(function(){var m=/[?&]lang=(tr|en)\\b/.exec(location.search),k=document.createElement("link");'
+            'k.rel="canonical";k.href="%s"+(m?"?lang="+m[1]:"");document.head.appendChild(k);})();</script>' % url)
+
+
+def seo_files(base):
+    """robots.txt ve sitemap.xml: her sayfa üç adresiyle (Türkçe, İngilizce, tarayıcının dili) ve birbirine bağlı."""
+    (DOCS / "robots.txt").write_text("User-agent: *\nAllow: /\n\nSitemap: %ssitemap.xml\n" % base, encoding="utf-8")
+    rows = []
+    for page in PAGES:
+        url = base + page
+        alts = "".join('\n    <xhtml:link rel="alternate" hreflang="%s" href="%s"/>' % (h, u)
+                       for h, u in (("tr", url + "?lang=tr"), ("en", url + "?lang=en"), ("x-default", url)))
+        for loc in (url, url + "?lang=tr", url + "?lang=en"):
+            rows.append("  <url>\n    <loc>%s</loc>%s\n  </url>" % (loc, alts))
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+           + "\n".join(rows) + "\n</urlset>\n")
+    (DOCS / "sitemap.xml").write_text(xml, encoding="utf-8")
+    return len(rows)
 
 
 def font_faces():
@@ -88,10 +123,10 @@ def build_orbit(logo_svg, faces, files, base):
     if (ASSETS / "apple-touch-icon.png").exists():
         head.append('<link rel="apple-touch-icon" href="../apple-touch-icon.png">')
     head += ['<meta property="og:type" content="website">', '<meta property="og:site_name" content="Kose Capital">',
-             '<meta property="og:title" content="Orbit · Kose Capital">', '<meta property="og:description" content="%s">' % ORBIT_DESC]
+             '<meta property="og:title" content="%s">' % ORBIT_OG, '<meta property="og:description" content="%s">' % ORBIT_DESC]
     if base:
         url = base + "orbit/"
-        head += ['<link rel="canonical" href="%s">' % url,
+        head += [canonical(url),
                  '<link rel="alternate" hreflang="en" href="%s?lang=en">' % url, '<link rel="alternate" hreflang="tr" href="%s?lang=tr">' % url,
                  '<link rel="alternate" hreflang="x-default" href="%s">' % url, '<meta property="og:url" content="%s">' % url]
         if (ASSETS / "og.png").exists():
@@ -138,6 +173,8 @@ def main():
         if (ASSETS / name).exists():
             shutil.copyfile(ASSETS / name, DOCS / name)
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")
+    for f in sorted((SRC / "verify").glob("*")) if (SRC / "verify").is_dir() else []:     # Search Console ve Bing doğrulama dosyaları: sitenin köküne
+        shutil.copyfile(f, DOCS / f.name)
     domain = site.get("domain")
     if domain:
         (DOCS / "CNAME").write_text(domain, encoding="utf-8")      # GitHub'ın yazdığı dosyayla bayt bayt aynı: sonda satır sonu yok
@@ -155,7 +192,7 @@ def main():
     extra += ['<meta property="og:type" content="website">', '<meta property="og:site_name" content="Kose Capital">',
               '<meta property="og:title" content="Kose Capital">', '<meta property="og:description" content="%s">' % DESC]
     if base:
-        extra += ['<link rel="canonical" href="%s">' % base,
+        extra += [canonical(base),
                   '<link rel="alternate" hreflang="en" href="%s?lang=en">' % base, '<link rel="alternate" hreflang="tr" href="%s?lang=tr">' % base,
                   '<link rel="alternate" hreflang="x-default" href="%s">' % base,
                   '<meta property="og:url" content="%s">' % base]
@@ -168,9 +205,10 @@ def main():
            + "\n".join(extra) + "\n" + head + "</head>\n<body>\n" + rest + "</body>\n</html>\n")
     (DOCS / "index.html").write_text(doc, encoding="utf-8")
     orbit_size, geotiff = build_orbit(fills["<!--__LOGO__-->"], faces, files, base)
+    urls = seo_files(base) if base else 0
     print("docs/index.html %d bayt | dist/artifact.html %d bayt | yazı tipi %d dosya | alan adı: %s"
           % (len(doc.encode()), len(art.encode()), len(files), domain or "yok"))
-    print("docs/orbit/index.html %d bayt | geotiff %s" % (orbit_size, geotiff))
+    print("docs/orbit/index.html %d bayt | geotiff %s | sitemap.xml %d adres" % (orbit_size, geotiff, urls))
 
 
 if __name__ == "__main__":
