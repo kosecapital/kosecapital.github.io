@@ -44,7 +44,8 @@ ORBIT_DESC = ORBIT_TR + " / " + ORBIT_EN
 ORBIT_OG = "Orbit · Arazinin en yeni uydu görüntüsü / The latest satellite image of a piece of land"
 # Eski sitenin (Wix) Google'da kalan adresleri. Yeni sitede yoklar; açılınca "sayfa bulunamadı" yerine yeni sayfaya gider.
 # Search Console'da (Pages) görünen eski adresler buraya eklenir. Değer: gidilecek yol ("" ana sayfa). Bunlar sitemap.xml'e girmez.
-OLD = {"our-services": ""}
+# 15 Kasım 2026'da Search Console'da görülenler: /our-services (dizinde), /tr ve /file-share (taranmış, dizinde değil).
+OLD = {"our-services": "", "tr": "?lang=tr", "file-share": ""}
 # Google'a sayfaların listesi. Castle ayrı depodadır ama aynı alan adında (/castle/) durur; dili de adresteki ?lang= ile seçer.
 PAGES = ["", "orbit/", "castle/"]
 
@@ -71,14 +72,15 @@ def old_pages(base):
     """Her eski adres için küçük bir sayfa: hemen yeni adrese gider (Google bunu kalıcı yönlendirme sayar), betiksiz tarayıcıda bağlantı gösterir."""
     for old, new in OLD.items():
         to = "/" + new
+        keep = "" if "?" in new else " + location.search"            # hedefin kendi dili varsa (/tr → ?lang=tr) gelen adresin eki eklenmez
         canon = '<link rel="canonical" href="%s%s">\n' % (base, new) if base else ""
         page = ('<!doctype html>\n<html lang="tr">\n<head>\n<meta charset="utf-8">\n<title>Kose Capital</title>\n'
                 '<meta name="viewport" content="width=device-width,initial-scale=1">\n%s'
                 '<meta http-equiv="refresh" content="0; url=%s">\n'
-                '<script>location.replace("%s" + location.search + location.hash);</script>\n'
+                '<script>location.replace("%s"%s + location.hash);</script>\n'
                 '<style>body{margin:0;padding:2rem;background:#070B09;color:#ECE8DC;font:16px/1.5 Arial,sans-serif}a{color:#ECE8DC}</style>\n'
                 '</head>\n<body>\n<p>Bu sayfa taşındı: <a href="%s">Kose Capital ana sayfası</a></p>\n'
-                '<p lang="en">This page has moved: <a href="%s">Kose Capital home page</a></p>\n</body>\n</html>\n') % (canon, to, to, to, to)
+                '<p lang="en">This page has moved: <a href="%s">Kose Capital home page</a></p>\n</body>\n</html>\n') % (canon, to, to, keep, to, to)
         (DOCS / old).mkdir(parents=True, exist_ok=True)
         (DOCS / old / "index.html").write_text(page, encoding="utf-8")
     return len(OLD)

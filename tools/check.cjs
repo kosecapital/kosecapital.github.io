@@ -203,13 +203,16 @@ function serve() {
     }
     console.log("asıl sayfa etiketleri: " + seen.join(" | "));
     // eski sitenin adresi (/our-services): "sayfa bulunamadı" yerine ana sayfaya gider; dil eki korunur
-    for (const [from, to] of [["our-services/", H], ["our-services/?lang=tr", H + "?lang=tr"]]) {      // sonunda / olmayan adresi GitHub Pages kendisi / ile açar
-      await page.goto(H + from, { waitUntil: "load" }); await page.waitForURL((u) => !/our-services/.test(String(u)), { timeout: 5000 }).catch(() => {});
+    // eski sitenin adresleri: /our-services ve /file-share ana sayfaya, /tr Türkçe ana sayfaya (sonunda / olmayan adresi GitHub Pages kendisi / ile açar)
+    for (const [from, to] of [["our-services/", H], ["our-services/?lang=tr", H + "?lang=tr"], ["file-share/", H], ["tr/", H + "?lang=tr"], ["tr/?lang=en", H + "?lang=tr"]]) {
+      await page.goto(H + from, { waitUntil: "load" }); await page.waitForURL((u) => !/our-services|file-share|\/tr\//.test(String(u)), { timeout: 5000 }).catch(() => {});
       if (page.url() !== to) fail("eski adres " + from + " yönlendirmesi: " + page.url() + ", beklenen " + to);
     }
-    const old = fs.readFileSync(path.join(DOCS, "our-services", "index.html"), "utf8");
-    if (!old.includes('<link rel="canonical" href="' + H + '">') || !old.includes('<meta http-equiv="refresh" content="0; url=/">')) fail("eski adres sayfasının etiketleri");
-    if (/our-services/.test(map)) fail("eski adres sitemap.xml'e girmemeli");
+    for (const [dir, to] of [["our-services", ""], ["file-share", ""], ["tr", "?lang=tr"]]) {
+      const old = fs.readFileSync(path.join(DOCS, dir, "index.html"), "utf8");
+      if (!old.includes('<link rel="canonical" href="' + H + to + '">') || !old.includes('<meta http-equiv="refresh" content="0; url=/' + to + '">')) fail("eski adres sayfasının etiketleri: /" + dir);
+      if (new RegExp("/" + dir + "[/<]").test(map)) fail("eski adres sitemap.xml'e girmemeli: /" + dir);
+    }
     await ctx.close(); }
 
   // hareket azaltma: tek kare, döngü yok
