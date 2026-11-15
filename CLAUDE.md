@@ -71,6 +71,7 @@ Yayımlamak: `python3 build.py && node tools/check.cjs && git add -A && git comm
 - **Üst şerit.** Menü 720 pikselin altında gizlenir; dil düğmesi hiçbir genişlikte sıkışmaz.
 - **Castle rakamları.** Yayındaki sayfa ülke, şirket ve kale sayısını `/castle/data/summary.json` dosyasından okur (Castle deposu her derlemede yeniler). Okuyamazsa `src/castle.json`'dan yazılmış son rakamlar kalır.
 - **Castle ve Orbit bağlantıları.** Yayında `/castle/?lang=…` ve `/orbit/?lang=…`, önizlemede tam adres.
+- **Bazaar ve Apex'in ayrı sayfası yok.** İkisi yalnız ana sayfadaki bölümleriyle anlatılır. Alper 15 Kasım 2026'da şimdilik ayrı sayfaya gerek olmadığını söyledi; o istemeden açılmaz.
 - **Google için (15 Kasım 2026).** Amaç: Türkçe arayan Türkçe sayfayı bulsun.
   - Her sayfanın üç adresi vardır: `?lang=tr`, `?lang=en` ve dilsiz adres (tarayıcının dili). Her adres kendini asıl sayfa (canonical) gösterir. Sayfa tek dosya olduğu için bu etiket betikle yazılır; sabit HTML'de canonical yoktur. Sabit bir etiket bütün dilleri dilsiz adrese bağlıyordu; Google'ın tarayıcısı İngilizce açtığından Türkçe sürüm dizine girmiyordu. Sabit canonical geri eklenmez (denemeler tutmaz).
   - `build.py` `robots.txt` ve `sitemap.xml` yazar: ana sayfa, Orbit ve Castle, her biri üç adresiyle ve dil bağlantılarıyla.
