@@ -196,6 +196,13 @@ td small{display:none;font:400 .72rem var(--f-mono);color:var(--mute);white-spac
 .tl-tab table{min-width:0}
 .tl-tab th:first-child,.tl-tab td:first-child{padding-left:0}
 
+/* sorular: insanların aradığı sorulara kısa cevaplar (Google da bu bölümü okur) */
+.faq{padding-bottom:2.4rem}
+.faq .qa{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.3rem 2.4rem}
+.faq h3{font-family:var(--f-display);font-stretch:110%;font-weight:560;font-size:1.02rem;line-height:1.3;margin:0 0 .35rem}
+.faq p{margin:0;font-size:.92rem;color:var(--mute);max-width:62ch}
+@media (max-width:760px){.faq .qa{grid-template-columns:1fr}}
+
 .foot{border-top:1px solid var(--line)}
 .foot .wrap{padding-top:1.3rem;padding-bottom:2rem;font-size:.82rem;color:var(--mute);display:flex;flex-direction:column;gap:.35rem}
 
@@ -424,6 +431,26 @@ td small{display:none;font:400 .72rem var(--f-mono);color:var(--mute);white-spac
     </table></div>
     <div class="more"><button class="ghost" type="button" id="older"><span class="tr">Daha eski geçişleri getir</span><span class="en">Load older passes</span></button></div>
     <p class="note"><span class="tr">"Sahnede bulut" yaklaşık 110 km'lik karenin tamamı içindir. "Alanın üstü" yalnız alanın çevresine bakar; satırdaki düğmeye basınca kontrol edilir.</span><span class="en">"Scene cloud" is for the whole tile of about 110 km. "Over the area" looks only around the area; it is checked when you press a button in the row.</span></p>
+  </div>
+</div>
+
+<div class="wrap faq" id="faq">
+  <div class="panel">
+    <h2><span class="tr">Sorular</span><span class="en">Questions</span></h2>
+    <div class="qa">
+      <div><h3><span class="tr">Arsanın ya da tarlanın en yeni uydu görüntüsüne nasıl bakarım?</span><span class="en">How do I see the latest satellite image of a plot or field?</span></h3>
+      <p><span class="tr">Arazinin sınır dosyasını yükle ya da bir konum yapıştır. Orbit, alanın üstünde bulut olmayan en yeni Sentinel-2 görüntüsünü bulur ve sınırı üstüne çizer. Görüntünün çekildiği gün, görüntünün üstünde yazar.</span><span class="en">Load the boundary file of the land or paste a location. Orbit finds the latest Sentinel-2 image with no cloud over the area and draws the boundary on it. The day the image was taken is written above it.</span></p></div>
+      <div><h3><span class="tr">Görüntü ne kadar yeni?</span><span class="en">How recent is the image?</span></h3>
+      <p><span class="tr">Sentinel-2 uyduları aynı yeri ekvatorda beş günde bir görüntüler; Türkiye'nin enleminde bu süre daha kısadır. Alanın üstü bulutluysa o gün atlanır ve daha eski bir açık görüntüye gidilir. Bu yüzden görüntünün tarihine her zaman bak.</span><span class="en">The Sentinel-2 satellites image the same place every five days at the equator; at Türkiye's latitude it is more often. If the area is cloudy that day, the day is skipped and an earlier clear image is used. So always check the date of the image.</span></p></div>
+      <div><h3><span class="tr">İnşaat başladı mı, uzaktan nasıl anlarım?</span><span class="en">Has construction started? How can I tell from afar?</span></h3>
+      <p><span class="tr">En yeni görüntüyü eski bir tarihle kaydırarak karşılaştır. "Ne zaman değişti?" bölümü geçmiş görüntüleri sıraya dizer ve alanın içinin çevresinden en çok hangi iki tarih arasında ayrıldığını gösterir. Sayfa "inşaat başladı" demez; kararı görüntülere bakarak sen verirsin.</span><span class="en">Slide between the latest image and an earlier date. The "When did it change?" section lines up past images and shows between which two dates the inside of the area moved furthest from its surroundings. The page does not say "construction has started"; you decide by looking at the images.</span></p></div>
+      <div><h3><span class="tr">Görüntü ne kadar net?</span><span class="en">How sharp is the image?</span></h3>
+      <p><span class="tr">Bir piksel yerde 10 × 10 metredir. Toprağın açılması ya da geniş bir yapı alanı gibi onlarca metre süren değişiklikler görülür; bir araba, bir duvar ya da küçük bir kulübe seçilmez.</span><span class="en">One pixel is 10 × 10 metres on the ground. Changes that span tens of metres, such as cleared soil or a large building site, can be seen; a car, a wall or a small hut cannot.</span></p></div>
+      <div><h3><span class="tr">Parselin sınır dosyasını nereden bulurum?</span><span class="en">Where do I get the boundary file of a parcel?</span></h3>
+      <p><span class="tr">TKGM Parsel Sorgu uygulamasında parseli aç, üç nokta menüsünden "İndir"i seç ve KML ya da GeoJSON al; bu dosya bilgilendirme amaçlıdır. Google Earth'te çizdiğin bir alanı da KML ya da KMZ olarak kaydedebilirsin. Dosyan yoksa bir konum yapıştır; Orbit çevresine bir kare çizer.</span><span class="en">Open the parcel in the TKGM Parsel Sorgu app, choose "İndir" (download) in the three-dot menu and take KML or GeoJSON; the file is for information only. You can also save an area you drew in Google Earth as KML or KMZ. If you have no file, paste a location; Orbit draws a square around it.</span></p></div>
+      <div><h3><span class="tr">Ücretli mi? Dosyam bir yere gönderiliyor mu?</span><span class="en">Does it cost anything? Is my file sent anywhere?</span></h3>
+      <p><span class="tr">Ücretsizdir, kayıt gerekmez. Sınır dosyası tarayıcında okunur, bir yere gönderilmez. Görüntüler Copernicus programının Sentinel-2 uydularından gelen açık veridir.</span><span class="en">It is free and needs no sign-up. The boundary file is read in your browser and sent nowhere. The images are open data from the Sentinel-2 satellites of the Copernicus programme.</span></p></div>
+    </div>
   </div>
 </div>
 </main>

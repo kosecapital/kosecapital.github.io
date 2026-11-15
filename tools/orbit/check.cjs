@@ -213,6 +213,11 @@ function serve() {
       old: ["#il", "#ilce", "#mah", "#ada", "#parsel", "#tkgm-msg", "#tkgm-link"].filter((q) => document.querySelector(q)).join(","), empty: !document.querySelector("#empty").hidden, how: document.querySelector("#how a").getAttribute("href"),
       fonts: [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/["']/g, "")).filter((v, i, a) => a.indexOf(v) === i) }));
     console.log("masaüstü-tr " + JSON.stringify(head));
+    // sorular bölümü: alan seçilmeden de görünür; altı soru, her biri iki dilde
+    const faq = await page.evaluate(() => { const box = document.querySelector("#faq"), vis = (e) => e.getClientRects().length > 0;
+      return { shown: !!box && !box.hidden && vis(box), q: [...box.querySelectorAll("h3")].map((h) => h.querySelector(".tr").textContent), en: [...box.querySelectorAll("h3 .en, p .en")].filter((e) => e.textContent.trim()).length,
+        tr: [...box.querySelectorAll("h3 .tr, p .tr")].filter((e) => e.textContent.trim()).length, inMain: !!box.closest("main") }; });
+    ok(faq.shown && faq.inMain && faq.q.length === 6 && faq.en === 12 && faq.tr === 12 && faq.q[0] === "Arsanın ya da tarlanın en yeni uydu görüntüsüne nasıl bakarım?", "sorular bölümü: " + JSON.stringify(faq));
     ok(head.title === "Orbit · Arazinin en yeni uydu görüntüsü · Kose Capital" && head.lang === "tr" && head.home === "../?lang=tr" && head.logo, "başlık, dil, ana sayfa bağlantısı ya da logo");
     ok(head.desc.startsWith("Türkiye'deki bir arsa") && head.icon === "../favicon.svg", "açıklama satırı ya da site simgesi"); ok(head.canon === "https://www.kosecapital.com/orbit/?lang=tr", "canonical adresi: " + head.canon);
     ok(head.fonts.includes("Archivo") && head.fonts.includes("IBM Plex Mono"), "yazı tipi yüklenmedi: " + head.fonts);
