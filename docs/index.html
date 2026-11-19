@@ -20,7 +20,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.kosecapital.com/#org","name":"Kose Capital","url":"https://www.kosecapital.com/","logo":"https://www.kosecapital.com/logo.png","email":"info@kosecapital.com"},{"@type":"WebSite","@id":"https://www.kosecapital.com/#site","name":"Kose Capital","url":"https://www.kosecapital.com/","publisher":{"@id":"https://www.kosecapital.com/#org"},"inLanguage":["tr","en"]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://www.kosecapital.com/#org","name":"Kose Capital","url":"https://www.kosecapital.com/","logo":"https://www.kosecapital.com/logo.png","email":"info@kosecapital.com","address":{"@type":"PostalAddress","streetAddress":"Gülbahçe Mah. Gülbahçe Cad. Kuluçka Merkezi Binası Sitesi No: 1/45 İç Kapı No: 21","addressLocality":"Urla","addressRegion":"İzmir","addressCountry":"TR"}},{"@type":"WebSite","@id":"https://www.kosecapital.com/#site","name":"Kose Capital","url":"https://www.kosecapital.com/","publisher":{"@id":"https://www.kosecapital.com/#org"},"inLanguage":["tr","en"]}]}</script>
 <link rel="preload" as="font" type="font/woff2" crossorigin href="fonts/archivo-latin-wdth-normal.woff2">
 <title>Kose Capital · Değer yatırımı, yapay zekâyla satış, borsa bağlantısı, uydu görüntüsü</title>
 <style>
@@ -115,6 +115,9 @@ html[data-lang="tr"] .en{display:none}
 .addr{font-family:var(--f-display);font-stretch:118%;font-weight:540;font-size:clamp(1.3rem,6vw,5.4rem);line-height:1.05;letter-spacing:-.02em;text-decoration:none;max-width:100%;overflow-wrap:anywhere}
 .copy{font:500 .8rem var(--f-mono);color:var(--bone);background:none;border:1px solid var(--line);border-radius:2px;padding:.55rem .85rem;cursor:pointer}
 .copy:hover{border-color:var(--mute)}
+.office{display:flex;flex-direction:column;gap:.6rem;margin-top:1.2rem}
+.office .label{margin:0}
+.where{margin:0;max-width:90ch;line-height:1.55;text-wrap:pretty}
 .foot{border-top:1px solid var(--line)}
 .foot .wrap{display:flex;flex-wrap:wrap;gap:.6rem 2rem;justify-content:space-between;padding-block:1.5rem 2.2rem;font-size:.85rem;color:var(--mute)}
 
@@ -240,6 +243,10 @@ html[data-lang="tr"] .en{display:none}
   <h2 class="label"><span class="en">Reach us</span><span class="tr">Bize ulaş</span></h2>
   <a class="addr" id="addr" href="mailto:info@kosecapital.com">info@kosecapital.com</a>
   <button class="copy" id="copy" type="button"><span class="en">Copy address</span><span class="tr">Adresi kopyala</span></button>
+  <div class="office">
+    <h3 class="label"><span class="en">Registered office</span><span class="tr">Şirket merkezi</span></h3>
+    <p class="where"><span class="en">Teknopark İzmir<br>Gülbahçe Mah. Gülbahçe Cad. Kuluçka Merkezi Binası Sitesi No: 1/45 İç Kapı No: 21<br>Urla / İzmir, Türkiye</span><span class="tr">Teknopark İzmir<br>Gülbahçe Mah. Gülbahçe Cad. Kuluçka Merkezi Binası Sitesi No: 1/45 İç Kapı No: 21<br>Urla / İzmir</span></p>
+  </div>
 </div></section>
 </main>
 

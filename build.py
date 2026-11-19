@@ -60,10 +60,13 @@ def canonical(url):
 
 def org_data(base):
     """Google'a şirketin kendisi: adı, adresi, logosu, e-postası (schema.org). "Kose Capital" aramasında sonucun
-    yanında doğru ad ve logo görünsün diye. Yalnız sayfada zaten yazan bilgiler girer; adres ve kişi adı yoktur."""
+    yanında doğru ad ve logo görünsün diye. Yalnız sayfada zaten yazan bilgiler girer; kişi adı yoktur.
+    Adres, sayfadaki "Şirket merkezi" adresidir (Alper 19 Kasım 2026'da verdi); sayfadaki metinle aynı kalmalıdır (deneme karşılaştırır)."""
     org, site = base + "#org", base + "#site"
+    office = {"@type": "PostalAddress", "streetAddress": "Gülbahçe Mah. Gülbahçe Cad. Kuluçka Merkezi Binası Sitesi No: 1/45 İç Kapı No: 21",
+              "addressLocality": "Urla", "addressRegion": "İzmir", "addressCountry": "TR"}
     data = {"@context": "https://schema.org", "@graph": [
-        {"@type": "Organization", "@id": org, "name": "Kose Capital", "url": base, "logo": base + "logo.png", "email": "info@kosecapital.com"},
+        {"@type": "Organization", "@id": org, "name": "Kose Capital", "url": base, "logo": base + "logo.png", "email": "info@kosecapital.com", "address": office},
         {"@type": "WebSite", "@id": site, "name": "Kose Capital", "url": base, "publisher": {"@id": org}, "inLanguage": ["tr", "en"]}]}
     return '<script type="application/ld+json">%s</script>' % json.dumps(data, ensure_ascii=False, separators=(",", ":"))
 

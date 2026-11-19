@@ -181,6 +181,8 @@ function serve() {
     const ld = [...html.matchAll(/<script type="application\/ld\+json">([^<]*)<\/script>/g)].map((m) => JSON.parse(m[1]));
     const org = ld.length === 1 && ld[0]["@graph"].find((x) => x["@type"] === "Organization"), web = ld.length === 1 && ld[0]["@graph"].find((x) => x["@type"] === "WebSite");
     if (!org || org.name !== "Kose Capital" || org.url !== H || org.logo !== H + "logo.png" || org.email !== "info@kosecapital.com" || !web || web.url !== H || web.publisher["@id"] !== org["@id"]) fail("şirket tanımı (ld+json): " + JSON.stringify(ld));
+    // şirket merkezi adresi: şirket tanımındaki adres sayfada da aynen yazıyor olmalı
+    if (!org || !org.address || org.address.addressLocality !== "Urla" || !html.includes(org.address.streetAddress)) fail("şirket adresi (ld+json) sayfadaki adresle aynı değil: " + JSON.stringify(org && org.address));
     const logo = fs.readFileSync(path.join(DOCS, "logo.png")); if (logo.slice(1, 4).toString() !== "PNG" || logo.readUInt32BE(16) < 112 || logo.readUInt32BE(20) < 112) fail("logo.png yok ya da 112 pikselden küçük");
     if (/<link rel="canonical"/.test(html)) fail("sabit HTML'de canonical etiketi olmamalı (bütün dilleri tek adrese bağlar)");
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, locale: "en-US" }), seen = [];
